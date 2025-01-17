@@ -1,25 +1,30 @@
-import { forwardRef, useEffect, useRef } from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
 
-export default forwardRef(function TextInput({ type = 'text', className = '', isFocused = false, ...props }, ref) {
-    const input = ref ? ref : useRef();
+export default forwardRef(function TextInput(
+    { type = 'text', className = '', isFocused = false, ...props },
+    ref,
+) {
+    const localRef = useRef(null);
+
+    useImperativeHandle(ref, () => ({
+        focus: () => localRef.current?.focus(),
+    }));
 
     useEffect(() => {
         if (isFocused) {
-            input.current.focus();
+            localRef.current?.focus();
         }
-    }, []);
+    }, [isFocused]);
 
     return (
-        <div className="flex flex-col items-start">
-            <input
-                {...props}
-                type={type}
-                className={
-                    'border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm ' +
-                    className
-                }
-                ref={input}
-            />
-        </div>
+        <input
+            {...props}
+            type={type}
+            className={
+                'rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 bg-gray-800 text-white ' +
+                className
+            }            
+            ref={localRef}
+        />
     );
 });

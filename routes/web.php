@@ -35,4 +35,12 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+// routes/web.php
+Route::middleware(['auth', 'role:manajemen_dinas'])->group(function () {
+    // Route untuk manajemen dinas
+});
+
+Route::middleware(['auth', 'role:manajemen_sekolah'])->group(function () {
+    // Route untuk manajemen sekolah
+});
 require __DIR__.'/auth.php';
