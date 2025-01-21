@@ -5,6 +5,8 @@ use Illuminate\Foundation\Application;
 use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\AdminAuthController;
+
 
 Route::get('/', function () {
     return Inertia::render('User/Beranda', [
@@ -66,5 +68,30 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+// Route::middleware('guest:admin')->group(function () {
+//     Route::get('/admin/login', [AdminAuthController::class, 'showLoginForm'])->name('admin.login');
+//     Route::post('/admin/login', [AdminAuthController::class, 'login']);
+// });
+
+// Route::middleware('auth:admin')->group(function () {
+//     Route::get('/admin/dashboard', [AdminAuthController::class, 'dashboard'])->name('admin.dashboard');
+//     Route::post('/admin/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
+// });
+
+// Admin routes
+Route::prefix('admin')->group(function () {
+    Route::middleware('guest:admin')->group(function () {
+        Route::get('login', [AdminAuthController::class, 'loginForm'])->name('admin.login');
+        Route::post('login', [AdminAuthController::class, 'login']);
+    });
+
+    Route::middleware('auth:admin')->group(function () {
+        Route::get('dashboard', [AdminAuthController::class, 'dashboard'])->name('admin.dashboard');
+        Route::post('logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
+    });
+});
+
+
 
 require __DIR__.'/auth.php';
