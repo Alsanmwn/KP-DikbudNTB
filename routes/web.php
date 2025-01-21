@@ -80,17 +80,38 @@ Route::middleware('auth')->group(function () {
 // });
 
 // Admin routes
+// Route untuk halaman login dan logout admin
 Route::prefix('admin')->group(function () {
+    // Middleware untuk guest admin (belum login)
     Route::middleware('guest:admin')->group(function () {
         Route::get('login', [AdminAuthController::class, 'loginForm'])->name('admin.login');
         Route::post('login', [AdminAuthController::class, 'login']);
     });
 
+    // Middleware untuk admin yang sudah login
     Route::middleware('auth:admin')->group(function () {
+        // Halaman Dashboard
         Route::get('dashboard', [AdminAuthController::class, 'dashboard'])->name('admin.dashboard');
+
+        // Halaman untuk route yang mengarah ke React (Inertia)      
+        Route::get('/data-pendidikan', function () {
+            return Inertia::render('Admin/DataPendidikan', [
+                'admin' => Auth::user(),  // Kirim data admin ke Inertia
+            ]);
+        })->name('admin.data-pendidikan');
+        
+        Route::get('/agenda-btidp', function () {
+            return Inertia::render('Admin/AgendaBtidp', [
+                'admin' => Auth::user(),  // Kirim data admin ke Inertia
+            ]);
+        })->name('admin.agenda-btidp');        
+
+        // Logout admin
         Route::post('logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
     });
 });
+
+
 
 
 
