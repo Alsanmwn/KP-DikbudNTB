@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import { Link, usePage, router } from '@inertiajs/react';
+import { UserIcon } from '@heroicons/react/24/outline';
 import { HomeIcon, AcademicCapIcon, CalendarIcon, ChevronDownIcon, ChevronUpIcon, ArrowLeftOnRectangleIcon } from '@heroicons/react/24/outline';
+
 
 const Sidebar = () => {
     const { admin } = usePage().props; // Mengambil data admin
     const [isDataPendidikanOpen, setIsDataPendidikanOpen] = useState(false); // Menangani status dropdown
     const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false); // Menangani status modal logout
     const [isLoggingOut, setIsLoggingOut] = useState(false); // Status loading untuk logout
+
 
     const menuItems = [
         { name: 'Dashboard', route: '/admin/dashboard', icon: <HomeIcon className="h-5 w-5 mr-3" /> },
@@ -21,7 +24,10 @@ const Sidebar = () => {
             ],
         },
         { name: 'Agenda BTIDP', route: '/admin/agenda-btidp', icon: <CalendarIcon className="h-5 w-5 mr-3" /> },
+        { name: 'Ubah Profile', route: '/admin/profile', icon: <UserIcon className="h-5 w-5 mr-3" /> },
     ];
+       
+
 
     const handleLogout = () => {
         setIsLoggingOut(true); // Mulai loading
@@ -34,17 +40,21 @@ const Sidebar = () => {
         }); // Pastikan rute logout sudah benar
     };
 
+
     const toggleDropdown = () => {
         setIsDataPendidikanOpen(!isDataPendidikanOpen); // Toggle state dropdown
     };
+
 
     const openLogoutModal = () => {
         setIsLogoutModalOpen(true); // Membuka modal konfirmasi logout
     };
 
+
     const closeLogoutModal = () => {
         setIsLogoutModalOpen(false); // Menutup modal konfirmasi logout
     };
+
 
     return (
         <div className="w-64 h-screen bg-gray-800 text-white flex flex-col">
@@ -97,7 +107,7 @@ const Sidebar = () => {
                     </li>
                 ))}
             </ul>
-            
+           
             {/* Tombol Logout dengan ikon */}
             <div className="flex justify-center items-center mt-auto mb-4">
                 <button
@@ -109,9 +119,11 @@ const Sidebar = () => {
                 </button>
             </div>
 
+
             <div className="px-4 py-2 text-sm text-center border-t border-gray-600">
                 © 2025 BTIDP
             </div>
+
 
             {/* Modal Konfirmasi Logout */}
             {isLogoutModalOpen && (
@@ -145,5 +157,6 @@ const Sidebar = () => {
         </div>
     );
 };
+
 
 export default Sidebar;

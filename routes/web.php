@@ -6,7 +6,7 @@ use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\AdminAuthController;
-
+use App\Http\Controllers\AdminProfileController;
 
 Route::get('/', function () {
     return Inertia::render('User/Beranda', [
@@ -69,16 +69,6 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// Route::middleware('guest:admin')->group(function () {
-//     Route::get('/admin/login', [AdminAuthController::class, 'showLoginForm'])->name('admin.login');
-//     Route::post('/admin/login', [AdminAuthController::class, 'login']);
-// });
-
-// Route::middleware('auth:admin')->group(function () {
-//     Route::get('/admin/dashboard', [AdminAuthController::class, 'dashboard'])->name('admin.dashboard');
-//     Route::post('/admin/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
-// });
-
 // Admin routes
 // Route untuk halaman login dan logout admin
 Route::prefix('admin')->group(function () {
@@ -111,8 +101,9 @@ Route::prefix('admin')->group(function () {
     });
 });
 
-
-
+Route::middleware(['auth:admin'])->group(function () {
+    Route::get('/admin/profile', [AdminProfileController::class, 'edit'])->name('admin.profile');
+});
 
 
 require __DIR__.'/auth.php';
