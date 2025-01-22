@@ -89,7 +89,25 @@ Route::prefix('admin')->group(function () {
                 'admin' => Auth::user(),  // Kirim data admin ke Inertia
             ]);
         })->name('admin.data-pendidikan');
-        
+
+        Route::get('/data-pendidikan/siswa', function () {
+            return Inertia::render('Admin/Siswa', [
+                'admin' => Auth::user(),
+            ]);
+        })->name('admin.data-pendidikan.siswa');
+
+        Route::get('/data-pendidikan/sekolah', function () {
+            return Inertia::render('Admin/Sekolah', [
+                'admin' => Auth::user(),
+            ]);
+        })->name('admin.data-pendidikan.sekolah');
+
+        Route::get('/data-pendidikan/guru', function () {
+            return Inertia::render('Admin/Guru', [
+                'admin' => Auth::user(),
+            ]);
+        })->name('admin.data-pendidikan.guru');
+
         Route::get('/agenda-btidp', function () {
             return Inertia::render('Admin/AgendaBtidp', [
                 'admin' => Auth::user(),  // Kirim data admin ke Inertia

@@ -2,7 +2,6 @@ import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
-import GuestLayout from '@/Layouts/GuestLayout';
 import { Head, useForm } from '@inertiajs/react';
 
 export default function AdminLogin({ status }) {
@@ -20,26 +19,33 @@ export default function AdminLogin({ status }) {
     };
 
     return (
-        <GuestLayout>
+        <div
+            className="min-h-screen flex items-center justify-center bg-cover bg-center"
+            style={{ backgroundImage: "url('/assets/loginadmin.png')" }}
+
+        >
             <Head title="Admin Login" />
 
+            {/* Status message */}
             {status && (
-                <div className="mb-4 text-sm font-medium text-green-600">
+                <div className="mb-4 text-sm font-medium text-green-600 text-center">
                     {status}
                 </div>
             )}
 
-            <form onSubmit={submit}>
-                {/* Judul di atas email */}
-                <div className="mb-4 text-center">
-                    <h1 className="text-2xl font-bold text-white">
-                        Login Admin Panel
-                    </h1>
-                </div>
+            {/* Form Login */}
+            <form
+                onSubmit={submit}
+                className="w-full max-w-md p-4 "
+            >
+                {/* Judul */}
+                <h1 className="text-2xl font-bold text-white text-center mb-6">
+                    Login Admin Panel
+                </h1>
 
+                {/* Input Email */}
                 <div>
                     <InputLabel htmlFor="email" value="Email" className="text-white" />
-
                     <TextInput
                         id="email"
                         type="email"
@@ -50,13 +56,12 @@ export default function AdminLogin({ status }) {
                         isFocused={true}
                         onChange={(e) => setData('email', e.target.value)}
                     />
-
                     <InputError message={errors.email} className="mt-2 text-white" />
                 </div>
 
+                {/* Input Password */}
                 <div className="mt-4">
                     <InputLabel htmlFor="password" value="Password" className="text-white" />
-
                     <TextInput
                         id="password"
                         type="password"
@@ -66,17 +71,16 @@ export default function AdminLogin({ status }) {
                         autoComplete="current-password"
                         onChange={(e) => setData('password', e.target.value)}
                     />
-
                     <InputError message={errors.password} className="mt-2 text-white" />
                 </div>
 
-                {/* Tombol login */}
-                <div className="mt-4">
+                {/* Tombol Login */}
+                <div className="mt-6">
                     <PrimaryButton className="w-full" disabled={processing}>
                         Masuk
                     </PrimaryButton>
                 </div>
             </form>
-        </GuestLayout>
+        </div>
     );
 }
