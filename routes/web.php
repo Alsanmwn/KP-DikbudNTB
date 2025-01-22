@@ -103,7 +103,10 @@ Route::prefix('admin')->group(function () {
 
 Route::middleware(['auth:admin'])->group(function () {
     Route::get('/admin/profile', [AdminProfileController::class, 'edit'])->name('admin.profile');
+    Route::patch('/admin/profile-update', [AdminProfileController::class, 'update'])->name('admin.profile.update');
+
 });
+
 
 
 require __DIR__.'/auth.php';
