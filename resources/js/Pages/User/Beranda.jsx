@@ -84,7 +84,7 @@ export default function Beranda({ auth }) {
                 <div className="flex items-center justify-center space-x-14 max-w-6xl mx-auto">
                     {/* Gambar yang dapat diklik */}
                     <div className="relative">
-                        <a href="https://www.youtube.com/@dikbudntb" target="_blank" rel="noopener noreferrer">
+                        <a href="https://www.youtube.com/@btidpntbchannel4371" target="_blank" rel="noopener noreferrer">
                             <img 
                                 src="/assets/fotodikbud.png" 
                                 alt="Profil Kami" 
@@ -92,7 +92,7 @@ export default function Beranda({ auth }) {
                             />
                             {/* Logo YouTube di tengah gambar */}
                             <div className="absolute inset-0 flex justify-center items-center">
-                                <a href="https://www.youtube.com/@dikbudntb" target="_blank" rel="noopener noreferrer">
+                                <a href="https://www.youtube.com/@btidpntbchannel4371" target="_blank" rel="noopener noreferrer">
                                     <img 
                                         src="/assets/Youtube.png" 
                                         alt="YouTube Logo" 
@@ -215,7 +215,7 @@ export default function Beranda({ auth }) {
             </section>
 
 
-            <section className="bg-white text-center pb-20">
+            <section className="bg-white text-center pb-16">
                 <h3 className="text-[25px] font-bold text-[#223A5C] mb-8" style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)' }}>
                     Agenda Kegiatan
                 </h3>
@@ -393,8 +393,65 @@ export default function Beranda({ auth }) {
                     </div>
                 </div>
             </section>
+            <section
+                className="flex flex-col items-center pb-16 mx-10 rounded-tl-[30px] rounded-tr-[30px] rounded-bl-[30px] rounded-br-[30px]"
+                style={{
+                    backgroundImage: 'url(/assets/Gradasi2.jpeg)', // Ganti dengan path gambar Anda
+                    backgroundSize: 'cover', // Mengatur gambar agar menutupi seluruh area
+                    backgroundPosition: 'center', // Mengatur posisi gambar di tengah
+                    backgroundRepeat: 'no-repeat' // Mencegah gambar diulang
+                }}
+            >
+                <h3
+                    className="text-[25px] font-bold text-center text-[#FFFFFFFF] mb-8 mt-8"
+                    style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)' }}
+                >
+                    Informasi Kebudayaan
+                </h3>
+                <div className="flex items-center gap-6 mx-20">
+                    {/* Tulisan di sebelah kanan */}
+                    <div className="text-white mr-5 flex-1">
+                        <h4 className="text-[20px] font-bold mb-4">Menelusuri Tradisi dan Seni di NTB</h4>
+                        <p className="mb-6">
+                            Kebudayaan Nusa Tenggara Barat mencerminkan kekayaan sejarah dan tradisi yang telah ada selama 
+                            berabad-abad. Dari seni ukir yang indah hingga masakan khas yang menggugah selera, setiap elemen 
+                            budaya NTB memiliki makna yang mendalam. Jika Anda ingin memahami lebih dalam tentang kebudayaan 
+                            yang membentuk identitas masyarakat NTB, klik tombol di bawah ini untuk menjelajahi informasi yang 
+                            menarik! 
+                        </p>
 
-            <section className="bg-white text-center py-2 pb-16">
+                        {/* Tombol */}
+                        <div className="flex gap-4">
+                            <a
+                                href="https://ntbprov.go.id/post/program-unggulan/taman-budaya-ntb-rumah-bagi-para-seniman"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="bg-blue-500 text-white py-2 px-4 rounded"
+                            >
+                                Taman Budaya NTB
+                            </a>
+                            <a
+                                href="https://museum.kemdikbud.go.id/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="bg-blue-500 text-white py-2 px-4 rounded"
+                            >
+                                Museum Kemdikbud
+                            </a>
+                        </div>
+                    </div>
+
+                    {/* Gambar di sebelah kiri dengan ukuran yang tetap */}
+                    <div className="flex-shrink-0 w-[300px] h-auto mx-5">
+                        <img
+                            src="/assets/logobtidp.jpg"
+                            alt="Informasi Kebudayaan"
+                            className="w-full h-auto object-cover"
+                        />
+                    </div>
+                </div>
+            </section>
+            <section className="bg-white text-center py-16 pb-16">
                 <h3 className="text-[25px] font-bold text-[#223A5C] mb-8" style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)' }}>Layanan Kami</h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mx-auto max-w-6xl">
                     <div className="p-8 border-2 border-[#0E2038] rounded-lg shadow-lg">
@@ -430,7 +487,6 @@ export default function Beranda({ auth }) {
                 </div>
             </section>
 
-
             {/* Footer */}
             <footer className="w-full mt-auto">
                 <Footer />
@@ -460,4 +516,4 @@ export default function Beranda({ auth }) {
             )}
         </div>
     );
-}   
+}
