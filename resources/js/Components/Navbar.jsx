@@ -40,14 +40,20 @@ export default function Navbar({ auth }) {
                         >
                             Layanan
                         </Link>
-                        <a
+                        <Link
+                            href={route('informasi-kebudayaan')}
+                            className="text-white font-regular text-[16px] hover:text-gray-200"
+                        >
+                            Informasi Kebudayaan
+                        </Link>
+                        {/* <a
                             href="https://ayomi.vercel.app/"
                             target="_blank"  // Membuka link di tab baru
                             rel="noopener noreferrer"  // Menambahkan keamanan saat membuka link di tab baru
                             className="text-white font-regular text-[16px] hover:text-gray-200"
                         >
                             Informasi Kebudayaan
-                        </a>
+                        </a> */}
 
 
                         {/* {auth.user ? (
