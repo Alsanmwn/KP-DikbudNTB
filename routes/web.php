@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\AdminProfileController;
+use App\Http\Controllers\KegiatanController;
 
 Route::get('/', function () {
     return Inertia::render('User/Beranda', [
@@ -124,6 +125,8 @@ Route::middleware(['auth:admin'])->group(function () {
     Route::patch('/admin/profile-update', [AdminProfileController::class, 'update'])->name('admin.profile.update');
 
 });
+
+Route::resource('kegiatan', KegiatanController::class);
 
 
 
