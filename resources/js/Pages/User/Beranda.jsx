@@ -267,7 +267,7 @@ export default function Beranda({ auth }) {
                 <div className="flex flex-col md:flex-row mx-auto max-w-6xl">
                     {/* Kegiatan List */}
                     <div className="w-full md:w-[70%] space-y-6">
-                        {kegiatanList.map(kegiatan => (
+                        {kegiatanList.slice(0, 3).map(kegiatan => (
                             <div key={kegiatan.id} className="w-full md:w-[770px] h-[240px] p-6 border-2 border-[#0E2038] rounded-lg shadow-lg relative flex items-center">
                                 <img
                                     src={`/storage/${kegiatan.gambar}`}
@@ -313,6 +313,7 @@ export default function Beranda({ auth }) {
                             </div>
                         ))}
                     </div>
+
                     {/* Kalender */}
                     <div className="w-full md:w-[30%] mt-6 md:mt-0 ml-6">
                         <div className="bg-[#0E2038] w-full p-4 rounded-lg shadow-lg">
