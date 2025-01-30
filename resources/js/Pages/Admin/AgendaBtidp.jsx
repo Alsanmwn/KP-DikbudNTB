@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { MaterialReactTable } from 'material-react-table';
 import { PlusCircle, Edit, Trash } from 'lucide-react';
 import axios from 'axios';
+import Sidebar from '@/Components/Sidebar';
 
 const AgendaBTIDP = () => {
   const [kegiatan, setKegiatan] = useState([]);
@@ -14,7 +15,7 @@ const AgendaBTIDP = () => {
     waktu: '',
     lokasi: '',
     gambar: null,
-    status: 'open for public', // Default status
+    status: 'open for public',
   });
   const [imagePreview, setImagePreview] = useState('');
 
@@ -55,14 +56,19 @@ const AgendaBTIDP = () => {
         if (currentKegiatan.id) {
           formData.append('_method', 'PUT');
         }
-  
-        // Pastikan hanya mengirim data yang tidak null
+
+        // Hanya kirim gambar jika ada file baru yang diupload
+        if (currentKegiatan.gambar instanceof File) {
+          formData.append('gambar', currentKegiatan.gambar);
+        }
+
+        // Kirim data lainnya, kecuali gambar jika tidak ada perubahan
         Object.keys(currentKegiatan).forEach(key => {
-          if (currentKegiatan[key] !== null) {
+          if (key !== 'gambar' && currentKegiatan[key] !== null) {
             formData.append(key, currentKegiatan[key]);
           }
         });
-  
+
         if (currentKegiatan.id) {
           // Update existing kegiatan
           await axios.post(`/api/kegiatan/${currentKegiatan.id}`, formData, {
@@ -78,18 +84,16 @@ const AgendaBTIDP = () => {
             },
           });
         }
-  
+
         fetchKegiatan();
         setIsModalOpen(false);
         resetForm();
       } catch (error) {
         console.error('Error saving kegiatan:', error);
-        // Tambahkan alert untuk menampilkan pesan error
         alert('Gagal menyimpan kegiatan: ' + error.response?.data?.message || error.message);
       }
     }
   };
-  
 
   // Handle delete kegiatan
   const handleDeleteKegiatan = async (id) => {
@@ -129,7 +133,7 @@ const AgendaBTIDP = () => {
     { 
       accessorKey: 'waktu', 
       header: 'Waktu',
-      Cell: ({ cell }) => cell.getValue().slice(0, 5),  // Format: HH:mm
+      Cell: ({ cell }) => cell.getValue().slice(0, 5),
     },
     { accessorKey: 'lokasi', header: 'Lokasi' },
     {
@@ -164,7 +168,10 @@ const AgendaBTIDP = () => {
         <div className="flex gap-2">
           <button
             onClick={() => {
-              setCurrentKegiatan(row.original);
+              setCurrentKegiatan({
+                ...row.original,
+                gambar: null  // Set gambar ke null agar tidak mengirim string path
+              });
               setImagePreview(row.original.gambar ? `/storage/${row.original.gambar}` : '');
               setIsModalOpen(true);
             }}
@@ -182,130 +189,130 @@ const AgendaBTIDP = () => {
       ),
     },
   ], []);
-  
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
-      <div className="bg-white shadow-md rounded-lg">
-        <div className="flex justify-between items-center p-4 border-b">
-          <h2 className="text-2xl font-bold text-gray-800">Agenda Kegiatan BTIDP</h2>
-          <button
-            onClick={() => {
-              resetForm();
-              setIsModalOpen(true);
-            }}
-            className="flex items-center bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition"
-          >
-            <PlusCircle className="mr-2" /> Tambah Kegiatan
-          </button>
-        </div>
-        <MaterialReactTable
-          columns={columns}
-          data={kegiatan}
-          enableRowActions={false}
-          muiTableContainerProps={{ style: { zIndex: 1 } }}
-          loading={loading}
-        />
-      </div>
+    <div className="flex min-h-screen bg-gray-100">
+      {/* Sidebar */}
+      <Sidebar />
 
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto relative z-50">
-            <h3 className="text-xl font-semibold mb-4">
-              {currentKegiatan.id ? "Edit Kegiatan" : "Tambah Kegiatan Baru"}
-            </h3>
-            <div className="grid grid-cols-2 gap-4">
-              {/* Form Fields */}
-              <div className="col-span-2">
-                <label className="block mb-2">Nama Kegiatan</label>
-                <input
-                  type="text"
-                  value={currentKegiatan.nama}
-                  onChange={(e) => setCurrentKegiatan({ ...currentKegiatan, nama: e.target.value })}
-                  className="w-full p-2 border rounded"
-                />
-              </div>
-              <div className="col-span-1">
-                <label className="block mb-2">Tanggal</label>
-                <input
-                  type="date"
-                  value={currentKegiatan.tanggal}
-                  onChange={(e) => setCurrentKegiatan({ ...currentKegiatan, tanggal: e.target.value })}
-                  className="w-full p-2 border rounded"
-                />
-              </div>
-              <div className="col-span-1">
-                <label className="block mb-2">Waktu</label>
-                <input
-                  type="time"
-                  value={currentKegiatan.waktu}
-                  onChange={(e) => setCurrentKegiatan({ ...currentKegiatan, waktu: e.target.value })}
-                  className="w-full p-2 border rounded"
-                />
-              </div>
-              <div className="col-span-2">
-                <label className="block mb-2">Lokasi</label>
-                <input
-                  type="text"
-                  value={currentKegiatan.lokasi}
-                  onChange={(e) => setCurrentKegiatan({ ...currentKegiatan, lokasi: e.target.value })}
-                  className="w-full p-2 border rounded"
-                />
-              </div>
-              <div className="col-span-2">
-                <label className="block mb-2">Deskripsi</label>
-                <textarea
-                  value={currentKegiatan.deskripsi}
-                  onChange={(e) => setCurrentKegiatan({ ...currentKegiatan, deskripsi: e.target.value })}
-                  className="w-full p-2 border rounded"
-                  rows="4"
-                />
-              </div>
-              <div className="col-span-2">
-                <label className="block mb-2">Gambar</label>
-                {imagePreview && (
-                  <img src={imagePreview} alt="Preview" className="w-24 h-24 object-cover mb-2" />
-                )}
-                <input
-                  type="file"
-                  onChange={handleImageUpload}
-                  className="w-full p-2 border rounded"
-                  accept="image/*"
-                />
-              </div>
-              <div className="col-span-2">
-                <label className="block mb-2">Status</label>
-                <select
+      <div className="flex-1 p-6 bg-gray-50 overflow-hidden">
+        <div className="bg-white shadow-md rounded-lg">
+          <div className="flex justify-between items-center p-4 border-b">
+            <h2 className="text-2xl font-bold text-gray-800">Agenda Kegiatan BTIDP</h2>
+            <button
+              onClick={() => {
+                resetForm();
+                setIsModalOpen(true);
+              }}
+              className="flex items-center bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition"
+            >
+              <PlusCircle className="mr-2" /> Tambah Kegiatan
+            </button>
+          </div>
+          
+          <div className="overflow-x-auto max-h-[70vh]">
+            <MaterialReactTable
+              columns={columns}
+              data={kegiatan}
+              enableRowActions={false}
+              muiTableContainerProps={{ style: { zIndex: 1 } }}
+              loading={loading}
+            />
+          </div>
+        </div>
+
+        {isModalOpen && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white p-6 rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto relative z-50">
+              <h3 className="text-xl font-semibold mb-4">
+                {currentKegiatan.id ? "Edit Kegiatan" : "Tambah Kegiatan Baru"}
+              </h3>
+              <div className="grid grid-cols-2 gap-4">
+                {/* Form Fields */}
+                <div className="col-span-2">
+                  <label className="block mb-2">Nama Kegiatan</label>
+                  <input
+                    type="text"
+                    value={currentKegiatan.nama}
+                    onChange={(e) => setCurrentKegiatan({ ...currentKegiatan, nama: e.target.value })}
+                    className="w-full p-2 border rounded"
+                  />
+                </div>
+                <div className="col-span-1">
+                  <label className="block mb-2">Tanggal</label>
+                  <input
+                    type="date"
+                    value={currentKegiatan.tanggal}
+                    onChange={(e) => setCurrentKegiatan({ ...currentKegiatan, tanggal: e.target.value })}
+                    className="w-full p-2 border rounded"
+                  />
+                </div>
+                <div className="col-span-1">
+                  <label className="block mb-2">Waktu</label>
+                  <input
+                    type="time"
+                    value={currentKegiatan.waktu}
+                    onChange={(e) => setCurrentKegiatan({ ...currentKegiatan, waktu: e.target.value })}
+                    className="w-full p-2 border rounded"
+                  />
+                </div>
+                <div className="col-span-2">
+                  <label className="block mb-2">Lokasi</label>
+                  <input
+                    type="text"
+                    value={currentKegiatan.lokasi}
+                    onChange={(e) => setCurrentKegiatan({ ...currentKegiatan, lokasi: e.target.value })}
+                    className="w-full p-2 border rounded"
+                  />
+                </div>
+                <div className="col-span-2">
+                  <label className="block mb-2">Deskripsi</label>
+                  <textarea
+                    value={currentKegiatan.deskripsi}
+                    onChange={(e) => setCurrentKegiatan({ ...currentKegiatan, deskripsi: e.target.value })}
+                    className="w-full p-2 border rounded"
+                  ></textarea>
+                </div>
+                <div className="col-span-2">
+                  <label className="block mb-2">Gambar</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    className="w-full p-2 border rounded"
+                  />
+                  {imagePreview && <img src={imagePreview} alt="Preview" className="mt-2 h-32 object-cover" />}
+                </div>
+                <div className="col-span-2">
+                  <label className="block mb-2">Status</label>
+                  <select
                     value={currentKegiatan.status}
                     onChange={(e) => setCurrentKegiatan({ ...currentKegiatan, status: e.target.value })}
                     className="w-full p-2 border rounded"
-                >
+                  >
                     <option value="open for public">Open for Public</option>
                     <option value="open anggota">Open Anggota</option>
-                </select>
-            </div>
-
-            </div>
-            <div className="flex justify-end gap-4 mt-4">
-              <button
-                onClick={() => {
-                  setIsModalOpen(false);
-                  resetForm();
-                }}
-                className="bg-gray-300 text-gray-700 px-4 py-2 rounded-md"
-              >
-                Batal
-              </button>
-              <button
-                onClick={handleSaveKegiatan}
-                className="bg-blue-500 text-white px-4 py-2 rounded-md"
-              >
-                {currentKegiatan.id ? 'Simpan Perubahan' : 'Tambah Kegiatan'}
-              </button>
+                  </select>
+                </div>
+              </div>
+              <div className="flex justify-end gap-4 mt-4">
+                <button
+                  onClick={() => setIsModalOpen(false)}
+                  className="bg-gray-300 text-gray-700 px-4 py-2 rounded-md"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSaveKegiatan}
+                  className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+                >
+                  Save
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };
