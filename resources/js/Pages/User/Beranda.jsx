@@ -7,68 +7,43 @@ import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css"; // Import default styles
 import { FaClock, FaMapMarkerAlt } from 'react-icons/fa'
 
-
-
-
 export default function Beranda({ auth }) {
     const [showScrollToTop, setShowScrollToTop] = useState(false);
     const [date, setDate] = useState(new Date());
     const [kegiatanList, setKegiatanList] = useState([]);
 
-
     useEffect(() => {
         const handleScroll = () => {
-            if (window.scrollY > 300) {
-                setShowScrollToTop(true);
-            } else {
-                setShowScrollToTop(false);
-            }
+            setShowScrollToTop(window.scrollY > 300);
         };
-
 
         window.addEventListener('scroll', handleScroll);
-        return () => {
-            window.removeEventListener('scroll', handleScroll);
-        };
+        return () => window.removeEventListener('scroll', handleScroll);
     }, []);
-
-
-    // useEffect(() => {
-    //     const fetchKegiatan = async () => {
-    //         try {
-    //             const response = await axios.get('/api/kegiatan'); // Ambil data dari API
-    //             setKegiatanList(response.data);
-    //         } catch (error) {
-    //             console.error("Error fetching kegiatan:", error);
-    //         }
-    //     };
-
-
-    //     fetchKegiatan();
-    // }, []);
 
     useEffect(() => {
         const fetchKegiatan = async () => {
             try {
                 const response = await axios.get('/api/kegiatan');
-                console.log('Data kegiatan:', response.data); // Untuk melihat struktur data
-                setKegiatanList(response.data);
+                const today = new Date();
+
+                // Filter kegiatan yang belum terjadi dan urutkan berdasarkan tanggal
+                const upcomingKegiatan = response.data
+                    .filter(kegiatan => new Date(kegiatan.tanggal) >= today)
+                    .sort((a, b) => new Date(a.tanggal) - new Date(b.tanggal));
+
+                setKegiatanList(upcomingKegiatan);
             } catch (error) {
                 console.error("Error fetching kegiatan:", error);
             }
         };
-    
+
         fetchKegiatan();
     }, []);
 
-
     const scrollToTop = () => {
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth',
-        });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     };
-
 
     return (
         <div className="bg-gray-50 text-black/50 dark:bg-black dark:text-white/50 min-h-screen flex flex-col">
