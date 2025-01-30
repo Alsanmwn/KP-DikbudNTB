@@ -1,3 +1,4 @@
+import React from 'react';
 import { useState, useEffect } from 'react';
 import { Link } from '@inertiajs/react';
 import Navbar from '@/Components/Navbar';
@@ -6,9 +7,14 @@ import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css"; // Import default styles
 import { FaClock, FaMapMarkerAlt } from 'react-icons/fa'
 
+
+
+
 export default function Beranda({ auth }) {
     const [showScrollToTop, setShowScrollToTop] = useState(false);
     const [date, setDate] = useState(new Date());
+    const [kegiatanList, setKegiatanList] = useState([]);
+
 
     useEffect(() => {
         const handleScroll = () => {
@@ -19,11 +25,42 @@ export default function Beranda({ auth }) {
             }
         };
 
+
         window.addEventListener('scroll', handleScroll);
         return () => {
             window.removeEventListener('scroll', handleScroll);
         };
     }, []);
+
+
+    // useEffect(() => {
+    //     const fetchKegiatan = async () => {
+    //         try {
+    //             const response = await axios.get('/api/kegiatan'); // Ambil data dari API
+    //             setKegiatanList(response.data);
+    //         } catch (error) {
+    //             console.error("Error fetching kegiatan:", error);
+    //         }
+    //     };
+
+
+    //     fetchKegiatan();
+    // }, []);
+
+    useEffect(() => {
+        const fetchKegiatan = async () => {
+            try {
+                const response = await axios.get('/api/kegiatan');
+                console.log('Data kegiatan:', response.data); // Untuk melihat struktur data
+                setKegiatanList(response.data);
+            } catch (error) {
+                console.error("Error fetching kegiatan:", error);
+            }
+        };
+    
+        fetchKegiatan();
+    }, []);
+
 
     const scrollToTop = () => {
         window.scrollTo({
@@ -32,17 +69,19 @@ export default function Beranda({ auth }) {
         });
     };
 
+
     return (
         <div className="bg-gray-50 text-black/50 dark:bg-black dark:text-white/50 min-h-screen flex flex-col">
             <header className="w-full">
                 <Navbar auth={auth} />
             </header>
 
+
             {/* Hero Section */}
             <div className="relative flex justify-center items-center flex-1 mb-1">
-                <img 
-                    src="/assets/landingpage.png" 
-                    alt="Deskripsi gambar" 
+                <img
+                    src="/assets/landingpage.png"
+                    alt="Deskripsi gambar"
                     className="w-full h-screen object-cover"
                 />
                 <div className="absolute text-left left-10 pl-6">
@@ -50,11 +89,12 @@ export default function Beranda({ auth }) {
                         Selamat datang di BTIDP
                     </h1>
                     <h2 className="text-white text-[40px] font-bold">
-                        Balai Teknologi Informasi <br /> dan 
+                        Balai Teknologi Informasi <br /> dan
                         Data Pendidikan
                     </h2>
                 </div>
             </div>
+
 
             {/* Statistik Section */}
             <section className="bg-white text-center py-12">
@@ -77,7 +117,7 @@ export default function Beranda({ auth }) {
                         </div>
                     </div>
             </section>
-            
+           
             {/* Profil Kami */}
             <section className="bg-white text-center py-3 pb-16">
                 <h3 className="text-[25px] font-bold text-[#223A5C] mb-8" style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)' }}>Profil Kami</h3>
@@ -85,17 +125,17 @@ export default function Beranda({ auth }) {
                     {/* Gambar yang dapat diklik */}
                     <div className="relative">
                         <a href="https://www.youtube.com/@btidpntbchannel4371" target="_blank" rel="noopener noreferrer">
-                            <img 
-                                src="/assets/fotodikbud.png" 
-                                alt="Profil Kami" 
+                            <img
+                                src="/assets/fotodikbud.png"
+                                alt="Profil Kami"
                                 className="w-[548px] h-[305px] object-cover rounded-[10px] shadow-lg cursor-pointer"
                             />
                             {/* Logo YouTube di tengah gambar */}
                             <div className="absolute inset-0 flex justify-center items-center">
                                 <a href="https://www.youtube.com/@btidpntbchannel4371" target="_blank" rel="noopener noreferrer">
-                                    <img 
-                                        src="/assets/Youtube.png" 
-                                        alt="YouTube Logo" 
+                                    <img
+                                        src="/assets/Youtube.png"
+                                        alt="YouTube Logo"
                                         className="w-16 h-16 cursor-pointer"
                                     />
                                 </a>
@@ -103,18 +143,20 @@ export default function Beranda({ auth }) {
                         </a>
                     </div>
 
+
                     {/* Judul dan Deskripsi */}
                     <div className="text-left max-w-lg">
                         <h4 className="text-[20px] font-bold text-[#223A5C] mb-4">Channel Kami</h4>
                         <p className="text-[18px] text-[#555] text-justify">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus vitae eleifend lectus. 
-                            Duis dignissim nibh porta, sodales nibh ullamcorper, cursus nunc. In eget tempor tortor. 
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus vitae eleifend lectus.
+                            Duis dignissim nibh porta, sodales nibh ullamcorper, cursus nunc. In eget tempor tortor.
                             Morbi rhoncus purus id libero rhoncus, ac eleifend lacus auctor. Curabitur eleifend, nisl
-                            in malesuada faucibus, dui elit bibendum lectus, eget aliquet purus sem ac risus. 
+                            in malesuada faucibus, dui elit bibendum lectus, eget aliquet purus sem ac risus.
                         </p>
                     </div>
                 </div>
             </section>
+
 
             {/* Kegiatan Yang Telah Kami Lakukan */}
             <section className="bg-[#223A5C] py-8 pb-28 mb-14 w-full h-[567px]">
@@ -125,8 +167,8 @@ export default function Beranda({ auth }) {
                     {/* Kiri */}
                     <div className="space-y-4">
                         <div className="relative">
-                            <img 
-                                src="/assets/Bimbingan.png" 
+                            <img
+                                src="/assets/Bimbingan.png"
                                 alt="Kegiatan 1"
                                 className="w-[400px] h-[200px] object-cover"
                             />
@@ -140,15 +182,16 @@ export default function Beranda({ auth }) {
                             </div>
                         </div>
 
+
                         <div className="relative">
-                            <img 
-                                src="/assets/FasilitasGoogleSites.png" 
+                            <img
+                                src="/assets/FasilitasGoogleSites.png"
                                 alt="Kegiatan 2"
                                 className="w-[400px] h-[200px] object-cover"
                             />
                             <div className="absolute bottom-0 inset-x-0 bg-black bg-opacity-40 p-4 h-1/2 flex flex-col justify-center items-center w-full">
                                 <h4 className="text-white text-[18px] font-bold  text-center px-4">
-                                    Kegiatan Fasilitas Google 
+                                    Kegiatan Fasilitas Google
                                     Sites Bagi Guru SMK
                                 </h4>
                                 <Link href="#" className="border-2 border-white text-white p-1 px-4 text-[10px] rounded-md">
@@ -158,10 +201,11 @@ export default function Beranda({ auth }) {
                         </div>
                     </div>
 
+
                     {/* Tengah */}
                     <div className="relative">
-                        <img 
-                            src="/assets/SecurityAwareness.png" 
+                        <img
+                            src="/assets/SecurityAwareness.png"
                             alt="Kegiatan 3"
                             className="w-[350px] h-[416px] object-cover"
                         />
@@ -176,11 +220,12 @@ export default function Beranda({ auth }) {
                         </div>
                     </div>
 
+
                     {/* Kanan */}
                     <div className="space-y-4">
                         <div className="relative">
-                            <img 
-                                src="/assets/AkselerasiEkosistem.png" 
+                            <img
+                                src="/assets/AkselerasiEkosistem.png"
                                 alt="Kegiatan 4"
                                 className="w-[400px] h-[200px] object-cover"
                             />
@@ -194,9 +239,10 @@ export default function Beranda({ auth }) {
                             </div>
                         </div>
 
+
                         <div className="relative">
-                            <img 
-                                src="/assets/GoogleSitesSMA.png" 
+                            <img
+                                src="/assets/GoogleSitesSMA.png"
                                 alt="Kegiatan 5"
                                 className="w-[400px] h-[200px] object-cover"
                             />
@@ -214,7 +260,6 @@ export default function Beranda({ auth }) {
                 </div>
             </section>
 
-
             <section className="bg-white text-center pb-16">
                 <h3 className="text-[25px] font-bold text-[#223A5C] mb-8" style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)' }}>
                     Agenda Kegiatan
@@ -222,156 +267,52 @@ export default function Beranda({ auth }) {
                 <div className="flex flex-col md:flex-row mx-auto max-w-6xl">
                     {/* Kegiatan List */}
                     <div className="w-full md:w-[70%] space-y-6">
-                        {/* Kegiatan 1 */}
-                        <div className="w-full md:w-[770px] h-[240px] p-6 border-2 border-[#0E2038] rounded-lg shadow-lg relative flex items-center">
-                            {/* Gambar */}
-                            <img 
-                                src="/assets/logobtidp.jpg" 
-                                alt="Kegiatan 1" 
-                                className="w-[200px] h-[236px] object-cover rounded-md" 
-                                style={{ marginLeft: "-24px" }}
-                            />
-                            {/* Teks */}
-                            <div className="flex flex-col justify-center text-left ml-6">
-                                <h2 className="text-[18px] font-bold text-[#0E2038] mb-4 text-center">
-                                    Diskusi rencana tindak lanjut MoU Data Pendidikan antara Pusdatin dengan Dinas Dikbud NTB.
-                                </h2>
-                                <div className="flex flex-col gap-y-2">
-                                    {/* Waktu */}
-                                    <div className="flex gap-x-2">
-                                        <p className="text-[15px] text-gray-700 font-bold w-[100px]">Waktu</p>
-                                        <p className="text-sm text-gray-700">: 08:00 - 12:00 WITA</p>
+                        {kegiatanList.map(kegiatan => (
+                            <div key={kegiatan.id} className="w-full md:w-[770px] h-[240px] p-6 border-2 border-[#0E2038] rounded-lg shadow-lg relative flex items-center">
+                                <img
+                                    src={`/storage/${kegiatan.gambar}`}
+                                    alt={kegiatan.nama}
+                                    className="w-[200px] h-[236px] object-cover rounded-md"
+                                    style={{ marginLeft: "-24px" }}
+                                    onError={(e) => {
+                                        console.log('Error loading image:', kegiatan.gambar); // Debug
+                                        e.target.src = '/default-image.jpg';
+                                    }}
+                                />
+                                <div className="flex flex-col justify-center text-left ml-6">
+                                    <h2 className="text-[18px] font-bold text-[#0E2038] mb-4 text-center">
+                                        {kegiatan.nama}
+                                    </h2>
+                                    <div className="flex flex-col gap-y-2">
+                                        <div className="flex gap-x-2">
+                                            <p className="text-[15px] text-gray-700 font-bold w-[100px]">Waktu</p>
+                                            <p className="text-sm text-gray-700">: {kegiatan.waktu}</p>
+                                        </div>
+                                        <div className="flex gap-x-2">
+                                            <p className="text-[15px] text-gray-700 font-bold w-[100px]">Tanggal</p>
+                                            <p className="text-sm text-gray-700">: {new Date(kegiatan.tanggal).toLocaleDateString('id-ID')}</p>
+                                        </div>
+                                        <div className="flex gap-x-2">
+                                            <p className="text-[15px] text-gray-700 font-bold w-[100px]">Lokasi</p>
+                                            <p className="text-sm text-gray-700">: {kegiatan.lokasi}</p>
+                                        </div>
                                     </div>
-
-                            {/* Tanggal */}
-                            <div className="flex gap-x-2">
-                                <p className="text-[15px] text-gray-700 font-bold w-[100px]">Tanggal</p>
-                                <p className="text-sm text-gray-700">: 15 Januari 2025</p>
+                                    <div className="flex space-x-2 w-full mt-4">
+                                        <div className={`py-1 px-1 w-[140px] text-center rounded-lg shadow-lg text-[10px] ${kegiatan.status === 'open for public' ? 'bg-green-500' : 'bg-blue-500'}`}>
+                                            {kegiatan.status}
+                                        </div>
+                                        <Link
+                                            href={route('kegiatan.detail', { id: kegiatan.id })}
+                                            className="py-1 px-1 w-[140px] bg-white-10 font-bold text-[#223A5C] text-center rounded-lg shadow-lg text-[10px]"
+                                            style={{ boxShadow: "0 4px 9px rgba(0, 0, 0, 0.1)", borderRadius: "15px" }}
+                                        >
+                                            Lihat Detail
+                                        </Link>
+                                    </div>
+                                </div>
                             </div>
-
-                            {/* Lokasi */}
-                            <div className="flex gap-x-2">
-                                <p className="text-[15px] text-gray-700 font-bold w-[100px]">Lokasi</p>
-                                <p className="text-sm text-gray-700">: Auditorium Universitas</p>
-                            </div>
-                        </div>
-
-                        <div className="flex space-x-2 w-full mt-4">
-                            <div className="py-1 px-1 w-[140px] bg-white-10 text-black text-center rounded-lg shadow-lg text-[10px]" style={{ boxShadow: "0 4px 9px rgba(0, 0, 0, 0.1)", borderRadius: "15px" }}>
-                                Open for Public
-                            </div>
-                            {/* Lihat Detail with Link */}
-                            <Link 
-                                href="User/detail-kegiatan" 
-                                className="py-1 px-1 w-[140px] bg-white-10 font-bold text-[#223A5C] text-center rounded-lg shadow-lg text-[10px]" 
-                                style={{ boxShadow: "0 4px 9px rgba(0, 0, 0, 0.1)", borderRadius: "15px" }}
-                            >
-                                Lihat Detail
-                            </Link>
-                        </div>
+                        ))}
                     </div>
-                </div>
-
-                    {/* Kegiatan 2 */}
-                    <div className="w-full md:w-[770px] h-[240px] p-6 border-2 border-[#0E2038] rounded-lg shadow-lg relative flex items-center">
-                        {/* Gambar */}
-                        <img 
-                            src="/assets/logobtidp.jpg" 
-                            alt="Kegiatan 1" 
-                            className="w-[200px] h-[236px] object-cover rounded-md" 
-                            style={{ marginLeft: "-24px" }}
-                        />
-                        {/* Teks */}
-                        <div className="flex flex-col justify-center text-left ml-6">
-                            <h2 className="text-[18px] font-bold text-[#0E2038] mb-4 text-center">
-                                Diskusi rencana tindak lanjut MoU Data Pendidikan antara Pusdatin dengan Dinas Dikbud NTB.
-                            </h2>
-                            <div className="flex flex-col gap-y-2">
-                                {/* Waktu */}
-                                <div className="flex gap-x-2">
-                                    <p className="text-[15px] text-gray-700 font-bold w-[100px]">Waktu</p>
-                                    <p className="text-sm text-gray-700">: 08:00 - 12:00 WITA</p>
-                                </div>
-
-                                {/* Tanggal */}
-                                <div className="flex gap-x-2">
-                                    <p className="text-[15px] text-gray-700 font-bold w-[100px]">Tanggal</p>
-                                    <p className="text-sm text-gray-700">: 15 Januari 2025</p>
-                                </div>
-
-                                {/* Lokasi */}
-                                <div className="flex gap-x-2">
-                                    <p className="text-[15px] text-gray-700 font-bold w-[100px]">Lokasi</p>
-                                    <p className="text-sm text-gray-700">: Auditorium Universitas</p>
-                                </div>
-                            </div>
-
-                            <div className="flex space-x-2 w-full mt-4">
-                                <div className="py-1 px-1 w-[140px] bg-white-10 text-black text-center rounded-lg shadow-lg text-[10px]" style={{ boxShadow: "0 4px 9px rgba(0, 0, 0, 0.1)", borderRadius: "15px" }}>
-                                    Open for Public
-                                </div>
-                                {/* Lihat Detail with Link */}
-                                <Link 
-                                    href="User/detail-kegiatan" 
-                                    className="py-1 px-1 w-[140px] bg-white-10 font-bold text-[#223A5C] text-center rounded-lg shadow-lg text-[10px]" 
-                                    style={{ boxShadow: "0 4px 9px rgba(0, 0, 0, 0.1)", borderRadius: "15px" }}
-                                >
-                                    Lihat Detail
-                                </Link>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Kegiatan 3 */}
-                    <div className="w-full md:w-[770px] h-[240px] p-6 border-2 border-[#0E2038] rounded-lg shadow-lg relative flex items-center">
-                        {/* Gambar */}
-                        <img 
-                            src="/assets/logobtidp.jpg" 
-                            alt="Kegiatan 1" 
-                            className="w-[200px] h-[236px] object-cover rounded-md" 
-                            style={{ marginLeft: "-24px" }}
-                        />
-                        {/* Teks */}
-                        <div className="flex flex-col justify-center text-left ml-6">
-                            <h2 className="text-[18px] font-bold text-[#0E2038] mb-4 text-center">
-                                Diskusi rencana tindak lanjut MoU Data Pendidikan antara Pusdatin dengan Dinas Dikbud NTB.
-                            </h2>
-                            <div className="flex flex-col gap-y-2">
-                                {/* Waktu */}
-                                <div className="flex gap-x-2">
-                                    <p className="text-[15px] text-gray-700 font-bold w-[100px]">Waktu</p>
-                                    <p className="text-sm text-gray-700">: 08:00 - 12:00 WITA</p>
-                                </div>
-
-                                {/* Tanggal */}
-                                <div className="flex gap-x-2">
-                                    <p className="text-[15px] text-gray-700 font-bold w-[100px]">Tanggal</p>
-                                    <p className="text-sm text-gray-700">: 15 Januari 2025</p>
-                                </div>
-
-                                {/* Lokasi */}
-                                <div className="flex gap-x-2">
-                                    <p className="text-[15px] text-gray-700 font-bold w-[100px]">Lokasi</p>
-                                    <p className="text-sm text-gray-700">: Auditorium Universitas</p>
-                                </div>
-                            </div>
-
-                            <div className="flex space-x-2 w-full mt-4">
-                                <div className="py-1 px-1 w-[140px] bg-white-10 text-black text-center rounded-lg shadow-lg text-[10px]" style={{ boxShadow: "0 4px 9px rgba(0, 0, 0, 0.1)", borderRadius: "15px" }}>
-                                    Open for Public
-                                </div>
-                                {/* Lihat Detail with Link */}
-                                <Link 
-                                    href="User/detail-kegiatan" 
-                                    className="py-1 px-1 w-[140px] bg-white-10 font-bold text-[#223A5C] text-center rounded-lg shadow-lg text-[10px]" 
-                                    style={{ boxShadow: "0 4px 9px rgba(0, 0, 0, 0.1)", borderRadius: "15px" }}
-                                >
-                                    Lihat Detail
-                                </Link>
-                            </div>
-                        </div>
-                    </div>
-                </div>
                     {/* Kalender */}
                     <div className="w-full md:w-[30%] mt-6 md:mt-0 ml-6">
                         <div className="bg-[#0E2038] w-full p-4 rounded-lg shadow-lg">
@@ -393,6 +334,18 @@ export default function Beranda({ auth }) {
                     </div>
                 </div>
             </section>
+
+
+            {showScrollToTop && (
+                <button
+                    onClick={scrollToTop}
+                    className="fixed bottom-10 right-10 bg-[#223A5C] text-white p-3 rounded-full shadow-lg hover:bg-[#0E2038] transition-colors"
+                >
+                    ↑
+                </button>
+            )}
+
+
             <section
                 className="flex flex-col items-center pb-16 mx-10 rounded-tl-[30px] rounded-tr-[30px] rounded-bl-[30px] rounded-br-[30px]"
                 style={{
@@ -413,12 +366,13 @@ export default function Beranda({ auth }) {
                     <div className="text-white mr-5 flex-1">
                         <h4 className="text-[20px] font-bold mb-4">Menelusuri Tradisi dan Seni di NTB</h4>
                         <p className="mb-6">
-                            Kebudayaan Nusa Tenggara Barat mencerminkan kekayaan sejarah dan tradisi yang telah ada selama 
-                            berabad-abad. Dari seni ukir yang indah hingga masakan khas yang menggugah selera, setiap elemen 
-                            budaya NTB memiliki makna yang mendalam. Jika Anda ingin memahami lebih dalam tentang kebudayaan 
-                            yang membentuk identitas masyarakat NTB, klik tombol di bawah ini untuk menjelajahi informasi yang 
-                            menarik! 
+                            Kebudayaan Nusa Tenggara Barat mencerminkan kekayaan sejarah dan tradisi yang telah ada selama
+                            berabad-abad. Dari seni ukir yang indah hingga masakan khas yang menggugah selera, setiap elemen
+                            budaya NTB memiliki makna yang mendalam. Jika Anda ingin memahami lebih dalam tentang kebudayaan
+                            yang membentuk identitas masyarakat NTB, klik tombol di bawah ini untuk menjelajahi informasi yang
+                            menarik!
                         </p>
+
 
                         {/* Tombol */}
                         <div className="flex gap-4">
@@ -440,6 +394,7 @@ export default function Beranda({ auth }) {
                             </a>
                         </div>
                     </div>
+
 
                     {/* Gambar di sebelah kiri dengan ukuran yang tetap */}
                     <div className="flex-shrink-0 w-[300px] h-auto mx-5">
@@ -487,28 +442,30 @@ export default function Beranda({ auth }) {
                 </div>
             </section>
 
+
             {/* Footer */}
             <footer className="w-full mt-auto">
                 <Footer />
             </footer>
 
+
             {/* Tombol scroll ke atas */}
             {showScrollToTop && (
-                <button 
+                <button
                     onClick={scrollToTop}
                     className="fixed bottom-10 right-10 bg-white bg-opacity-80 border-2 border-[#223A5C] text-[#223A5C] p-3 rounded-[15px] shadow-lg hover:bg-opacity-100 hover:border-blue-700 transition-all duration-300"
                 >
-                    <svg 
-                        xmlns="http://www.w3.org/2000/svg" 
-                        fill="none" 
-                        viewBox="0 0 24 24" 
-                        stroke="currentColor" 
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
                         className="w-5 h-5 font-bold"
                     >
-                        <path 
-                            strokeLinecap="round" 
-                            strokeLinejoin="round" 
-                            strokeWidth="2" 
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
                             d="M19 9l-7-7-7 7M12 15V3"
                         />
                     </svg>

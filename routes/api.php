@@ -1,8 +1,10 @@
 <?php
 
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\KegiatanController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -15,17 +17,28 @@ use App\Http\Controllers\KegiatanController;
 |
 */
 
+
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
 
+
+
 // Route::apiResource('kegiatans', KegiatanController::class);
+
 
 Route::apiResource('kegiatan', KegiatanController::class);
 
+
 Route::post('/api/kegiatan', [KegiatanController::class, 'store']); // Untuk menambah kegiatan
 Route::post('/api/kegiatan/{id}', [KegiatanController::class, 'update']); // Untuk memperbarui kegiatan
+Route::get('/kegiatan/{id}', [KegiatanController::class, 'show']);
+
+
+
+
+
 
 
 
