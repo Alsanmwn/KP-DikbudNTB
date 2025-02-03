@@ -1,30 +1,14 @@
 <?php
 
-
 namespace App\Http\Controllers;
-
 
 use App\Models\Kegiatan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
-
 class KegiatanController extends Controller
 {
-    // public function index()
-    // {
-    //     return Kegiatan::latest()->get();
-    // }
-
-
-    // public function index()
-    // {
-    //     $kegiatan = Kegiatan::all();
-    //     return response()->json($kegiatan);
-    // }
-
-
     public function index()
     {
         $kegiatan = Kegiatan::all()->map(function ($item) {
@@ -34,10 +18,8 @@ class KegiatanController extends Controller
             }
             return $item;
         });
-        
         return response()->json($kegiatan);
-    }
-
+    }    
 
     public function showDetail($id)
     {
@@ -53,54 +35,54 @@ class KegiatanController extends Controller
         ]);
     }
 
-
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'nama' => 'required',
-            'deskripsi' => 'nullable',
+        $data = $request->validate([
+            'nama' => 'required|string',
+            'deskripsi' => 'required|string',
             'tanggal' => 'required|date',
-            'waktu' => 'required',
-            'lokasi' => 'nullable',
-            'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'status' => 'required|in:open for public,open anggota'
+            'waktu' => 'required|string',
+            'lokasi' => 'required|string',
+            'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg',
+            'status' => 'required|string',
+            'link_pendaftaran' => 'nullable|url',
+            'link_kegiatan' => 'nullable|url',
         ]);
 
         if ($request->hasFile('gambar')) {
-            // Simpan gambar ke folder storage/app/public/kegiatan
-            $path = $request->file('gambar')->store('kegiatan', 'public');
-            $validated['gambar'] = $path;
+            $data['gambar'] = $request->file('gambar')->store('kegiatan', 'public');
         }
 
-        $kegiatan = Kegiatan::create($validated);
+        $kegiatan = Kegiatan::create($data);
         return response()->json($kegiatan, 201);
     }
-   
+
     public function update(Request $request, $id)
     {
         $kegiatan = Kegiatan::findOrFail($id);
-       
-        $validated = $request->validate([
-            'nama' => 'required',
-            'deskripsi' => 'nullable',
+
+        $data = $request->validate([
+            'nama' => 'required|string',
+            'deskripsi' => 'required|string',
             'tanggal' => 'required|date',
-            'waktu' => 'required',
-            'lokasi' => 'nullable',
-            'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'status' => 'required|in:open for public,open anggota'
+            'waktu' => 'required|string',
+            'lokasi' => 'required|string',
+            'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg',
+            'status' => 'required|string',
+            'link_pendaftaran' => 'nullable|string',
+            'link_kegiatan' => 'nullable|string',
         ]);
-   
+
         if ($request->hasFile('gambar')) {
-            // Hapus gambar lama jika ada
+            // Delete old image if there's a new one
             if ($kegiatan->gambar) {
                 Storage::disk('public')->delete($kegiatan->gambar);
             }
-            $gambar = $request->file('gambar')->store('kegiatan', 'public');
-            $validated['gambar'] = $gambar;
+            $data['gambar'] = $request->file('gambar')->store('kegiatan', 'public');
         }
-   
-        $kegiatan->update($validated);
-        return response()->json($kegiatan);
+
+        $kegiatan->update($data);
+        return response()->json($kegiatan, 200);
     }
 
     public function destroy(Kegiatan $kegiatan)

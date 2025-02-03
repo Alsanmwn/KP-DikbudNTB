@@ -54,12 +54,12 @@ const DetailKegiatan = ({ auth, kegiatan }) => {
                         <div>
                             <h4 className="text-[22px] font-bold text-[#223A5C] mb-6">Link Pendaftaran Kegiatan:</h4>
                             <a
-                                href="https://ayomi.vercel.app/"
+                                href={kegiatan.link_pendaftaran || "#"}  // Use the link from the database or fallback to "#" if not available
                                 className="text-[18px] text-blue-500 hover:underline"
                                 target="_blank"
                                 rel="noopener noreferrer"
                             >
-                                https://ayomi.vercel.app/
+                                {kegiatan.link_pendaftaran || "No registration link available"}  {/* Display a default message if link is missing */}
                             </a>
                         </div>
                     </div>

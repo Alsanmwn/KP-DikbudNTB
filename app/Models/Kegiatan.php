@@ -16,7 +16,9 @@ class Kegiatan extends Model
         'waktu',
         'lokasi',
         'gambar',
-        'status'
+        'status',
+        'link_pendaftaran',  // Add this line
+        'link_kegiatan'
     ];
 
     protected $casts = [
