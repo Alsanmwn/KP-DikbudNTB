@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { MaterialReactTable } from 'material-react-table';
-import { PlusCircle, Edit, Trash } from 'lucide-react';
+import { PlusCircle, Edit, Trash, Link } from 'lucide-react';
 import axios from 'axios';
 import Sidebar from '@/Components/Sidebar';
 
@@ -16,6 +16,8 @@ const AgendaBTIDP = () => {
     lokasi: '',
     gambar: null,
     status: 'open for public',
+    link_pendaftaran: '',
+    link_kegiatan: '',
   });
   const [imagePreview, setImagePreview] = useState('');
 
@@ -52,17 +54,14 @@ const AgendaBTIDP = () => {
       try {
         const formData = new FormData();
         
-        // Tambahkan method PUT untuk update
         if (currentKegiatan.id) {
           formData.append('_method', 'PUT');
         }
 
-        // Hanya kirim gambar jika ada file baru yang diupload
         if (currentKegiatan.gambar instanceof File) {
           formData.append('gambar', currentKegiatan.gambar);
         }
 
-        // Kirim data lainnya, kecuali gambar jika tidak ada perubahan
         Object.keys(currentKegiatan).forEach(key => {
           if (key !== 'gambar' && currentKegiatan[key] !== null) {
             formData.append(key, currentKegiatan[key]);
@@ -70,14 +69,12 @@ const AgendaBTIDP = () => {
         });
 
         if (currentKegiatan.id) {
-          // Update existing kegiatan
           await axios.post(`/api/kegiatan/${currentKegiatan.id}`, formData, {
             headers: {
               'Content-Type': 'multipart/form-data',
             },
           });
         } else {
-          // Create new kegiatan
           await axios.post('/api/kegiatan', formData, {
             headers: {
               'Content-Type': 'multipart/form-data',
@@ -95,19 +92,6 @@ const AgendaBTIDP = () => {
     }
   };
 
-  // Handle delete kegiatan
-  const handleDeleteKegiatan = async (id) => {
-    const confirmed = window.confirm("Apakah Anda yakin ingin menghapus kegiatan ini?");
-    if (confirmed) {
-      try {
-        await axios.delete(`/api/kegiatan/${id}`);
-        fetchKegiatan();
-      } catch (error) {
-        console.error('Error deleting kegiatan:', error);
-      }
-    }
-  };
-
   // Reset form
   const resetForm = () => {
     setCurrentKegiatan({
@@ -118,6 +102,8 @@ const AgendaBTIDP = () => {
       lokasi: '',
       gambar: null,
       status: 'open for public',
+      link_pendaftaran: '',
+      link_kegiatan: '',
     });
     setImagePreview('');
   };
@@ -146,6 +132,40 @@ const AgendaBTIDP = () => {
       ),
     },
     {
+      accessorKey: 'link_pendaftaran',
+      header: 'Link Pendaftaran',
+      Cell: ({ cell }) => (
+        cell.getValue() ? (
+          <a
+            href={cell.getValue()}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-500 hover:text-blue-700 flex items-center"
+          >
+            <Link className="w-4 h-4 mr-1" />
+            Link Pendaftaran
+          </a>
+        ) : 'Tidak ada link'
+      ),
+    },
+    {
+      accessorKey: 'link_kegiatan',
+      header: 'Link Kegiatan',
+      Cell: ({ cell }) => (
+        cell.getValue() ? (
+          <a
+            href={cell.getValue()}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-500 hover:text-blue-700 flex items-center"
+          >
+            <Link className="w-4 h-4 mr-1" />
+            Link Kegiatan
+          </a>
+        ) : 'Tidak ada link'
+      ),
+    },
+    {
       accessorKey: 'gambar',
       header: 'Gambar',
       Cell: ({ cell }) => (
@@ -170,7 +190,7 @@ const AgendaBTIDP = () => {
             onClick={() => {
               setCurrentKegiatan({
                 ...row.original,
-                gambar: null  // Set gambar ke null agar tidak mengirim string path
+                gambar: null
               });
               setImagePreview(row.original.gambar ? `/storage/${row.original.gambar}` : '');
               setIsModalOpen(true);
@@ -192,7 +212,6 @@ const AgendaBTIDP = () => {
 
   return (
     <div className="flex min-h-screen bg-gray-100">
-      {/* Sidebar */}
       <Sidebar />
 
       <div className="flex-1 p-6 bg-gray-50 overflow-hidden">
@@ -228,7 +247,6 @@ const AgendaBTIDP = () => {
                 {currentKegiatan.id ? "Edit Kegiatan" : "Tambah Kegiatan Baru"}
               </h3>
               <div className="grid grid-cols-2 gap-4">
-                {/* Form Fields */}
                 <div className="col-span-2">
                   <label className="block mb-2">Nama Kegiatan</label>
                   <input
@@ -263,6 +281,26 @@ const AgendaBTIDP = () => {
                     value={currentKegiatan.lokasi}
                     onChange={(e) => setCurrentKegiatan({ ...currentKegiatan, lokasi: e.target.value })}
                     className="w-full p-2 border rounded"
+                  />
+                </div>
+                <div className="col-span-2">
+                  <label className="block mb-2">Link Pendaftaran</label>
+                  <input
+                    type="url"
+                    value={currentKegiatan.link_pendaftaran}
+                    onChange={(e) => setCurrentKegiatan({ ...currentKegiatan, link_pendaftaran: e.target.value })}
+                    className="w-full p-2 border rounded"
+                    placeholder="https://example.com"
+                  />
+                </div>
+                <div className="col-span-2">
+                  <label className="block mb-2">Link Kegiatan</label>
+                  <input
+                    type="url"
+                    value={currentKegiatan.link_kegiatan}
+                    onChange={(e) => setCurrentKegiatan({ ...currentKegiatan, link_kegiatan: e.target.value })}
+                    className="w-full p-2 border rounded"
+                    placeholder="https://example.com"
                   />
                 </div>
                 <div className="col-span-2">
