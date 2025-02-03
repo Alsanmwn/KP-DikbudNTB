@@ -236,12 +236,16 @@ export default function Beranda({ auth }) {
             </section>
 
             <section className="bg-white text-center pb-16">
-                <h3 className="text-[25px] font-bold text-[#223A5C] mb-8" style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)' }}>
+                <Link
+                    href={route('agenda-kegiatan')}  
+                    className="text-[25px] font-bold text-[#223A5C] mb-8"
+                    style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)' }}
+                >
                     Agenda Kegiatan
-                </h3>
+                </Link>
                 <div className="flex flex-col md:flex-row mx-auto max-w-6xl">
                     {/* Kegiatan List */}
-                    <div className="w-full md:w-[70%] space-y-6">
+                    <div className="w-full md:w-[70%] space-y-6 mt-8">
                         {kegiatanList.slice(0, 3).map(kegiatan => (
                             <div key={kegiatan.id} className="w-full md:w-[770px] h-[240px] p-6 border-2 border-[#0E2038] rounded-lg shadow-lg relative flex items-center">
                                 <img
@@ -255,7 +259,7 @@ export default function Beranda({ auth }) {
                                     }}
                                 />
                                 <div className="flex flex-col justify-center text-left ml-6">
-                                    <h2 className="text-[18px] font-bold text-[#0E2038] mb-4 text-center">
+                                    <h2 className="text-[18px] font-bold text-[#0E2038] mb-4">
                                         {kegiatan.nama}
                                     </h2>
                                     <div className="flex flex-col gap-y-2">
@@ -290,7 +294,7 @@ export default function Beranda({ auth }) {
                     </div>
 
                     {/* Kalender */}
-                    <div className="w-full md:w-[30%] mt-6 md:mt-0 ml-6">
+                    <div className="w-full md:w-[30%] mt-6 md:mt-0 ml-6 pt-8">
                         <div className="bg-[#0E2038] w-full p-4 rounded-lg shadow-lg">
                             <h4 className="text-white text-xl font-semibold mb-4">
                                 Kalender Kegiatan
@@ -309,13 +313,20 @@ export default function Beranda({ auth }) {
                         </div>
                     </div>
                 </div>
+                {/* <Link
+                    href={route('agenda-kegiatan')}  
+                    className="text-[15px] font-regular text-[#223A5C] mb-8 "
+                    style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)' }}
+                >
+                    Show More
+                </Link> */}
             </section>
 
 
             {showScrollToTop && (
                 <button
                     onClick={scrollToTop}
-                    className="fixed bottom-10 right-10 bg-[#223A5C] text-white p-3 rounded-full shadow-lg hover:bg-[#0E2038] transition-colors"
+                    className="fixed bottom-10 right-10  p-3 rounded-full shadow-lg hover:bg-[#0E2038] transition-colors"
                 >
                     ↑
                 </button>
