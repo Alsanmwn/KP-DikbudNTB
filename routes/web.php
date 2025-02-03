@@ -49,6 +49,15 @@ Route::get('User/pengajuan-surat', function () {
     return Inertia::render('User/PengajuanSurat');
 })->name('pengajuan-surat');
 
+Route::get('User/Beranda/agenda-btidp', function () {
+    return Inertia::render('User/Beranda/AgendaBtidp');
+})->name('agenda-btidp');
+
+Route::get('User/agenda-kegiatan', function () {
+    return Inertia::render('User/AgendaKegiatan');
+})->name('agenda-kegiatan');
+
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
