@@ -1,17 +1,31 @@
-// resources/js/Pages/Admin/Dashboard.jsx
-
-import React from 'react';
+import React, { useEffect } from 'react';
 import { usePage, router } from '@inertiajs/react';
-import Sidebar from '@/Components/Sidebar'; // Impor Sidebar yang sudah dibuat
+import Sidebar from '@/Components/Sidebar';
 
 
 const Dashboard = () => {
     const { admin } = usePage().props;
 
+
+    // Check authentication on component mount
+    useEffect(() => {
+        if (!admin) {
+            router.visit('/admin/login');
+        }
+    }, [admin]);
+
+
+    // Show loading or redirect if not authenticated
+    if (!admin) {
+        return null; // or return a loading spinner
+    }
+
+
     return (
         <div className="flex min-h-screen bg-gray-100">
             {/* Sidebar */}
             <Sidebar />
+
 
             <div className="flex-1">
                 <nav className="bg-white shadow-sm">
@@ -26,6 +40,7 @@ const Dashboard = () => {
                         </div>
                     </div>
                 </nav>
+
 
                 <div className="py-12">
                     <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -42,5 +57,6 @@ const Dashboard = () => {
         </div>
     );
 };
+
 
 export default Dashboard;

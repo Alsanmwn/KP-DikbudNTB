@@ -1,8 +1,8 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
+// use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
-use App\Http\Controllers\AdminController;
+// use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\AdminAuthController;
@@ -41,9 +41,9 @@ Route::get('User/informasi-kebudayaan', function () {
     ]);
 })->name('informasi-kebudayaan');
 
-Route::get('/dashboard', function () {
-    return Inertia::render('User/Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+// Route::get('/dashboard', function () {
+//     return Inertia::render('User/Dashboard');
+// })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('User/pengajuan-surat', function () {
     return Inertia::render('User/PengajuanSurat');
@@ -58,11 +58,11 @@ Route::get('User/agenda-kegiatan', function () {
 })->name('agenda-kegiatan');
 
 
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
+// Route::middleware('auth')->group(function () {
+//     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+//     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+//     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+// });
 
 // Admin routes
 // Route untuk halaman login dan logout admin
@@ -103,11 +103,11 @@ Route::prefix('admin')->group(function () {
             ]);
         })->name('admin.data-pendidikan.guru');
 
-        Route::get('/agenda-btidp', function () {
-            return Inertia::render('Admin/AgendaBtidp', [
-                'admin' => Auth::user(),  // Kirim data admin ke Inertia
-            ]);
-        })->name('admin.agenda-btidp');        
+        // Route::get('/agenda-btidp', function () {
+        //     return Inertia::render('Admin/AgendaBtidp', [
+        //         'admin' => Auth::user(),  // Kirim data admin ke Inertia
+        //     ]);
+        // })->name('admin.agenda-btidp');        
 
         // Logout admin
         Route::post('logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
@@ -127,5 +127,36 @@ Route::get('/User/detail-kegiatan/{id}', [KegiatanController::class, 'show'])->n
 
 Route::get('/User/detail-kegiatan/{id}', [KegiatanController::class, 'showDetail'])
     ->name('kegiatan.detail');
+
+// Public admin routes
+Route::get('/admin/login', [AdminAuthController::class, 'loginForm'])->name('admin.login');
+Route::post('/admin/login', [AdminAuthController::class, 'login']);
+
+// Protected admin routes
+Route::middleware(['admin.auth'])->prefix('admin')->group(function () {
+    Route::get('/dashboard', [AdminAuthController::class, 'dashboard'])->name('admin.dashboard');
+   
+    // Data Pendidikan routes BELUM ADA
+    // Route::prefix('data-pendidikan')->group(function () {
+    //     Route::get('/siswa', [DataPendidikanController::class, 'siswa'])->name('admin.data-pendidikan.siswa');
+    //     Route::get('/guru', [DataPendidikanController::class, 'guru'])->name('admin.data-pendidikan.guru');
+    //     Route::get('/sekolah', [DataPendidikanController::class, 'sekolah'])->name('admin.data-pendidikan.sekolah');
+    // });
+   
+    // Agenda BTIDP route
+    // Route::get('/agenda-btidp', [KegiatanController::class, 'index'])->name('admin.agenda-btidp');
+    Route::get('/agenda-btidp', function () {
+        return Inertia::render('Admin/AgendaBtidp', [
+            'admin' => Auth::user(),  // Kirim data admin ke Inertia
+        ]);
+    })->name('admin.agenda-btidp');  
+   
+    // Profile routes
+    // Route::get('/profile', [AdminProfileController::class, 'edit'])->name('admin.profile');
+    // Route::patch('/profile', [AdminProfileController::class, 'update'])->name('admin.profile.update');
+   
+    // Logout route
+    Route::post('/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
+});
 
 require __DIR__.'/auth.php';
