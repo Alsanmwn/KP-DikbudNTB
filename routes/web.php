@@ -57,6 +57,9 @@ Route::get('User/agenda-kegiatan', function () {
     return Inertia::render('User/AgendaKegiatan');
 })->name('agenda-kegiatan');
 
+Route::get('User/data-pendidikan', function () {
+    return Inertia::render('User/DataPendidikan');
+})->name('data-pendidikan');
 
 // Route::middleware('auth')->group(function () {
 //     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

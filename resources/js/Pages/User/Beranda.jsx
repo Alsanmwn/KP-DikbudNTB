@@ -231,13 +231,12 @@ export default function Beranda({ auth }) {
             </section>
 
             <section className="bg-white text-center pb-4">
-            <Link
-                href={route('agenda-kegiatan')}  
-                className="text-[25px] font-bold text-[#223A5C] mb-8"
+            <h1
+                className="text-[25px] font-bold text-[#223A5C]"
                 style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)' }}
             >
                 Agenda Kegiatan
-            </Link>
+            </h1>
             <div className="flex flex-col md:flex-row mx-auto max-w-6xl">
                 {/* Kegiatan List */}
                 <div className="w-full md:w-[70%] space-y-6 mt-8">
@@ -345,7 +344,7 @@ export default function Beranda({ auth }) {
                     </div>
                     <div className="p-8 border-2 border-[#0E2038] rounded-lg shadow-lg">
                         <img src="/assets/Data.png" alt="Siswa" className="mx-auto mb-4 w-24" />
-                        <Link href="/data-pendidikan">
+                        <Link href="User/data-pendidikan">
                             <h4 className="text-xl font-semibold text-[#223A5C]">Data Pendidikan</h4>
                         </Link>
                         <p className="text-xl font-reguler mt-3">
@@ -355,9 +354,11 @@ export default function Beranda({ auth }) {
                     </div>
                     <div className="p-8 border-2 border-[#0E2038] rounded-lg shadow-lg">
                         <img src="/assets/Study.png" alt="Guru" className="mx-auto mb-4 w-24" />
-                        <Link href="/rumah-belajar">
-                            <h4 className="text-xl font-semibold text-[#223A5C]">Rumah Belajar</h4>
-                        </Link>
+                        <a href="https://ayomi.vercel.app/" target="_blank" rel="noopener noreferrer">
+                            <h4 className="text-xl font-semibold text-[#223A5C]">
+                                Rumah Belajar
+                            </h4>
+                        </a>
                         <p className="text-xl font-reguler mt-3">
                             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus vitae eleifend lectus. Duis dignissim
                             nibh porta, sodales nibh ullamcorper, cursus nunc. In eget tempor tortor.
