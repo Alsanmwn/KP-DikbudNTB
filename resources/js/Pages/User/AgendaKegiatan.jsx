@@ -60,6 +60,15 @@ const events = [
   },
   {
     image: "/assets/malino.jpg",
+    title: "Bakar-bakar dirumahnya ayu",
+    description: "Kegiatan ini rutin dilakukan setiap tahun untuk mempererat tali persaudaraan Cc",
+    date: "16 November 2025",
+    time: "15:00 WITA - Selesai",
+    location: "Rumah ayu",
+    status: "Only for Cc",
+  },
+  {
+    image: "/assets/malino.jpg",
     title: "EDUSPEAK FORUM",
     description: "Dalam rangka pelaksanaan RAPAT KERJA HMIF FT-UH PERIODE 2024-2025",
     date: "16 November 2026",
@@ -183,9 +192,15 @@ const AgendaKegiatan = () => {
           <div className="h-full flex items-center justify-between">
             {/* Left side - Title */}
             <div className="h-16 flex items-center space-x-4">
-              <h1 className="text-xl font-semibold text-white border-b-2 border-white pb-1">
-                Agenda Kegiatan
-              </h1>
+                <Link
+                    href={route("beranda")}
+                    className="p-1 hover:bg-gray-700 rounded-full transition-colors"
+                >
+                    <ArrowLeft className="w-5 h-5 text-white" />
+                </Link>
+                <h1 className="text-xl font-semibold text-white border-b-2 border-white pb-1">
+                    Agenda Kegiatan
+                </h1>
             </div>
 
             {/* Right side - Filters and Undo button */}
@@ -214,13 +229,13 @@ const AgendaKegiatan = () => {
                 ))}
               </select>
 
-              {/* Undo/Back Button */}
+              {/* Undo/Back Button
               <Link
                 href={route("beranda")}
                 className="p-1 hover:bg-gray-700 rounded-full transition-colors"
               >
                 <ArrowLeft className="w-5 h-5 text-white" />
-              </Link>
+              </Link> */}
             </div>
           </div>
         </div>
