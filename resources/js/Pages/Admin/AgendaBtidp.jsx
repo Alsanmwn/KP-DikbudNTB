@@ -92,6 +92,20 @@ const AgendaBTIDP = () => {
     }
   };
 
+  // Add this function inside the AgendaBTIDP component
+  const handleDeleteKegiatan = async (id) => {
+    const confirmed = window.confirm("Apakah Anda yakin ingin menghapus kegiatan ini?");
+    if (confirmed) {
+      try {
+        await axios.delete(`/api/kegiatan/${id}`);
+        fetchKegiatan(); // Refresh the list after deletion
+      } catch (error) {
+        console.error('Error deleting kegiatan:', error);
+        alert('Gagal menghapus kegiatan: ' + error.response?.data?.message || error.message);
+      }
+    }
+  };
+
   // Reset form
   const resetForm = () => {
     setCurrentKegiatan({
