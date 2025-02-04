@@ -5,12 +5,14 @@ import Navbar from '@/Components/Navbar';
 import Footer from '@/Components/Footer'; // Impor Footer
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css"; // Import default styles
+import axios from 'axios';
 import { FaClock, FaMapMarkerAlt } from 'react-icons/fa'
 
 export default function Beranda({ auth }) {
     const [showScrollToTop, setShowScrollToTop] = useState(false);
     const [date, setDate] = useState(new Date());
     const [kegiatanList, setKegiatanList] = useState([]);
+    const [pastKegiatanList, setPastKegiatanList] = useState([]);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -30,9 +32,17 @@ export default function Beranda({ auth }) {
                 // Filter kegiatan yang belum terjadi dan urutkan berdasarkan tanggal
                 const upcomingKegiatan = response.data
                     .filter(kegiatan => new Date(kegiatan.tanggal) >= today)
-                    .sort((a, b) => new Date(a.tanggal) - new Date(b.tanggal));
+                    .sort((a, b) => new Date(a.tanggal) - new Date(b.tanggal))
+                    .slice(0, 5); // Limit to 5 kegiatan to match the existing UI
+
+                // Kegiatan yang sudah dilakukan
+                const pastKegiatan = response.data
+                    .filter(kegiatan => new Date(kegiatan.tanggal) < today)
+                    .sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal))
+                    .slice(0, 5);
 
                 setKegiatanList(upcomingKegiatan);
+                setPastKegiatanList(pastKegiatan);
             } catch (error) {
                 console.error("Error fetching kegiatan:", error);
             }
@@ -141,96 +151,80 @@ export default function Beranda({ auth }) {
                 <div className="flex justify-between mx-auto max-w-6xl gap-4">
                     {/* Kiri */}
                     <div className="space-y-4">
-                        <div className="relative">
-                            <img
-                                src="/assets/Bimbingan.png"
-                                alt="Kegiatan 1"
-                                className="w-[400px] h-[200px] object-cover"
-                            />
-                            <div className="absolute bottom-0 inset-x-0 bg-black bg-opacity-40 p-4 h-1/2 flex flex-col justify-center items-center w-full">
-                                <h4 className="text-white text-[18px] font-bold  text-center px-4">
-                                     Bimbingan Teknis Pemanfaatan TIK Untuk Pembelajaran
-                                </h4>
-                                <Link href="#" className="border-2 border-white text-white p-1 px-4 text-[10px] rounded-md">
-                                    Baca Selengkapnya
-                                </Link>
+                        {pastKegiatanList.slice(0, 2).map((kegiatan, index) => (
+                            <div key={kegiatan.id} className="relative">
+                                <img
+                                    src={`/storage/${kegiatan.gambar}`}
+                                    alt={kegiatan.nama}
+                                    className="w-[400px] h-[200px] object-cover"
+                                />
+                                <div className="absolute bottom-0 inset-x-0 bg-black bg-opacity-40 p-4 h-1/2 flex flex-col justify-center items-center w-full">
+                                    <h4 className="text-white text-[18px] font-bold text-center px-4">
+                                        {kegiatan.nama}
+                                    </h4>
+                                    {kegiatan.link_kegiatan && (
+                                        <a 
+                                            href={kegiatan.link_kegiatan} 
+                                            target="_blank" 
+                                            rel="noopener noreferrer" 
+                                            className="border-2 border-white text-white p-1 px-4 text-[10px] rounded-md"
+                                        >
+                                            Baca Selengkapnya
+                                        </a>
+                                    )}
+                                </div>
                             </div>
-                        </div>
-
-
-                        <div className="relative">
-                            <img
-                                src="/assets/FasilitasGoogleSites.png"
-                                alt="Kegiatan 2"
-                                className="w-[400px] h-[200px] object-cover"
-                            />
-                            <div className="absolute bottom-0 inset-x-0 bg-black bg-opacity-40 p-4 h-1/2 flex flex-col justify-center items-center w-full">
-                                <h4 className="text-white text-[18px] font-bold  text-center px-4">
-                                    Kegiatan Fasilitas Google
-                                    Sites Bagi Guru SMK
-                                </h4>
-                                <Link href="#" className="border-2 border-white text-white p-1 px-4 text-[10px] rounded-md">
-                                    Baca Selengkapnya
-                                </Link>
-                            </div>
-                        </div>
+                        ))}
                     </div>
-
 
                     {/* Tengah */}
-                    <div className="relative">
-                        <img
-                            src="/assets/SecurityAwareness.png"
-                            alt="Kegiatan 3"
-                            className="w-[350px] h-[416px] object-cover"
-                        />
-                        <div className="absolute bottom-0 inset-x-0 bg-black bg-opacity-40 p-4 h-1/2 flex flex-col justify-center items-center w-full">
-                            <h4 className="text-white text-[18px] font-bold  text-center px-4">
-                                Sosialisasi mengenai Peningkatan Security Awareness di lingkungan Pendidikan
-                                Bersama Pusdatin Kemendikbudristek...
-                            </h4>
-                            <Link href="#" className="border-2 border-white text-white p-1 px-4 text-[10px] rounded-md">
-                                Baca Selengkapnya
-                            </Link>
+                    {pastKegiatanList.length > 2 && (
+                        <div className="relative">
+                            <img
+                                src={`/storage/${pastKegiatanList[2].gambar}`}
+                                alt={pastKegiatanList[2].nama}
+                                className="w-[350px] h-[416px] object-cover"
+                            />
+                            <div className="absolute bottom-0 inset-x-0 bg-black bg-opacity-40 p-4 h-1/2 flex flex-col justify-center items-center w-full">
+                                <h4 className="text-white text-[18px] font-bold text-center px-4">
+                                    {pastKegiatanList[2].nama}
+                                </h4>
+                                <Link 
+                                    href={pastKegiatanList[2].link_kegiatan || `/kegiatan/${pastKegiatanList[2].id}`} 
+                                    className="border-2 border-white text-white p-1 px-4 text-[10px] rounded-md"
+                                >
+                                    Baca Selengkapnya
+                                </Link>
+                            </div>
                         </div>
-                    </div>
-
+                    )}
 
                     {/* Kanan */}
                     <div className="space-y-4">
-                        <div className="relative">
-                            <img
-                                src="/assets/AkselerasiEkosistem.png"
-                                alt="Kegiatan 4"
-                                className="w-[400px] h-[200px] object-cover"
-                            />
-                            <div className="absolute bottom-0 inset-x-0 bg-black bg-opacity-40 p-4 h-1/2 flex flex-col justify-center items-center w-full">
-                                <h4 className="text-white text-[18px] font-bold  text-center px-4">
-                                    Akselerasi Ekosistem Pendidikan Berbasis Digital...
-                                </h4>
-                                <Link href="#" className="border-2 border-white text-white p-1 px-4 text-[10px] rounded-md">
-                                    Baca Selengkapnya
-                                </Link>
+                        {pastKegiatanList.slice(3, 5).map((kegiatan, index) => (
+                            <div key={kegiatan.id} className="relative">
+                                <img
+                                    src={`/storage/${kegiatan.gambar}`}
+                                    alt={kegiatan.nama}
+                                    className="w-[400px] h-[200px] object-cover"
+                                />
+                                <div className="absolute bottom-0 inset-x-0 bg-black bg-opacity-40 p-4 h-1/2 flex flex-col justify-center items-center w-full">
+                                    <h4 className="text-white text-[18px] font-bold text-center px-4">
+                                        {kegiatan.nama}
+                                    </h4>
+                                    {kegiatan.link_kegiatan && (
+                                        <a 
+                                            href={kegiatan.link_kegiatan} 
+                                            target="_blank" 
+                                            rel="noopener noreferrer" 
+                                            className="border-2 border-white text-white p-1 px-4 text-[10px] rounded-md"
+                                        >
+                                            Baca Selengkapnya
+                                        </a>
+                                    )}
+                                </div>
                             </div>
-                        </div>
-
-
-                        <div className="relative">
-                            <img
-                                src="/assets/GoogleSitesSMA.png"
-                                alt="Kegiatan 5"
-                                className="w-[400px] h-[200px] object-cover"
-                            />
-                            <div className="absolute bottom-0 inset-x-0 bg-black bg-opacity-40 p-4 h-1/2 flex flex-col justify-center items-center w-full">
-                                <h4 className="text-white text-[18px] font-bold  text-center px-4">
-                                Kegiatan Fasilitas Google
-                                Sites Bagi Guru SMA
-                                </h4>
-                                <Link href="#" className="border-2 border-white text-white p-1 px-4 text-[10px] rounded-md">
-                                    Baca Selengkapnya
-                                </Link>
-                            </div>
-                        </div>
+                        ))}
                     </div>
                 </div>
             </section>
