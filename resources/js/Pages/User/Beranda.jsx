@@ -229,92 +229,95 @@ export default function Beranda({ auth }) {
                 </div>
             </section>
 
-            <section className="bg-white text-center pb-16">
-                <Link
-                    href={route('agenda-kegiatan')}  
-                    className="text-[25px] font-bold text-[#223A5C] mb-8"
-                    style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)' }}
-                >
-                    Agenda Kegiatan
-                </Link>
-                <div className="flex flex-col md:flex-row mx-auto max-w-6xl">
-                    {/* Kegiatan List */}
-                    <div className="w-full md:w-[70%] space-y-6 mt-8">
-                        {kegiatanList.slice(0, 3).map(kegiatan => (
-                            <div key={kegiatan.id} className="w-full md:w-[770px] h-[240px] p-6 border-2 border-[#0E2038] rounded-lg shadow-lg relative flex items-center">
-                                <img
-                                    src={`/storage/${kegiatan.gambar}`}
-                                    alt={kegiatan.nama}
-                                    className="w-[200px] h-[236px] object-cover rounded-md"
-                                    style={{ marginLeft: "-24px" }}
-                                    onError={(e) => {
-                                        console.log('Error loading image:', kegiatan.gambar); // Debug
-                                        e.target.src = '/default-image.jpg';
-                                    }}
-                                />
-                                <div className="flex flex-col justify-center text-left ml-6">
-                                    <h2 className="text-[18px] font-bold text-[#0E2038] mb-4">
-                                        {kegiatan.nama}
-                                    </h2>
-                                    <div className="flex flex-col gap-y-2">
-                                        <div className="flex gap-x-2">
-                                            <p className="text-[15px] text-gray-700 font-bold w-[100px]">Waktu</p>
-                                            <p className="text-sm text-gray-700">: {kegiatan.waktu}</p>
-                                        </div>
-                                        <div className="flex gap-x-2">
-                                            <p className="text-[15px] text-gray-700 font-bold w-[100px]">Tanggal</p>
-                                            <p className="text-sm text-gray-700">: {new Date(kegiatan.tanggal).toLocaleDateString('id-ID')}</p>
-                                        </div>
-                                        <div className="flex gap-x-2">
-                                            <p className="text-[15px] text-gray-700 font-bold w-[100px]">Lokasi</p>
-                                            <p className="text-sm text-gray-700">: {kegiatan.lokasi}</p>
-                                        </div>
+            <section className="bg-white text-center pb-4">
+            <Link
+                href={route('agenda-kegiatan')}  
+                className="text-[25px] font-bold text-[#223A5C] mb-8"
+                style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)' }}
+            >
+                Agenda Kegiatan
+            </Link>
+            <div className="flex flex-col md:flex-row mx-auto max-w-6xl">
+                {/* Kegiatan List */}
+                <div className="w-full md:w-[70%] space-y-6 mt-8">
+                    {kegiatanList.slice(0, 3).map(kegiatan => (
+                        <div key={kegiatan.id} className="w-full md:w-[770px] h-[240px] p-6 border-2 border-[#0E2038] rounded-lg shadow-lg relative flex items-center">
+                            <img
+                                src={`/storage/${kegiatan.gambar}`}
+                                alt={kegiatan.nama}
+                                className="w-[200px] h-[236px] object-cover rounded-md"
+                                style={{ marginLeft: "-24px" }}
+                                onError={(e) => {
+                                    console.log('Error loading image:', kegiatan.gambar); // Debug
+                                    e.target.src = '/default-image.jpg';
+                                }}
+                            />
+                            <div className="flex flex-col justify-center text-left ml-6">
+                                <h2 className="text-[18px] font-bold text-[#0E2038] mb-4">
+                                    {kegiatan.nama}
+                                </h2>
+                                <div className="flex flex-col gap-y-2">
+                                    <div className="flex gap-x-2">
+                                        <p className="text-[15px] text-gray-700 font-bold w-[100px]">Waktu</p>
+                                        <p className="text-sm text-gray-700">: {kegiatan.waktu}</p>
                                     </div>
-                                    <div className="flex space-x-2 w-full mt-4">
-                                        <div className={`py-1 px-1 w-[140px] text-center rounded-lg shadow-lg text-[10px] ${kegiatan.status === 'open for public' ? 'bg-green-500' : 'bg-blue-500'}`}>
-                                            {kegiatan.status}
-                                        </div>
-                                        <Link
-                                            href={route('kegiatan.detail', { id: kegiatan.id })}
-                                            className="py-1 px-1 w-[140px] bg-white-10 font-bold text-[#223A5C] text-center rounded-lg shadow-lg text-[10px]"
-                                            style={{ boxShadow: "0 4px 9px rgba(0, 0, 0, 0.1)", borderRadius: "15px" }}
-                                        >
-                                            Lihat Detail
-                                        </Link>
+                                    <div className="flex gap-x-2">
+                                        <p className="text-[15px] text-gray-700 font-bold w-[100px]">Tanggal</p>
+                                        <p className="text-sm text-gray-700">: {new Date(kegiatan.tanggal).toLocaleDateString('id-ID')}</p>
+                                    </div>
+                                    <div className="flex gap-x-2">
+                                        <p className="text-[15px] text-gray-700 font-bold w-[100px]">Lokasi</p>
+                                        <p className="text-sm text-gray-700">: {kegiatan.lokasi}</p>
                                     </div>
                                 </div>
+                                <div className="flex space-x-2 w-full mt-4">
+                                    <div className={`py-1 px-1 w-[140px] text-center rounded-lg shadow-lg text-[10px] ${kegiatan.status === 'open for public' ? 'bg-green-500' : 'bg-blue-500'}`}>
+                                        {kegiatan.status}
+                                    </div>
+                                    <Link
+                                        href={route('kegiatan.detail', { id: kegiatan.id })}
+                                        className="py-1 px-1 w-[140px] bg-white-10 font-bold text-[#223A5C] text-center rounded-lg shadow-lg text-[10px]"
+                                        style={{ boxShadow: "0 4px 9px rgba(0, 0, 0, 0.1)", borderRadius: "15px" }}
+                                    >
+                                        Lihat Detail
+                                    </Link>
+                                </div>
                             </div>
-                        ))}
-                    </div>
-
-                    {/* Kalender */}
-                    <div className="w-full md:w-[30%] mt-6 md:mt-0 ml-6 pt-8">
-                        <div className="bg-[#0E2038] w-full p-4 rounded-lg shadow-lg">
-                            <h4 className="text-white text-xl font-semibold mb-4">
-                                Kalender Kegiatan
-                            </h4>
-                            <div className="bg-white rounded-lg shadow-md p-4">
-                                <Calendar
-                                    onChange={setDate}
-                                    value={date}
-                                    className="custom-calendar"
-                                />
-                            </div>
-                            <p className="text-white mt-4">
-                                Tanggal yang dipilih:{" "}
-                                <span className="font-bold">{date.toLocaleDateString()}</span>
-                            </p>
                         </div>
+                    ))}
+                </div>
+
+                {/* Kalender */}
+                <div className="w-full md:w-[30%] mt-6 md:mt-0 ml-6 pt-8">
+                    <div className="bg-[#0E2038] w-full p-4 rounded-lg shadow-lg">
+                        <h4 className="text-white text-xl font-semibold mb-4">
+                            Kalender Kegiatan
+                        </h4>
+                        <div className="bg-white rounded-lg shadow-md p-4">
+                            <Calendar
+                                onChange={setDate}
+                                value={date}
+                                className="custom-calendar"
+                            />
+                        </div>
+                        <p className="text-white mt-4">
+                            Tanggal yang dipilih:{" "}
+                            <span className="font-bold">{date.toLocaleDateString()}</span>
+                        </p>
                     </div>
                 </div>
-                {/* <Link
+            </div>
+            <div className="mt-8">
+                <Link
                     href={route('agenda-kegiatan')}  
-                    className="text-[15px] font-regular text-[#223A5C] mb-8 "
+                    className="text-[15px] font-regular text-[#0095FF] mb-8"
                     style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)' }}
                 >
-                    Show More
-                </Link> */}
-            </section>
+                    Show More {'>>>'}
+                </Link>
+            </div>
+        </section>
+
 
 
             {showScrollToTop && (
@@ -326,67 +329,6 @@ export default function Beranda({ auth }) {
                 </button>
             )}
 
-
-            <section
-                className="flex flex-col items-center pb-16 mx-10 rounded-tl-[30px] rounded-tr-[30px] rounded-bl-[30px] rounded-br-[30px]"
-                style={{
-                    backgroundImage: 'url(/assets/Gradasi2.jpeg)', // Ganti dengan path gambar Anda
-                    backgroundSize: 'cover', // Mengatur gambar agar menutupi seluruh area
-                    backgroundPosition: 'center', // Mengatur posisi gambar di tengah
-                    backgroundRepeat: 'no-repeat' // Mencegah gambar diulang
-                }}
-            >
-                <h3
-                    className="text-[25px] font-bold text-center text-[#FFFFFFFF] mb-8 mt-8"
-                    style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)' }}
-                >
-                    Informasi Kebudayaan
-                </h3>
-                <div className="flex items-center gap-6 mx-20">
-                    {/* Tulisan di sebelah kanan */}
-                    <div className="text-white mr-5 flex-1">
-                        <h4 className="text-[20px] font-bold mb-4">Menelusuri Tradisi dan Seni di NTB</h4>
-                        <p className="mb-6">
-                            Kebudayaan Nusa Tenggara Barat mencerminkan kekayaan sejarah dan tradisi yang telah ada selama
-                            berabad-abad. Dari seni ukir yang indah hingga masakan khas yang menggugah selera, setiap elemen
-                            budaya NTB memiliki makna yang mendalam. Jika Anda ingin memahami lebih dalam tentang kebudayaan
-                            yang membentuk identitas masyarakat NTB, klik tombol di bawah ini untuk menjelajahi informasi yang
-                            menarik!
-                        </p>
-
-
-                        {/* Tombol */}
-                        <div className="flex gap-4">
-                            <a
-                                href="https://ntbprov.go.id/post/program-unggulan/taman-budaya-ntb-rumah-bagi-para-seniman"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="bg-blue-500 text-white py-2 px-4 rounded"
-                            >
-                                Taman Budaya NTB
-                            </a>
-                            <a
-                                href="https://museum.kemdikbud.go.id/"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="bg-blue-500 text-white py-2 px-4 rounded"
-                            >
-                                Museum Kemdikbud
-                            </a>
-                        </div>
-                    </div>
-
-
-                    {/* Gambar di sebelah kiri dengan ukuran yang tetap */}
-                    <div className="flex-shrink-0 w-[300px] h-auto mx-5">
-                        <img
-                            src="/assets/logobtidp.jpg"
-                            alt="Informasi Kebudayaan"
-                            className="w-full h-auto object-cover"
-                        />
-                    </div>
-                </div>
-            </section>
             <section className="bg-white text-center py-16 pb-16">
                 <h3 className="text-[25px] font-bold text-[#223A5C] mb-8" style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)' }}>Layanan Kami</h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mx-auto max-w-6xl">
