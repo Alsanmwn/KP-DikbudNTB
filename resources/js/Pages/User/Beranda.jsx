@@ -148,85 +148,86 @@ export default function Beranda({ auth }) {
                 <h3 className="text-white text-center text-[25px] font-bold mb-8" style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)' }}>
                     Dokumentasi Kegiatan
                 </h3>
-                <div className="flex justify-between mx-auto max-w-6xl gap-4">
-                    {/* Kiri */}
-                    <div className="space-y-4">
-                        {pastKegiatanList.slice(0, 2).map((kegiatan, index) => (
-                            <div key={kegiatan.id} className="relative">
-                                <img
-                                    src={`/storage/${kegiatan.gambar}`}
-                                    alt={kegiatan.nama}
-                                    className="w-[400px] h-[200px] object-cover"
-                                />
-                                <div className="absolute bottom-0 inset-x-0 bg-black bg-opacity-40 p-4 h-1/2 flex flex-col justify-center items-center w-full">
-                                    <h4 className="text-white text-[18px] font-bold text-center px-4">
-                                        {kegiatan.nama}
-                                    </h4>
-                                    {kegiatan.link_kegiatan && (
-                                        <a 
-                                            href={kegiatan.link_kegiatan} 
-                                            target="_blank" 
-                                            rel="noopener noreferrer" 
-                                            className="border-2 border-white text-white p-1 px-4 text-[10px] rounded-md"
-                                        >
-                                            Baca Selengkapnya
-                                        </a>
-                                    )}
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-
-                    {/* Tengah */}
-                    {pastKegiatanList.length > 2 && (
-                        <div className="relative">
+                <div className="flex justify-between mx-auto max-w-6xl gap-3">
+                {/* Kiri */}
+                <div className="space-y-4 ">
+                    {pastKegiatanList.slice(0, 2).map((kegiatan, index) => (
+                        <div key={kegiatan.id} className="relative">
                             <img
-                                src={`/storage/${pastKegiatanList[2].gambar}`}
-                                alt={pastKegiatanList[2].nama}
-                                className="w-[350px] h-[416px] object-cover"
+                                src={`/storage/${kegiatan.gambar}`}
+                                alt={kegiatan.nama}
+                                className="w-[400px] h-[200px] object-cover rounded-[8px]" // Radius ditambahkan di sini
                             />
-                            <div className="absolute bottom-0 inset-x-0 bg-black bg-opacity-40 p-4 h-1/2 flex flex-col justify-center items-center w-full">
+                            <div className="absolute bottom-0 inset-x-0 bg-black bg-opacity-40 p-4 h-1/2 flex flex-col justify-center items-center w-full rounded-b-[10px]">
                                 <h4 className="text-white text-[18px] font-bold text-center px-4">
-                                    {pastKegiatanList[2].nama}
+                                    {kegiatan.nama}
                                 </h4>
-                                <Link 
-                                    href={pastKegiatanList[2].link_kegiatan || `/kegiatan/${pastKegiatanList[2].id}`} 
-                                    className="border-2 border-white text-white p-1 px-4 text-[10px] rounded-md"
-                                >
-                                    Baca Selengkapnya
-                                </Link>
+                                {kegiatan.link_kegiatan && (
+                                    <a 
+                                        href={kegiatan.link_kegiatan} 
+                                        target="_blank" 
+                                        rel="noopener noreferrer" 
+                                        className="border-2 border-white text-white p-1 px-4 text-[10px] rounded-md"
+                                    >
+                                        Baca Selengkapnya
+                                    </a>
+                                )}
                             </div>
                         </div>
-                    )}
-
-                    {/* Kanan */}
-                    <div className="space-y-4">
-                        {pastKegiatanList.slice(3, 5).map((kegiatan, index) => (
-                            <div key={kegiatan.id} className="relative">
-                                <img
-                                    src={`/storage/${kegiatan.gambar}`}
-                                    alt={kegiatan.nama}
-                                    className="w-[400px] h-[200px] object-cover"
-                                />
-                                <div className="absolute bottom-0 inset-x-0 bg-black bg-opacity-40 p-4 h-1/2 flex flex-col justify-center items-center w-full">
-                                    <h4 className="text-white text-[18px] font-bold text-center px-4">
-                                        {kegiatan.nama}
-                                    </h4>
-                                    {kegiatan.link_kegiatan && (
-                                        <a 
-                                            href={kegiatan.link_kegiatan} 
-                                            target="_blank" 
-                                            rel="noopener noreferrer" 
-                                            className="border-2 border-white text-white p-1 px-4 text-[10px] rounded-md"
-                                        >
-                                            Baca Selengkapnya
-                                        </a>
-                                    )}
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+                    ))}
                 </div>
+
+                {/* Tengah */}
+                {pastKegiatanList.length > 2 && (
+                    <div className="relative">
+                        <img
+                            src={`/storage/${pastKegiatanList[2].gambar}`}
+                            alt={pastKegiatanList[2].nama}
+                            className="w-[350px] h-[416px] object-cover rounded-[8px]" // Radius ditambahkan di sini
+                        />
+                        <div className="absolute bottom-0 inset-x-0 bg-black bg-opacity-40 p-4 h-1/2 flex flex-col justify-center items-center w-full rounded-b-[10px]">
+                            <h4 className="text-white text-[18px] font-bold text-center px-4">
+                                {pastKegiatanList[2].nama}
+                            </h4>
+                            <Link 
+                                href={pastKegiatanList[2].link_kegiatan || `/kegiatan/${pastKegiatanList[2].id}`} 
+                                className="border-2 border-white text-white p-1 px-4 text-[10px] rounded-md"
+                            >
+                                Baca Selengkapnya
+                            </Link>
+                        </div>
+                    </div>
+                )}
+
+                {/* Kanan */}
+                <div className="space-y-4">
+                    {pastKegiatanList.slice(3, 5).map((kegiatan, index) => (
+                        <div key={kegiatan.id} className="relative">
+                            <img
+                                src={`/storage/${kegiatan.gambar}`}
+                                alt={kegiatan.nama}
+                                className="w-[400px] h-[200px] object-cover rounded-[8px]" // Radius ditambahkan di sini
+                            />
+                            <div className="absolute bottom-0 inset-x-0 bg-black bg-opacity-40 p-4 h-1/2 flex flex-col justify-center items-center w-full rounded-b-[10px]">
+                                <h4 className="text-white text-[18px] font-bold text-center px-4">
+                                    {kegiatan.nama}
+                                </h4>
+                                {kegiatan.link_kegiatan && (
+                                    <a 
+                                        href={kegiatan.link_kegiatan} 
+                                        target="_blank" 
+                                        rel="noopener noreferrer" 
+                                        className="border-2 border-white text-white p-1 px-4 text-[10px] rounded-md"
+                                    >
+                                        Baca Selengkapnya
+                                    </a>
+                                )}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
             </section>
 
             <section className="bg-white text-center pb-4">
