@@ -33,7 +33,7 @@ const DataPendidikan = () => {
     return (
         <div className="min-h-screen flex flex-col">
             <Navbar />
-            <main className="flex-grow container  mx-auto px-4 py-6 pt-28 pb-16">
+            <main className="flex-grow container mx-auto px-4 py-6 pt-28 pb-16">
                 <div className="bg-white rounded-lg shadow-lg overflow-hidden">
                     <div className="bg-[#4A6A99] p-4 flex items-center gap-2">
                         <Link
