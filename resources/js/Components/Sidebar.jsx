@@ -35,13 +35,12 @@ const Sidebar = () => {
         });
     };
 
-    // Toggle dropdown hanya ketika header diklik
     const toggleDropdown = () => {
         setIsDropdownOpen(!isDropdownOpen);
     };
 
     return (
-        <div className="w-64 h-screen bg-gray-800 text-white flex flex-col sticky top-0 z-10">
+        <div className="w-64 h-screen bg-[#223A5C] text-white flex flex-col sticky top-0 z-10">
             <div className="px-6 py-4 text-lg font-bold border-b border-gray-600 text-center">
                 Admin Panel
             </div>
@@ -50,7 +49,6 @@ const Sidebar = () => {
                     <li key={index}>
                         {item.dropdown ? (
                             <div>
-                                {/* Header Data Pendidikan */}
                                 <button
                                     onClick={toggleDropdown}
                                     className="flex items-center w-full px-4 py-2 hover:bg-gray-700 border-b border-gray-600"
@@ -65,7 +63,6 @@ const Sidebar = () => {
                                         )}
                                     </span>
                                 </button>
-                                {/* Dropdown Menu */}
                                 {isDropdownOpen && (
                                     <ul className="space-y-2 ml-4">
                                         {item.subItems.map((subItem, subIndex) => (
@@ -108,7 +105,6 @@ const Sidebar = () => {
                 © 2025 BTIDP
             </div>
 
-            {/* Modal Logout */}
             {isLogoutModalOpen && (
                 <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex items-center justify-center z-50">
                     <div className="bg-white p-6 rounded-md shadow-lg w-1/3 h-1/8">
