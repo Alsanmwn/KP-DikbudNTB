@@ -189,24 +189,22 @@ const Dashboard = () => {
             <Sidebar />
 
             <div className="flex-1">
-                <nav className="bg-white shadow-sm">
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                        <div className="flex justify-between h-16">
-                            <div className="flex items-center">
-                                <h1 className="text-xl font-semibold">Admin Dashboard</h1>
+                <div className="max-w-7xl mx-auto px-6 pt-6">
+                    <div className="bg-gradient-to-r from-[#355685] to-[#696F78] rounded-lg h-40 overflow-hidden relative mb-6">
+                        <div className="flex justify-between p-6">
+                            <div className="flex flex-col text-white">
+                                <h1 className="text-2xl font-semibold mb-2">Selamat Datang, {admin.name}! 👋</h1>
+                                <p className="text-gray-200">Siap untuk membuat perbedaan hari ini?</p>
                             </div>
-                            <div className="flex items-center">
-                                <span className="mr-4">Welcome, {admin.name}</span>
-                            </div>
+                            <img 
+                                src="/assets/welcome.png" 
+                                alt="Welcome Illustration" 
+                                className="h-40 absolute right-0 top-0"
+                            />
                         </div>
                     </div>
-                </nav>
 
-                <div className="py-6 px-6">
                     <div className="max-w-7xl mx-auto">
-                        <h2 className="text-lg font-semibold mb-4">Dashboard Overview</h2>
-                        <p className="mb-6">Email: {admin.email}</p>
-
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                             <StatsCard 
                                 title="Kunjungan untuk hari ini" 
