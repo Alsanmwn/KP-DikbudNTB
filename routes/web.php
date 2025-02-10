@@ -1,6 +1,6 @@
 <?php
 
-// use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 // use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Route;
@@ -12,6 +12,7 @@ use App\Http\Controllers\KegiatanController;
 Route::get('/', function () {
     return Inertia::render('User/Beranda', [
         'canLogin' => Route::has('login'),
+        'canRegister' => Route::has('register'),
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
     ]);
@@ -20,6 +21,7 @@ Route::get('/', function () {
 Route::get('User/tentang-kami', function () {
     return Inertia::render('User/TentangKami', [
         'canLogin' => Route::has('login'),
+        'canRegister' => Route::has('register'),
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
     ]);
@@ -28,6 +30,7 @@ Route::get('User/tentang-kami', function () {
 Route::get('User/informasi-pendidikan', function () {
     return Inertia::render('User/InformasiPendidikan', [
         'canLogin' => Route::has('login'),
+        'canRegister' => Route::has('register'),
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
     ]);
@@ -36,14 +39,15 @@ Route::get('User/informasi-pendidikan', function () {
 Route::get('User/informasi-kebudayaan', function () {
     return Inertia::render('User/InformasiKebudayaan', [
         'canLogin' => Route::has('login'),
+        'canRegister' => Route::has('register'),
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
     ]);
 })->name('informasi-kebudayaan');
 
-// Route::get('/dashboard', function () {
-//     return Inertia::render('User/Dashboard');
-// })->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', function () {
+    return Inertia::render('User/Dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('User/pengajuan-surat', function () {
     return Inertia::render('User/PengajuanSurat');
@@ -61,11 +65,11 @@ Route::get('User/data-pendidikan', function () {
     return Inertia::render('User/DataPendidikan');
 })->name('data-pendidikan');
 
-// Route::middleware('auth')->group(function () {
-//     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-//     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-//     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-// });
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
 
 // Admin routes
 // Route untuk halaman login dan logout admin

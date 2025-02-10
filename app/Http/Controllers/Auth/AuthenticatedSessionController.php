@@ -30,26 +30,11 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
-        // Validasi tambahan untuk role
-        $request->validate([
-            'role' => ['required', 'in:manajemen_dinas,manajemen_sekolah']
-        ]);
-
-        // Cek apakah user dengan email tersebut memiliki role yang sesuai
-        $user = User::where('email', $request->email)->first();
-        
-        if (!$user || $user->role !== $request->role) {
-            return back()->withErrors([
-                'email' => 'Email atau role tidak sesuai.',
-            ]);
-        }
-
         $request->authenticate();
-
         $request->session()->regenerate();
-
-        return redirect()->intended(route('dashboard', absolute: false));
-    }
+    
+        return redirect()->route('profile.edit');
+    }    
 
     /**
      * Destroy an authenticated session.
