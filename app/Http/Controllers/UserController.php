@@ -12,19 +12,25 @@ class UserController extends Controller
         return response()->json(User::all());
     }
 
-    // public function update(Request $request, $id)
-    // {
-    //     $user = User::findOrFail($id);
-    //     $user->update($request->only(['name', 'email']));
-    //     return response()->json($user);
-    // }
-
-    // public function destroy($id)
-    // {
-    //     $user = User::findOrFail($id);
-    //     $user->delete();
-    //     return response()->json(['message' => 'User deleted successfully']);
-    // }
+    public function update(Request $request, User $user)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+        ]);
+    
+        $user->update($request->all());
+    
+        return response()->json($user);
+    }
+    
+    public function destroy(User $user)
+    {
+        $user->delete();
+    
+        return response()->json(['message' => 'User deleted successfully']);
+    }
+    
 }
 
 
