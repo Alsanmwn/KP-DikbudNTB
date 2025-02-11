@@ -10,7 +10,7 @@ export default function Navbar() {
                 <div className="flex items-center pl-6">
                     <Link href={route('beranda')}>
                         <img
-                            src="/assets/logobtidp.jpg"
+                            src="/assets/logobtidp.png"
                             alt="Logo BTIDP"
                             className="h-10 mr-4 cursor-pointer"
                         />
