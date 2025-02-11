@@ -2,8 +2,16 @@ import React from 'react';
 import Navbar from '@/Components/Navbar';
 import Footer from '@/Components/Footer';
 import { FaMapMarkerAlt, FaClock, FaCalendarAlt } from 'react-icons/fa';
+import { Link } from '@inertiajs/react';
 
 const DetailKegiatan = ({ auth, kegiatan }) => {
+    const currentDate = new Date();
+    const kegiatanDate = new Date(kegiatan.tanggal);
+    const oneDayBefore = new Date(kegiatanDate);
+    oneDayBefore.setDate(kegiatanDate.getDate() - 1);
+
+    const isRegistrationClosed = currentDate >= oneDayBefore;
+
     return (
         <div className="bg-gray-50 text-black/50 dark:bg-black dark:text-white/50 min-h-screen flex flex-col">
             {/* Header */}
@@ -50,17 +58,29 @@ const DetailKegiatan = ({ auth, kegiatan }) => {
                             </div>
                         </div>
 
-                        {/* Link Pendaftaran */}
+                        {/* Button Daftar Sekarang */}
                         <div>
-                            <h4 className="text-[22px] font-bold text-[#223A5C] mb-6">Link Pendaftaran Kegiatan:</h4>
-                            <a
-                                href={kegiatan.link_pendaftaran || "#"}  // Use the link from the database or fallback to "#" if not available
-                                className="text-[18px] text-blue-500 hover:underline"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                {kegiatan.link_pendaftaran || "No registration link available"}  {/* Display a default message if link is missing */}
-                            </a>
+                            <h4 className="text-[22px] font-bold text-[#223A5C] mb-6">Daftar Kegiatan:</h4>
+                            {isRegistrationClosed ? (
+                                <p className="text-red-500 text-[16px] mb-4">Pendaftaran sudah ditutup, satu hari sebelum kegiatan.</p>
+                            ) : !auth.user ? (
+                                <div>
+                                    <p className="text-red-500 text-[16px] mb-4">Anda harus login terlebih dahulu untuk mendaftar kegiatan.</p>
+                                    <a
+                                        href="/login"
+                                        className="inline-block bg-blue-500 text-white py-3 px-6 rounded-lg text-[18px] hover:bg-blue-600 transition"
+                                    >
+                                        Login Sekarang
+                                    </a>
+                                </div>
+                            ) : (
+                                <Link
+                                    href="/User/pendaftaran-kegiatan"
+                                    className="inline-block bg-blue-500 text-white py-3 px-6 rounded-lg text-[18px] hover:bg-blue-600 transition"
+                                >
+                                    Daftar Sekarang
+                                </Link>
+                            )}
                         </div>
                     </div>
 
