@@ -85,7 +85,13 @@ Route::prefix('admin')->group(function () {
         // Halaman Dashboard
         Route::get('dashboard', [AdminAuthController::class, 'dashboard'])->name('admin.dashboard');
 
-        // Halaman untuk route yang mengarah ke React (Inertia)      
+        // Halaman untuk route yang mengarah ke React (Inertia)    
+        Route::get('user', function () {
+            return Inertia::render('Admin/User', [
+                'admin' => Auth::guard('admin')->user(),
+            ]);
+        })->name('admin.user');
+          
         Route::get('/data-pendidikan', function () {
             return Inertia::render('Admin/DataPendidikan', [
                 'admin' => Auth::user(),  // Kirim data admin ke Inertia

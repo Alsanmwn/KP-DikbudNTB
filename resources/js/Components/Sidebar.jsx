@@ -11,6 +11,11 @@ const Sidebar = () => {
     const menuItems = [
         { name: 'Dashboard', route: '/admin/dashboard', icon: <HomeIcon className="h-5 w-5 mr-3" /> },
         {
+            name: 'User', 
+            route: '/admin/user', 
+            icon: <UserIcon className="h-5 w-5 mr-3" /> // Icon untuk menu User
+        },
+        {
             name: 'Data Pendidikan',
             icon: <AcademicCapIcon className="h-5 w-5 mr-3" />,
             dropdown: true,

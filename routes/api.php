@@ -4,6 +4,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\KegiatanController;
+use App\Http\Controllers\UserController;
 
 
 /*
@@ -35,7 +36,11 @@ Route::post('/api/kegiatan', [KegiatanController::class, 'store']); // Untuk men
 Route::post('/api/kegiatan/{id}', [KegiatanController::class, 'update']); // Untuk memperbarui kegiatan
 Route::get('/kegiatan/{id}', [KegiatanController::class, 'show']);
 
+Route::get('/users', function () {
+    return response()->json(User::all());
+});
 
+Route::get('/users', [UserController::class, 'index']);
 
 
 

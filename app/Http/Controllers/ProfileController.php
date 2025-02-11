@@ -26,7 +26,7 @@ class ProfileController extends Controller
                     'id' => $request->user()->id,
                     'name' => $request->user()->name,
                     'email' => $request->user()->email,
-                    'role' => $request->user()->role, // Pastikan role diambil dari database
+                    // 'role' => $request->user()->role, // Pastikan role diambil dari database
                 ],
             ],
         ]);
