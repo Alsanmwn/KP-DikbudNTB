@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '@/Components/Navbar';
 import Footer from '@/Components/Footer';
 
-const PendaftaranKegiatan = ({ auth, kegiatan_data }) => {
+const PendaftaranKegiatan = ({ auth }) => {
     const [formData, setFormData] = useState({
         namaLengkap: '',
         jenisKelamin: '',
@@ -12,15 +12,16 @@ const PendaftaranKegiatan = ({ auth, kegiatan_data }) => {
         email: '',
     });
 
+    // Mengisi formData dengan data pengguna yang login
     useEffect(() => {
-        if (auth?.user && kegiatan_data) {
-            setFormData(prevState => ({
-                ...prevState,
+        if (auth && auth.user) {
+            setFormData((prevFormData) => ({
+                ...prevFormData,
                 namaLengkap: auth.user.name || '',
                 email: auth.user.email || '',
             }));
         }
-    }, [auth, kegiatan_data]);
+    }, [auth]);
 
     const handleChange = (e) => {
         setFormData({
@@ -31,7 +32,8 @@ const PendaftaranKegiatan = ({ auth, kegiatan_data }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        alert('Form berhasil disubmit!');
+        // Tambahkan logika untuk mengirim data form ke server atau API
+        console.log(formData);
     };
 
     return (
