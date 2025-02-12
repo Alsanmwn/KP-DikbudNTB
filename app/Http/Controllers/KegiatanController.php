@@ -145,4 +145,13 @@ class KegiatanController extends Controller
         ]);
     }
 
+    public function getPendaftar(Kegiatan $kegiatan)
+    {
+        \Log::info('Fetching registrants for kegiatan: ' . $kegiatan->id);
+        $pendaftar = $kegiatan->pendaftaran()->get(); // Changed from pendaftar to pendaftaran
+        \Log::info('Found pendaftar:', $pendaftar->toArray());
+        
+        return $pendaftar;
+    }
+
 }

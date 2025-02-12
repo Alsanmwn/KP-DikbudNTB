@@ -177,14 +177,14 @@ Route::middleware(['admin.auth'])->prefix('admin')->group(function () {
     Route::post('/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
 });
 
-    Route::post('/pendaftaran-kegiatan', [PendaftaranKegiatanController::class, 'store']);
+    // Route::post('/pendaftaran-kegiatan', [PendaftaranKegiatanController::class, 'store']);
 
-    Route::post('/pendaftaran-kegiatan/{kegiatan_id}', [KegiatanController::class, 'daftar'])->name('pendaftaran-kegiatan');
+    // Route::post('/pendaftaran-kegiatan/{kegiatan_id}', [KegiatanController::class, 'daftar'])->name('pendaftaran-kegiatan');
 
-    Route::get('/pendaftaran-kegiatan', [KegiatanController::class, 'daftarKegiatan'])
+Route::get('/pendaftaran-kegiatan', [KegiatanController::class, 'daftarKegiatan'])
     ->name('pendaftaran-kegiatan')
     ->middleware(['auth']); // Tambahkan middleware auth jika diperlukan
 
-    Route::get('/pendaftaran-kegiatan', [KegiatanController::class, 'daftarKegiatan'])->name('pendaftaran-kegiatan');
+Route::get('/pendaftaran-kegiatan', [KegiatanController::class, 'daftarKegiatan'])->name('pendaftaran-kegiatan');
 
 require __DIR__.'/auth.php';

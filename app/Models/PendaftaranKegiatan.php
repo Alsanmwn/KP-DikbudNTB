@@ -23,4 +23,9 @@ class PendaftaranKegiatan extends Model
     ];
 
     protected $dates = ['tanggalLahir'];
+
+    public function kegiatan()
+    {
+        return $this->belongsTo(Kegiatan::class);
+    }
 }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { MaterialReactTable } from 'material-react-table';
-import { PlusCircle, Edit, Trash, Link } from 'lucide-react';
+import { PlusCircle, Edit, Trash, Users } from 'lucide-react';
 import axios from 'axios';
 import Sidebar from '@/Components/Sidebar';
 
@@ -8,6 +8,9 @@ const AgendaBTIDP = () => {
   const [kegiatan, setKegiatan] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isRegistrantsModalOpen, setIsRegistrantsModalOpen] = useState(false);
+  const [registrants, setRegistrants] = useState([]);
+  const [selectedKegiatanId, setSelectedKegiatanId] = useState(null);
   const [currentKegiatan, setCurrentKegiatan] = useState({
     nama: '',
     deskripsi: '',
@@ -15,13 +18,10 @@ const AgendaBTIDP = () => {
     waktu: '',
     lokasi: '',
     gambar: null,
-    status: 'open for public',
-    link_pendaftaran: '',
-    link_kegiatan: '',
+    status: 'open for public'
   });
   const [imagePreview, setImagePreview] = useState('');
 
-  // Fetch data
   useEffect(() => {
     fetchKegiatan();
   }, []);
@@ -33,12 +33,33 @@ const AgendaBTIDP = () => {
       setKegiatan(response.data);
     } catch (error) {
       console.error('Error fetching kegiatan:', error);
+      alert('Gagal mengambil data kegiatan');
     } finally {
       setLoading(false);
     }
   };
 
-  // Handle image upload
+  const fetchRegistrants = async (kegiatanId) => {
+    try {
+      console.log('Fetching registrants for kegiatan:', kegiatanId);
+      const response = await axios.get(`/api/kegiatan/${kegiatanId}/pendaftar`);
+      console.log('Response:', response.data);
+      
+      // Ensure we're working with an array
+      const registrantsData = Array.isArray(response.data) ? response.data : 
+                             Array.isArray(response.data.data) ? response.data.data : 
+                             [];
+      
+      setRegistrants(registrantsData);
+      setIsRegistrantsModalOpen(true);
+      setSelectedKegiatanId(kegiatanId);
+    } catch (error) {
+      console.error('Error details:', error.response?.data);
+      console.error('Error status:', error.response?.status);
+      alert('Gagal mengambil data pendaftar: ' + (error.response?.data?.message || error.message));
+    }
+  };
+
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -47,38 +68,30 @@ const AgendaBTIDP = () => {
     }
   };
 
-  // Handle save kegiatan
   const handleSaveKegiatan = async () => {
     const confirmed = window.confirm("Apakah Anda yakin ingin menyimpan perubahan ini?");
     if (confirmed) {
       try {
         const formData = new FormData();
         
-        if (currentKegiatan.id) {
-          formData.append('_method', 'PUT');
-        }
-
-        if (currentKegiatan.gambar instanceof File) {
-          formData.append('gambar', currentKegiatan.gambar);
-        }
-
         Object.keys(currentKegiatan).forEach(key => {
-          if (key !== 'gambar' && currentKegiatan[key] !== null) {
+          if (key === 'gambar') {
+            if (currentKegiatan.gambar instanceof File) {
+              formData.append('gambar', currentKegiatan.gambar);
+            }
+          } else if (currentKegiatan[key] !== null) {
             formData.append(key, currentKegiatan[key]);
           }
         });
 
         if (currentKegiatan.id) {
+          formData.append('_method', 'PUT');
           await axios.post(`/api/kegiatan/${currentKegiatan.id}`, formData, {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
+            headers: { 'Content-Type': 'multipart/form-data' }
           });
         } else {
           await axios.post('/api/kegiatan', formData, {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
+            headers: { 'Content-Type': 'multipart/form-data' }
           });
         }
 
@@ -92,13 +105,12 @@ const AgendaBTIDP = () => {
     }
   };
 
-  // Add this function inside the AgendaBTIDP component
   const handleDeleteKegiatan = async (id) => {
     const confirmed = window.confirm("Apakah Anda yakin ingin menghapus kegiatan ini?");
     if (confirmed) {
       try {
         await axios.delete(`/api/kegiatan/${id}`);
-        fetchKegiatan(); // Refresh the list after deletion
+        fetchKegiatan();
       } catch (error) {
         console.error('Error deleting kegiatan:', error);
         alert('Gagal menghapus kegiatan: ' + error.response?.data?.message || error.message);
@@ -106,7 +118,6 @@ const AgendaBTIDP = () => {
     }
   };
 
-  // Reset form
   const resetForm = () => {
     setCurrentKegiatan({
       nama: '',
@@ -115,14 +126,11 @@ const AgendaBTIDP = () => {
       waktu: '',
       lokasi: '',
       gambar: null,
-      status: 'open for public',
-      link_pendaftaran: '',
-      link_kegiatan: '',
+      status: 'open for public'
     });
     setImagePreview('');
   };
 
-  // Table columns
   const columns = useMemo(() => [
     { accessorKey: 'nama', header: 'Nama Kegiatan' },
     {
@@ -143,40 +151,6 @@ const AgendaBTIDP = () => {
         <div className="truncate max-w-[200px]" title={cell.getValue()}>
           {cell.getValue() || 'Tidak ada deskripsi'}
         </div>
-      ),
-    },
-    {
-      accessorKey: 'link_pendaftaran',
-      header: 'Link Pendaftaran',
-      Cell: ({ cell }) => (
-        cell.getValue() ? (
-          <a
-            href={cell.getValue()}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-500 hover:text-blue-700 flex items-center"
-          >
-            <Link className="w-4 h-4 mr-1" />
-            Link Pendaftaran
-          </a>
-        ) : 'Tidak ada link'
-      ),
-    },
-    {
-      accessorKey: 'link_kegiatan',
-      header: 'Link Kegiatan',
-      Cell: ({ cell }) => (
-        cell.getValue() ? (
-          <a
-            href={cell.getValue()}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-500 hover:text-blue-700 flex items-center"
-          >
-            <Link className="w-4 h-4 mr-1" />
-            Link Kegiatan
-          </a>
-        ) : 'Tidak ada link'
       ),
     },
     {
@@ -219,10 +193,106 @@ const AgendaBTIDP = () => {
           >
             <Trash className="w-5 h-5" />
           </button>
+          <button
+            onClick={() => fetchRegistrants(row.original.id)}
+            className="text-green-500 hover:text-green-700"
+          >
+            <Users className="w-5 h-5" />
+          </button>
         </div>
       ),
     },
   ], []);
+
+  const registrantsColumns = useMemo(() => [
+    {
+      accessorKey: 'namaLengkap',
+      header: 'Nama',
+      size: 200,
+    },
+    {
+      accessorKey: 'email',
+      header: 'Email',
+      size: 200,
+    },
+    {
+      accessorKey: 'nomorHP',
+      header: 'No. HP',
+      size: 150,
+    },
+    {
+      accessorKey: 'jenisKelamin',
+      header: 'Jenis Kelamin',
+      size: 150,
+    },
+    {
+      accessorKey: 'tanggalLahir',
+      header: 'Tanggal Lahir',
+      Cell: ({ cell }) => cell.getValue() ? new Date(cell.getValue()).toLocaleDateString('id-ID') : '-',
+      size: 150,
+    },
+    {
+      accessorKey: 'alamat',
+      header: 'Alamat',
+      size: 300,
+      Cell: ({ cell }) => (
+        <div className="whitespace-normal">{cell.getValue()}</div>
+      ),
+    },
+  ], []);
+
+  const RegistrantsModal = () => {
+    if (!isRegistrantsModalOpen) return null;
+
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="bg-white p-6 rounded-lg w-full max-w-7xl max-h-[90vh] overflow-y-auto">
+          <h3 className="text-xl font-semibold mb-4">Daftar Pendaftar Kegiatan</h3>
+          
+          {registrants.length === 0 ? (
+            <p className="text-gray-600 mb-4">Belum ada pendaftar untuk kegiatan ini.</p>
+          ) : (
+            <div className="mb-4">
+              <MaterialReactTable
+                columns={registrantsColumns}
+                data={registrants}
+                enableRowActions={false}
+                enableColumnResizing
+                enablePagination={true}
+                enableTopToolbar={true}
+                enableBottomToolbar={true}
+                enableColumnFilters={true}
+                enableGlobalFilter={true}
+                enableSorting={true}
+                muiTableContainerProps={{
+                  sx: { maxHeight: '500px' },
+                }}
+                initialState={{
+                  density: 'compact',
+                  pagination: { pageSize: 10, pageIndex: 0 },
+                }}
+                muiTableHeadCellProps={{
+                  sx: {
+                    fontWeight: 'bold',
+                    backgroundColor: 'rgb(243, 244, 246)',
+                  },
+                }}
+              />
+            </div>
+          )}
+
+          <div className="flex justify-end mt-4">
+            <button
+              onClick={() => setIsRegistrantsModalOpen(false)}
+              className="bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400 transition-colors"
+            >
+              Tutup
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="flex min-h-screen bg-gray-100">
@@ -249,14 +319,15 @@ const AgendaBTIDP = () => {
               data={kegiatan}
               enableRowActions={false}
               muiTableContainerProps={{ style: { zIndex: 1 } }}
-              loading={loading}
+              state={{ isLoading: loading }}
             />
           </div>
         </div>
 
+        {/* Form Modal */}
         {isModalOpen && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white p-6 rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto relative z-50">
+            <div className="bg-white p-6 rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto">
               <h3 className="text-xl font-semibold mb-4">
                 {currentKegiatan.id ? "Edit Kegiatan" : "Tambah Kegiatan Baru"}
               </h3>
@@ -298,31 +369,12 @@ const AgendaBTIDP = () => {
                   />
                 </div>
                 <div className="col-span-2">
-                  <label className="block mb-2">Link Pendaftaran</label>
-                  <input
-                    type="url"
-                    value={currentKegiatan.link_pendaftaran}
-                    onChange={(e) => setCurrentKegiatan({ ...currentKegiatan, link_pendaftaran: e.target.value })}
-                    className="w-full p-2 border rounded"
-                    placeholder="https://example.com"
-                  />
-                </div>
-                <div className="col-span-2">
-                  <label className="block mb-2">Link Kegiatan</label>
-                  <input
-                    type="url"
-                    value={currentKegiatan.link_kegiatan}
-                    onChange={(e) => setCurrentKegiatan({ ...currentKegiatan, link_kegiatan: e.target.value })}
-                    className="w-full p-2 border rounded"
-                    placeholder="https://example.com"
-                  />
-                </div>
-                <div className="col-span-2">
                   <label className="block mb-2">Deskripsi</label>
                   <textarea
                     value={currentKegiatan.deskripsi}
                     onChange={(e) => setCurrentKegiatan({ ...currentKegiatan, deskripsi: e.target.value })}
                     className="w-full p-2 border rounded"
+                    rows="4"
                   ></textarea>
                 </div>
                 <div className="col-span-2">
@@ -333,7 +385,9 @@ const AgendaBTIDP = () => {
                     onChange={handleImageUpload}
                     className="w-full p-2 border rounded"
                   />
-                  {imagePreview && <img src={imagePreview} alt="Preview" className="mt-2 h-32 object-cover" />}
+                  {imagePreview && (
+                    <img src={imagePreview} alt="Preview" className="mt-2 h-32 object-cover" />
+                  )}
                 </div>
                 <div className="col-span-2">
                   <label className="block mb-2">Status</label>
@@ -347,6 +401,7 @@ const AgendaBTIDP = () => {
                   </select>
                 </div>
               </div>
+
               <div className="flex justify-end gap-4 mt-4">
                 <button
                   onClick={() => setIsModalOpen(false)}
@@ -364,6 +419,8 @@ const AgendaBTIDP = () => {
             </div>
           </div>
         )}
+
+        <RegistrantsModal />
       </div>
     </div>
   );
