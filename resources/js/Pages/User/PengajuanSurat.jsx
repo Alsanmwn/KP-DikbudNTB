@@ -1,16 +1,49 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Navbar from '@/Components/Navbar';
 import Footer from '@/Components/Footer';
 
 const PengajuanSurat = ({ auth }) => {
+    const [formData, setFormData] = useState({
+        nama: '',
+        email: '',
+        alamatSekolah: '',
+        namaKegiatan: '',
+        keperluan: '',
+        kontak: '',
+        files: [],
+    });
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData({ ...formData, [name]: value });
+    };
+
+    const handleFileChange = (e) => {
+        const selectedFiles = Array.from(e.target.files);
+        if (selectedFiles.length + formData.files.length > 3) {
+            alert("Maksimal upload 3 file PDF");
+            return;
+        }
+        setFormData({ ...formData, files: [...formData.files, ...selectedFiles] });
+    };
+
+    const handleDeleteFile = (index) => {
+        const newFiles = formData.files.filter((_, i) => i !== index);
+        setFormData({ ...formData, files: newFiles });
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        console.log('Data terkirim:', formData);
+        alert('Permohonan layanan pendidikan berhasil dikirim!');
+    };
+
     return (
         <div className="bg-gray-50 text-black/50 dark:bg-black dark:text-white/50 min-h-screen flex flex-col">
-            {/* Header */}
             <header className="w-full">
                 <Navbar auth={auth} />
             </header>
 
-            {/* Hero Section */}
             <div className="relative flex justify-center items-center flex-1 mb-16">
                 <img 
                     src="/assets/landingpage.png" 
@@ -19,34 +52,104 @@ const PengajuanSurat = ({ auth }) => {
                 />
             </div>
         
-            <section className="bg-white text-center pb-16">
-                <h3 className="text-[25px] font-bold text-[#223A5C] mb-6" style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)' }}>Pengajuan Surat</h3>
-                <div className="flex flex-col lg:flex-row items-start justify-center space-y-8 lg:space-y-0 lg:space-x-12 max-w-6xl mx-auto">
-                    {/* Judul dan Deskripsi Surat Umum */}
-                    <div className="bg-gray-100 p-6 rounded-[10px] shadow-md max-w-md w-full">
-                        <h5 className="text-[18px] font-semibold text-[#223A5C] mb-2">Pengajuan Surat Umum</h5>
-                        <p className="text-[16px] text-[#555] text-justify mb-4">
-                            Jika Anda ingin mengajukan surat untuk keperluan umum, seperti permintaan izin atau pengajuan surat lainnya, Anda dapat mengirimkan surat melalui formulir di bawah ini:
-                        </p>
-                        <p className="text-[18px] text-[#555] text-justify">
-                            <a href="https://docs.google.com/forms/d/e/1FAIpQLSfD4T0GRb15l-0_gsSHsPwn2dgVoJRPpRlwaFotQX8MWZT8wQ/viewform?usp=dialog" target="_blank" className="text-blue-500 hover:underline">
-                                Link Pengajuan Surat Umum
-                            </a>
-                        </p>
-                    </div>
-
-                    {/* Judul dan Deskripsi Surat Fasilitas/Juru Bicara */}
-                    <div className="bg-gray-100 p-6 rounded-[10px] shadow-md max-w-md w-full">
-                        <h5 className="text-[18px] font-semibold text-[#223A5C] mb-2">Pengajuan Permintaan Fasilitas / Juru Bicara</h5>
-                        <p className="text-[16px] text-[#555] text-justify mb-4">
-                            Jika Anda memerlukan fasilitas khusus atau ingin mengajukan permintaan untuk juru bicara, silakan isi formulir di bawah ini untuk pengajuan lebih lanjut:
-                        </p>
-                        <p className="text-[18px] text-[#555] text-justify">
-                            <a href="https://docs.google.com/forms/d/e/1FAIpQLSfD4T0GRb15l-0_gsSHsPwn2dgVoJRPpRlwaFotQX8MWZT8wQ/viewform?usp=dialog" target="_blank" className="text-blue-500 hover:underline">
-                                Link Pengajuan Permintaan Fasilitas / Juru Bicara
-                            </a>
-                        </p>
-                    </div>
+            <section className="bg-white text-center pb-16 px-[50px]">
+                <h3 className="text-[25px] font-bold text-[#223A5C] mb-6" style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)' }}>Permohonan Layanan Pendidikan</h3>
+                <div className="bg-gray-100 p-6 rounded-[10px] shadow-md max-w-2xl mx-auto">
+                    <form onSubmit={handleSubmit} className="space-y-4">
+                        <div>
+                            <label className="block text-left font-medium text-[#223A5C]">Nama</label>
+                            <input 
+                                type="text" 
+                                name="nama" 
+                                value={formData.nama} 
+                                onChange={handleChange} 
+                                required 
+                                className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-left font-medium text-[#223A5C]">Email</label>
+                            <input 
+                                type="email" 
+                                name="email" 
+                                value={formData.email} 
+                                onChange={handleChange} 
+                                required 
+                                className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-left font-medium text-[#223A5C]">Alamat/Sekolah</label>
+                            <input 
+                                type="text" 
+                                name="alamatSekolah" 
+                                value={formData.alamatSekolah} 
+                                onChange={handleChange} 
+                                required 
+                                className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-left font-medium text-[#223A5C]">Nama Kegiatan</label>
+                            <input 
+                                type="text" 
+                                name="namaKegiatan" 
+                                value={formData.namaKegiatan} 
+                                onChange={handleChange} 
+                                required 
+                                className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-left font-medium text-[#223A5C]">Keperluan</label>
+                            <select 
+                                name="keperluan" 
+                                value={formData.keperluan} 
+                                onChange={handleChange} 
+                                className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="Permintaan Data">Permintaan Data</option>
+                                <option value="Permintaan Narasumber">Permintaan Narasumber</option>
+                                <option value="Konsultasi yang Lain">Konsultasi yang Lain</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label className="block text-left font-medium text-[#223A5C]">Upload PDF (Maksimal 3)</label>
+                            <input 
+                                type="file" 
+                                accept="application/pdf" 
+                                multiple 
+                                onChange={handleFileChange} 
+                                className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                            />
+                            <div className="mt-2 space-y-2">
+                                {formData.files.map((file, index) => (
+                                    <div key={index} className="flex items-center justify-between bg-white p-2 border rounded-md shadow-sm">
+                                        <span className="text-sm text-gray-700 truncate">📄 {file.name}</span>
+                                        <div className="flex gap-2">
+                                            <a href={URL.createObjectURL(file)} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline text-sm">Lihat</a>
+                                            <button type="button" onClick={() => handleDeleteFile(index)} className="text-red-500 hover:underline text-sm">Hapus</button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                        <div>
+                            <label className="block text-left font-medium text-[#223A5C]">Kontak</label>
+                            <input 
+                                type="text" 
+                                name="kontak" 
+                                value={formData.kontak} 
+                                onChange={handleChange} 
+                                required 
+                                className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                            />
+                        </div>
+                        <button 
+                            type="submit" 
+                            className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition">
+                            Kirim Permohonan
+                        </button>
+                    </form>
                 </div>
             </section>
             <Footer />
