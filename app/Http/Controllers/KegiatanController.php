@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Kegiatan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class KegiatanController extends Controller
@@ -106,7 +107,42 @@ class KegiatanController extends Controller
             echo "-------------------\n";
         }
     }
-    
+
+    public function showDaftarKegiatan(Request $request)
+    {
+        return Inertia::render('PendaftaranKegiatan', [
+            'auth' => [
+                'user' => $request->user(),
+            ],
+            'kegiatan_data' => [
+                'id' => $request->kegiatan_id,
+                'nama' => $request->nama_kegiatan
+            ]
+        ]);
+    }
+
+    // public function daftarKegiatan(Request $request)
+    // {
+    //     $kegiatan_data = Kegiatan::findOrFail($request->kegiatan_id);
+        
+    //     return Inertia::render('User/DaftarKegiatan', [ // Sesuaikan dengan path yang benar
+    //         'auth' => [
+    //             'user' => Auth::user()
+    //         ],
+    //         'kegiatan_data' => $kegiatan_data
+    //     ]);
+    // }
+
+    public function daftarKegiatan(Request $request)
+    {
+        $kegiatan_data = Kegiatan::findOrFail($request->kegiatan_id);
+        
+        return Inertia::render('User/PendaftaranKegiatan', [ // Sesuaikan dengan path yang benar
+            'auth' => [
+                'user' => Auth::user()
+            ],
+            'kegiatan_data' => $kegiatan_data
+        ]);
+    }
+
 }
-
-

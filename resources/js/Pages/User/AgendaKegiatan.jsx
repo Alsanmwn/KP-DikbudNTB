@@ -8,6 +8,13 @@ const EventCard = ({ event }) => {
   const eventDate = new Date(event.tanggal);
   const today = new Date();
   const isEventPassed = eventDate < today; // Menandakan apakah kegiatan sudah lewat
+  const oneDayBeforeEvent = new Date(eventDate);
+  oneDayBeforeEvent.setDate(eventDate.getDate() - 1); // Mengurangi satu hari dari tanggal kegiatan
+
+  const isRegistrationClosed = today >= oneDayBeforeEvent; // Mengecek apakah pendaftaran sudah ditutup
+
+  // Menambahkan pengecekan apakah dua jam sudah berlalu setelah kegiatan berlangsung
+  const isEventCompleted = today >= new Date(eventDate.getTime() + 2 * 60 * 60 * 1000); // Dua jam setelah event
 
   return (
     <div className="flex justify-center">
@@ -48,26 +55,31 @@ const EventCard = ({ event }) => {
             </div>
 
             <div className="flex items-center space-x-2">
-              {!isEventPassed ? (
+              {isRegistrationClosed ? (
                 <span
-                  className={`inline-block px-3 py-1 text-sm rounded-full ${
-                    event.status === "open for public"
-                      ? "bg-emerald-100 text-emerald-600"
-                      : "bg-red-100 text-red-600"
-                  }`}
+                  className="inline-block px-3 py-1 text-sm rounded-full bg-gray-300 text-gray-600"
                 >
-                  {event.status === "open for public" ? "Open for Public" : "Open Anggota"}
+                  Closed
                 </span>
               ) : (
                 <span
-                  className="inline-block px-3 py-1 text-sm rounded-full bg-gray-300 text-gray-600"
+                  className={`inline-block px-3 py-1 text-sm rounded-full ${event.status === "open for public" ? "bg-emerald-100 text-emerald-600" : "bg-red-100 text-red-600"}`}
+                >
+                  {event.status === "open for public" ? "Open for Public" : "Open Anggota"}
+                </span>
+              )}
+
+              {/* Kotak Telah Terlaksana muncul 2 jam setelah kegiatan */}
+              {isEventCompleted && (
+                <span
+                  className="inline-block px-3 py-1 text-sm rounded-full bg-blue-100 text-blue-600"
                 >
                   Telah Terlaksana
                 </span>
               )}
 
               {/* Hapus tombol "Lihat Detail" jika kegiatan sudah lewat */}
-              {!isEventPassed && (
+              {!isEventPassed && !isRegistrationClosed && (
                 <Link
                   href={route('kegiatan.detail', { id: event.id })}
                   className="inline-flex items-center px-3 py-1 bg-[#223A5C] text-white text-sm rounded-full hover:bg-blue-700 transition-colors"
@@ -82,6 +94,9 @@ const EventCard = ({ event }) => {
     </div>
   );
 };
+
+
+
 
 // Rest of the code remains the same as in the original file
 const EventsList = ({ filteredEvents }) => {
