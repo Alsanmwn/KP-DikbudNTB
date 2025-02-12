@@ -24,4 +24,9 @@ class Kegiatan extends Model
     protected $casts = [
         'tanggal' => 'date',
     ];
+
+    public function pendaftaran()
+    {
+        return $this->hasMany(PendaftaranKegiatan::class, 'kegiatan_id');
+    }
 }

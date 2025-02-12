@@ -46,6 +46,19 @@ Route::delete('/users/{user}', [UserController::class, 'destroy']);
 
 Route::post('/pendaftaran-kegiatan', [PendaftaranKegiatanController::class, 'store']);
 
+Route::middleware(['auth:admin'])->prefix('admin')->group(function () {
+    // User Management API
+    Route::apiResource('users', UserController::class);
+    
+    // Kegiatan API
+    Route::apiResource('kegiatan', KegiatanController::class);
+    
+    // Pendaftaran API
+    Route::post('pendaftaran-kegiatan', [PendaftaranKegiatanController::class, 'store']);
+});
+
+Route::get('/kegiatan/{kegiatan}/pendaftar', [KegiatanController::class, 'getPendaftar']);
+
 
 
 
