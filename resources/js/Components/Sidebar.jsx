@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, usePage, router } from '@inertiajs/react';
-import { UserIcon, HomeIcon, AcademicCapIcon, CalendarIcon, ChevronDownIcon, ChevronUpIcon, ArrowLeftOnRectangleIcon } from '@heroicons/react/24/outline';
+import { UserIcon, HomeIcon, AcademicCapIcon, CalendarIcon, ChevronDownIcon, ChevronUpIcon,  ArrowRightOnRectangleIcon } from '@heroicons/react/24/outline';
 
 const Sidebar = () => {
     const { admin } = usePage().props;
@@ -13,7 +13,7 @@ const Sidebar = () => {
         {
             name: 'User', 
             route: '/admin/user', 
-            icon: <UserIcon className="h-5 w-5 mr-3" /> // Icon untuk menu User
+            icon: <UserIcon className="h-5 w-5 mr-3" /> 
         },
         {
             name: 'Data Pendidikan',
@@ -101,10 +101,11 @@ const Sidebar = () => {
                     onClick={() => setIsLogoutModalOpen(true)}
                     className="flex items-center text-red-500 text-lg hover:underline"
                 >
-                    <ArrowLeftOnRectangleIcon className="h-5 w-5 mr-2" />
                     Logout
+                    <ArrowRightOnRectangleIcon className="h-5 w-5 ml-2" />
                 </button>
             </div>
+
 
             <div className="px-4 py-2 text-sm text-center border-t border-gray-600">
                 © 2025 BTIDP
@@ -112,20 +113,25 @@ const Sidebar = () => {
 
             {isLogoutModalOpen && (
                 <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-white p-6 rounded-md shadow-lg w-1/3 h-1/8">
-                        <div className="text-lg font-bold text-black mb-4 text-center">
-                            Anda yakin mau keluar?
+                    <div className="bg-white p-6 rounded-lg shadow-lg w-[400px]">
+                        <div className="flex flex-col items-center">
+                            <ArrowRightOnRectangleIcon className="h-12 w-12 text-red-600" />
+                            <h2 className="text-xl font-bold text-black mt-3">Logout</h2>
+                            <p className="text-gray-600 mt-1">Hi {admin?.email}</p>
+                            <p className="text-gray-600 text-sm mt-1 text-center">
+                                Are you sure you want to log out from My App?
+                            </p>
                         </div>
-                        <div className="flex justify-between">
+                        <div className="flex justify-center gap-4 mt-4">
                             <button
                                 onClick={() => setIsLogoutModalOpen(false)}
-                                className="bg-red-500 text-white py-1 px-4 rounded-md hover:bg-red-600"
+                                className="bg-red-500 text-white py-2 px-6 rounded-md hover:bg-red-700"
                             >
                                 No
                             </button>
                             <button
                                 onClick={handleLogout}
-                                className={`bg-blue-500 text-white py-1 px-4 rounded-md hover:bg-blue-600 ${isLoggingOut ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                className={`bg-blue-500 text-white py-2 px-6 rounded-md hover:bg-blue-700 ${isLoggingOut ? 'opacity-50 cursor-not-allowed' : ''}`}
                                 disabled={isLoggingOut}
                             >
                                 {isLoggingOut ? (
