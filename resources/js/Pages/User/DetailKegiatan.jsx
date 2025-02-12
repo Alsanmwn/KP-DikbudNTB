@@ -1,16 +1,26 @@
 import React from 'react';
+import { Link } from '@inertiajs/react';
 import Navbar from '@/Components/Navbar';
 import Footer from '@/Components/Footer';
 import { FaMapMarkerAlt, FaClock, FaCalendarAlt } from 'react-icons/fa';
-import { Link } from '@inertiajs/react';
 
 const DetailKegiatan = ({ auth, kegiatan }) => {
-    const currentDate = new Date();
-    const kegiatanDate = new Date(kegiatan.tanggal);
+    const currentDate = new Date(); // Mendapatkan tanggal saat ini
+    const kegiatanDate = new Date(kegiatan.tanggal); // Mengambil tanggal kegiatan
     const oneDayBefore = new Date(kegiatanDate);
-    oneDayBefore.setDate(kegiatanDate.getDate() - 1);
+    oneDayBefore.setDate(kegiatanDate.getDate() - 1); // Mengurangi 1 hari dari tanggal kegiatan
 
-    const isRegistrationClosed = currentDate >= oneDayBefore;
+    const isRegistrationClosed = currentDate >= oneDayBefore; // Mengecek apakah sudah lewat 1 hari sebelum kegiatan
+
+    const handleDaftar = () => {
+        console.log('Kegiatan ID:', kegiatan.id);
+        console.log('Nama Kegiatan:', kegiatan.nama);
+        
+        router.get(route('pendaftaran-kegiatan'), {
+            kegiatan_id: kegiatan.id,
+            nama_kegiatan: kegiatan.nama
+        });
+    };
 
     return (
         <div className="bg-gray-50 text-black/50 dark:bg-black dark:text-white/50 min-h-screen flex flex-col">
@@ -75,7 +85,10 @@ const DetailKegiatan = ({ auth, kegiatan }) => {
                                 </div>
                             ) : (
                                 <Link
-                                    href="/User/pendaftaran-kegiatan"
+                                    href={route('pendaftaran-kegiatan', { 
+                                        kegiatan_id: kegiatan.id,
+                                        nama_kegiatan: kegiatan.nama 
+                                    })}
                                     className="inline-block bg-blue-500 text-white py-3 px-6 rounded-lg text-[18px] hover:bg-blue-600 transition"
                                 >
                                     Daftar Sekarang

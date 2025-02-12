@@ -5,7 +5,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\KegiatanController;
 use App\Http\Controllers\UserController;
-
+use App\Http\Controllers\PendaftaranKegiatanController;
 
 /*
 |--------------------------------------------------------------------------
@@ -44,7 +44,7 @@ Route::get('/users', [UserController::class, 'index']);
 Route::put('/users/{user}', [UserController::class, 'update']);
 Route::delete('/users/{user}', [UserController::class, 'destroy']);
 
-
+Route::post('/pendaftaran-kegiatan', [PendaftaranKegiatanController::class, 'store']);
 
 
 

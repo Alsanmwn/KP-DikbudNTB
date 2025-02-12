@@ -28,28 +28,43 @@ export default function Beranda({ auth }) {
             try {
                 const response = await axios.get('/api/kegiatan');
                 const today = new Date();
-
+                today.setHours(0, 0, 0, 0);  // Set the current date to 00:00 for comparison
+    
                 // Filter kegiatan yang belum terjadi dan urutkan berdasarkan tanggal
                 const upcomingKegiatan = response.data
                     .filter(kegiatan => new Date(kegiatan.tanggal) >= today)
                     .sort((a, b) => new Date(a.tanggal) - new Date(b.tanggal))
                     .slice(0, 5); // Limit to 5 kegiatan to match the existing UI
-
+    
                 // Kegiatan yang sudah dilakukan
                 const pastKegiatan = response.data
                     .filter(kegiatan => new Date(kegiatan.tanggal) < today)
                     .sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal))
                     .slice(0, 5);
-
-                setKegiatanList(upcomingKegiatan);
+    
+                // Menambahkan kondisi status "closed" sehari sebelum kegiatan
+                const updatedUpcomingKegiatan = upcomingKegiatan.map(kegiatan => {
+                    const kegiatanDate = new Date(kegiatan.tanggal);
+                    kegiatanDate.setHours(0, 0, 0, 0); // Pastikan waktu di-set ke 00:00 untuk perbandingan
+    
+                    // Jika tanggal kegiatan adalah besok, ubah status menjadi "closed"
+                    if (kegiatanDate - today <= 24 * 60 * 60 * 1000) {  // 24 jam dalam milidetik
+                        kegiatan.status = 'closed';
+                    }
+    
+                    return kegiatan;
+                });
+    
+                setKegiatanList(updatedUpcomingKegiatan);
                 setPastKegiatanList(pastKegiatan);
             } catch (error) {
                 console.error("Error fetching kegiatan:", error);
             }
         };
-
+    
         fetchKegiatan();
     }, []);
+    
 
     const scrollToTop = () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -274,13 +289,16 @@ export default function Beranda({ auth }) {
                                     <div className={`py-1 px-1 w-[140px] text-center rounded-lg shadow-lg text-[10px] ${kegiatan.status === 'open for public' ? 'bg-green-500' : 'bg-blue-500'}`}>
                                         {kegiatan.status}
                                     </div>
-                                    <Link
-                                        href={route('kegiatan.detail', { id: kegiatan.id })}
-                                        className="py-1 px-1 w-[140px] bg-white-10 font-bold text-[#223A5C] text-center rounded-lg shadow-lg text-[10px]"
-                                        style={{ boxShadow: "0 4px 9px rgba(0, 0, 0, 0.1)", borderRadius: "15px" }}
-                                    >
-                                        Lihat Detail
-                                    </Link>
+                                    {/* Cek jika status kegiatan bukan 'closed' */}
+                                    {kegiatan.status !== 'closed' && (
+                                        <Link
+                                            href={route('kegiatan.detail', { id: kegiatan.id })}
+                                            className="py-1 px-1 w-[140px] bg-white-10 font-bold text-[#223A5C] text-center rounded-lg shadow-lg text-[10px]"
+                                            style={{ boxShadow: "0 4px 9px rgba(0, 0, 0, 0.1)", borderRadius: "15px" }}
+                                        >
+                                            Lihat Detail
+                                        </Link>
+                                    )}
                                 </div>
                             </div>
                         </div>

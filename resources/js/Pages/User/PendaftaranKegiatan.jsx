@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '@/Components/Navbar';
 import Footer from '@/Components/Footer';
+import axios from 'axios';
 
-const PendaftaranKegiatan = ({ auth }) => {
+const PendaftaranKegiatan = ({ auth, kegiatan_data }) => {
     const [formData, setFormData] = useState({
         namaLengkap: '',
         jenisKelamin: '',
@@ -10,18 +11,21 @@ const PendaftaranKegiatan = ({ auth }) => {
         alamat: '',
         nomorHP: '',
         email: '',
+        user_id: '',
+        kegiatan_id: '',
     });
 
-    // Mengisi formData dengan data pengguna yang login
     useEffect(() => {
-        if (auth && auth.user) {
-            setFormData((prevFormData) => ({
-                ...prevFormData,
+        if (auth?.user && kegiatan_data) {
+            setFormData(prevState => ({
+                ...prevState,
                 namaLengkap: auth.user.name || '',
                 email: auth.user.email || '',
+                user_id: auth.user.id,
+                kegiatan_id: kegiatan_data.id
             }));
         }
-    }, [auth]);
+    }, [auth, kegiatan_data]);
 
     const handleChange = (e) => {
         setFormData({
@@ -30,20 +34,42 @@ const PendaftaranKegiatan = ({ auth }) => {
         });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Tambahkan logika untuk mengirim data form ke server atau API
-        console.log(formData);
+        
+        try {
+            const submitButton = e.target.querySelector('button[type="submit"]');
+            submitButton.disabled = true;
+            submitButton.textContent = 'Mengirim...';
+    
+            await axios.post('/api/pendaftaran-kegiatan', formData);
+            
+            alert('Pendaftaran berhasil dikirim!');
+            
+            setFormData({
+                ...formData,
+                jenisKelamin: '',
+                tanggalLahir: '',
+                alamat: '',
+                nomorHP: '',
+            });
+            
+        } catch (error) {
+            alert(error.response?.data?.message || 'Terjadi kesalahan saat mengirim pendaftaran');
+            console.error('Error:', error.response?.data);
+        } finally {
+            const submitButton = e.target.querySelector('button[type="submit"]');
+            submitButton.disabled = false;
+            submitButton.textContent = 'Kirim';
+        }
     };
 
     return (
         <div className="bg-gray-50 text-black/50 dark:bg-black dark:text-white/50 min-h-screen flex flex-col">
-            {/* Header */}
             <header className="w-full">
                 <Navbar auth={auth} />
             </header>
 
-            {/* Hero Section */}
             <div className="relative flex justify-center items-center flex-1 mb-16">
                 <img
                     src="/assets/landingpage.png"
@@ -52,12 +78,10 @@ const PendaftaranKegiatan = ({ auth }) => {
                 />
             </div>
 
-            {/* Form Pendaftaran */}
             <section className="bg-white text-center pb-16 mb-16">
-                <h3 className="text-[25px] font-bold text-[#223A5C] mb-6" style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)' }}>Form Pendaftaran Kegiatan</h3>
+                <h3 className="text-[25px] font-bold text-[#223A5C] mb-6">Form Pendaftaran Kegiatan</h3>
                 <div className="max-w-4xl mx-auto p-6 bg-gray-100 rounded-md shadow-md">
                     <form onSubmit={handleSubmit} className="space-y-4">
-                        {/* Nama Lengkap */}
                         <div>
                             <label htmlFor="namaLengkap" className="block text-left font-semibold text-[#223A5C]">Nama Lengkap</label>
                             <input
@@ -66,15 +90,14 @@ const PendaftaranKegiatan = ({ auth }) => {
                                 name="namaLengkap"
                                 value={formData.namaLengkap}
                                 onChange={handleChange}
-                                className="w-full p-3 mt-2 border border-gray-300 rounded-md"
+                                className="w-full p-3 mt-2 border border-gray-300 rounded-md text-black"
                                 required
                             />
                         </div>
 
-                        {/* Jenis Kelamin */}
                         <div>
                             <label className="block text-left font-semibold text-[#223A5C]">Jenis Kelamin</label>
-                            <div className="flex space-x-4">
+                            <div className="flex space-x-4 text-black">
                                 <label className="flex items-center">
                                     <input
                                         type="radio"
@@ -100,7 +123,6 @@ const PendaftaranKegiatan = ({ auth }) => {
                             </div>
                         </div>
 
-                        {/* Tanggal Lahir */}
                         <div>
                             <label htmlFor="tanggalLahir" className="block text-left font-semibold text-[#223A5C]">Tempat Tanggal Lahir</label>
                             <input
@@ -109,12 +131,11 @@ const PendaftaranKegiatan = ({ auth }) => {
                                 name="tanggalLahir"
                                 value={formData.tanggalLahir}
                                 onChange={handleChange}
-                                className="w-full p-3 mt-2 border border-gray-300 rounded-md"
+                                className="w-full p-3 mt-2 border border-gray-300 rounded-md text-black"
                                 required
                             />
                         </div>
 
-                        {/* Alamat */}
                         <div>
                             <label htmlFor="alamat" className="block text-left font-semibold text-[#223A5C]">Alamat Lengkap</label>
                             <textarea
@@ -122,13 +143,12 @@ const PendaftaranKegiatan = ({ auth }) => {
                                 name="alamat"
                                 value={formData.alamat}
                                 onChange={handleChange}
-                                className="w-full p-3 mt-2 border border-gray-300 rounded-md"
+                                className="w-full p-3 mt-2 border border-gray-300 rounded-md text-black"
                                 rows="3"
                                 required
                             />
                         </div>
 
-                        {/* Nomor HP/WhatsApp */}
                         <div>
                             <label htmlFor="nomorHP" className="block text-left font-semibold text-[#223A5C]">Nomor HP/WhatsApp</label>
                             <input
@@ -137,12 +157,11 @@ const PendaftaranKegiatan = ({ auth }) => {
                                 name="nomorHP"
                                 value={formData.nomorHP}
                                 onChange={handleChange}
-                                className="w-full p-3 mt-2 border border-gray-300 rounded-md"
+                                className="w-full p-3 mt-2 border border-gray-300 rounded-md text-black"
                                 required
                             />
                         </div>
 
-                        {/* Email */}
                         <div>
                             <label htmlFor="email" className="block text-left font-semibold text-[#223A5C]">Email</label>
                             <input
@@ -151,12 +170,11 @@ const PendaftaranKegiatan = ({ auth }) => {
                                 name="email"
                                 value={formData.email}
                                 onChange={handleChange}
-                                className="w-full p-3 mt-2 border border-gray-300 rounded-md"
+                                className="w-full p-3 mt-2 border border-gray-300 rounded-md text-black"
                                 required
                             />
                         </div>
 
-                        {/* Tombol Kirim */}
                         <div>
                             <button
                                 type="submit"
@@ -169,7 +187,6 @@ const PendaftaranKegiatan = ({ auth }) => {
                 </div>
             </section>
 
-            {/* Footer */}
             <Footer />
         </div>
     );
