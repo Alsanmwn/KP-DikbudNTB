@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\KegiatanController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PendaftaranKegiatanController;
+use App\Http\Controllers\OrganizationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -58,6 +59,9 @@ Route::middleware(['auth:admin'])->prefix('admin')->group(function () {
 });
 
 Route::get('/kegiatan/{kegiatan}/pendaftar', [KegiatanController::class, 'getPendaftar']);
+
+Route::get('/organization-members', [OrganizationController::class, 'getMembers']);
+Route::get('/department-staff', [OrganizationController::class, 'getDepartmentStaff']);
 
 
 
