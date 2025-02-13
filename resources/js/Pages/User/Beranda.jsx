@@ -347,7 +347,7 @@ export default function Beranda({ auth }) {
                 </button>
             )}
 
-            <section className="bg-white text-center py-16 pb-16">
+            <section id="layanan-kami" className="bg-white text-center py-16 pb-16 min-h-screen">    
                 <h3 className="text-[25px] font-bold text-[#223A5C] mb-8" style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)' }}>Layanan Kami</h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mx-auto max-w-6xl">
                     <div className="p-8 border-2 border-[#0E2038] rounded-lg shadow-lg">
