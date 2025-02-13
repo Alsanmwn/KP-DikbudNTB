@@ -28,51 +28,185 @@ const HeroSection = () => (
   </div>
 );
 
-const AboutSection = () => (
-  <section className={`${STYLES.sectionPadding} bg-white text-center`}>
-    <SectionTitle>Tentang Kami</SectionTitle>
-    <div className="max-w-4xl mx-auto text-center">
-      <p className="text-[18px] text-[#223A5C] leading-relaxed mb-4">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus vitae
-        eleifend lectus. Duis dignissim nibh porta, sodales nibh ullamcorper,
-        cursus nunc.
-      </p>
-      <hr className="border-t-2 border-[#223A5C] mt-4 mx-auto w-1/5" />
-    </div>
-  </section>
-);
+const AboutSection = () => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <section className="py-16 bg-white text-center">
+      <h2 className="text-2xl font-bold text-[#223A5C] mb-6">Tentang Kami</h2>
+      <div className="max-w-4xl mx-auto text-center">
+        <p className="text-[18px] text-[#223A5C] leading-relaxed mb-2">
+          Balai Teknologi Informasi dan Data Pendidikan dipimpin oleh Kepala Balai
+          yang dibantu oleh Kasubbag Tata Usaha, Kepala Seksi Pemanfaatan Teknologi
+          Informasi dan Data Pendidikan serta Kepala Seksi Pengembangan Media
+          Pembelajaran. Dalam menjalankan tusinya sebagai Unit Pelaksana Teknis
+          Dinas Dikbud dibantu juga oleh Fungsional Pengembang Teknologi
+          Pembelajaran (PTP) dan Pranata Komputer (Prakom).
+        </p>
+        <button
+          onClick={() => setIsOpen(true)}
+          className="text-blue-700 font-semibold px-6 py-2 transition"
+        >
+          Selengkapnya {'>>>'}
+        </button>
+        <hr className="border-t-2 border-[#223A5C] mt-4 mx-auto w-1/5" />
+      </div>
+
+      {/* Modal Popup */}
+      {isOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white p-4 lg:p-6 rounded-lg shadow-lg max-w-4xl w-full max-h-[80vh] overflow-y-auto">
+            <h3 className="text-xl font-bold text-[#223A5C] mb-4">Sejarah BTIDP</h3>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 text-justify">
+              {/* Card 1 */}
+              <div className="border border-[#223A5C] p-4 rounded-lg shadow-md w-full">
+                <h4 className="text-lg font-semibold text-[#223A5C]">BTKP <br/> Balai Teknologi Komunikasi Pendidikan</h4>
+                <p className="text-sm text-gray-600 mt-2">
+                      Sebelum menjadi Balai Teknologi Komunikasi Pendidikan awalnya bernama Sanggar Teknologi
+                    Komunikasi Pendidikan di bawah naungan Pusat Teknologi Komunikasi (Pustekkom) yang secara tekni
+                    operasional bertanggung jawab kepada Kepala Kanto Wilayah Pendidikan dan Kebudayaan Provinsi Nusa
+                    Tenggara Barat. Sekitar tahun 2001 dengan diberlakukannya Otonomi Daerah maka sejak itulah berubah nama menjadi Bala
+                    Teknologi Komunikasi Pendidikan (BTKP) di bawah kendali Pemerintah Provinsi NTB sesuai SK Gubernur
+                    nomor 484 Tahun 2001, Tanggal 23 Desember 2001
+                    </p>
+              </div>
+              {/* Card 2 */}
+              <div className="border border-[#223A5C] p-4 rounded-lg shadow-md w-full">
+                <h4 className="text-lg font-semibold text-[#223A5C]">BTIKP <br/> Balai Teknologi Informasi dan Komunikasi Pendidikan (Dinas Dikbud)</h4>
+                <p className="text-sm text-gray-600 mt-2">
+                      Seiring dengan perkembangan kelembagaan dan tuntutan tentang Pembentukan dan
+                    Susunan Perangkat Daerah Provinsi Nusa Tenggara Barat maka dilakukan perombakan
+                    struktur organisasi beserta turunannya dan lahirlah Balai Teknologi Informasi dan Komunikasi 
+                    Pendidikan sesuai Peraturan Gubernur nomor 53 Tahun 2016 yang sebelumnya bernama BTKP.
+                </p>
+              </div>
+              {/* Card 3 */}
+              <div className="border border-[#223A5C] p-4 rounded-lg shadow-md w-full">
+                <h4 className="text-lg font-semibold text-[#223A5C]">BPTP <br/> Balai Pengembangan Teknologi Pembelajaran</h4>
+                <p className="text-sm text-gray-600 mt-2">
+                      Dengan mengacu pada amanat Permendagri No. 12 Tahun 2017 tentang Pedoman Pembentukan dan Klasifikasi
+                    Cabang Dinas dan Unit Pelaksana Teknis Daerah, BTIKP dievaluasi dan dikaji keberadaannya dan hasil rekomendasi
+                    Kementerian Dalam Negeri agar diubah tugas pokok dan fungsi serta hasil konsultasi dengan Biro Organisasi Sekretariat Daerah
+                    NTB maka Balai Teknologi Informasi dan Komunikasi Pendidikan berubah nama menjadi Balai Pengembangan Teknologi Pendidikan (BPTeknodik) NTB
+                </p>
+              </div>
+              {/* Card 4 */}
+              <div className="border border-[#223A5C] p-4 rounded-lg shadow-md w-full">
+                <h4 className="text-lg font-semibold text-[#223A5C]">BTIDP <br/> Balai Teknologi Informasi dan Data Pendidikan</h4>
+                <p className="text-sm text-gray-600 mt-2">
+                      Mengacu pada perubahan nomenklatur lembaga pembina Jabatan Fungsional yang ada di BPTeknodik dalam hal ini adalah
+                    Pusat Teknologi Komunikasi (Pustekkom) menjadi Pusat Data dan Informasi serta hasil konsultasi dengan Biro Organisasi Sekretaris
+                    Daerah NTB maka BPTeknodik berubah lagi dengan nama Balai Teknologi Informasi dan Data Pendidikan (BTIDP) yang tertuang
+                    dalam Peraturan Gubernur nomor 29 Tahun 2018 tanggal 14 September 2018
+                </p>
+              </div>
+            </div>
+
+            {/* Tombol Tutup */}
+            <div className="text-center mt-4">
+              <button
+                onClick={() => setIsOpen(false)}
+                className="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
+              >
+                Tutup
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </section>
+  );
+};
+
 
 const WelcomeSection = () => (
-  <section className="relative mb-32">
+  <section className="relative mb-36">
     <div className="flex justify-center items-center">
       <img
         src="/assets/sunset.png"
         alt="Sunset view"
-        className="w-full max-w-[1220px] h-[350px] object-cover"
+        className="w-full max-w-[1115px] h-[405px] object-cover"
       />
     </div>
-    <div className="absolute top-60 left-1/2 transform -translate-x-1/2 w-[90%] max-w-[1000px] bg-white shadow-lg p-6 mt-16">
+    <div className="absolute top-72 left-1/2 transform -translate-x-1/2 w-[90%] max-w-[1000px] bg-white shadow-lg p-6 mt-16">
       <h2 className="text-[#223A5C] text-xl font-semibold mb-1">
         Selamat Datang di Website Kami
       </h2>
       <p className="text-gray-600 text-sm">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus vitae
-        eleifend lectus. Duis dignissim nibh porta, sodales nibh ullamcorper,
-        cursus nunc.
+        Website ini menyediakan layanan Pengajuan Surat, Data Pendidikan, dan Rumah Belajar untuk 
+        mendukung kebutuhan pendidikan. Anda juga dapat melihat agenda BTIDP selama setahun, termasuk 
+        pelatihan dan seminar. Kami berkomitmen menghadirkan inovasi teknologi demi kemajuan pendidikan.
       </p>
     </div>
   </section>
 );
 
+// Mission Popup Component
+const MissionPopup = ({ isOpen, onClose }) => {
+  if (!isOpen) return null;
+
+  const missions = [
+    "Meningkatkan akses dan mutu pendidikan dengan mengembangkan media, model dan sistem pembelajaran berbasis teknologi bagi semua jalur, jenis dan jenjang pendidikan.",
+    "Mewujudkan peningkatan kompetensi sumber daya manusia dan menciptakan pertumbuhan kapasitas manajemen, serta sarana dan prasarana teknologi Pendidikan bagi tenaga pendidik dan kependidikan di semua jalur, jenis dan jenjang pendidikan.",
+    "Meningkatkan pelayanan dan pengelolaan pendidikan dengan mengembangkan sistem informasi dan jaringan pendidikan berbasis teknologi.",
+    "Mengembangkan kultur lembaga berbasis kinerja dan kebersamaan.",
+    "Membangun jejaring kerja dan kemitraan di bidang teknologi Pendidikan."
+  ];
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+      <div className="bg-white rounded-lg p-6 w-[800px] max-h-[80vh] overflow-y-auto">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-xl font-bold text-[#223A5C]">Misi BTIDP</h3>
+          <button
+            onClick={onClose}
+            className="text-gray-500 hover:text-gray-700"
+          >
+            ✕
+          </button>
+        </div>
+        <div className="space-y-4">
+          {missions.map((mission, index) => (
+            <div key={index} className="flex gap-2">
+              <span className="text-[#223A5C] font-bold min-w-[16px]">•</span>
+              <p className="text-[#223A5C]">{mission}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const VisionMissionSection = () => {
+  const [isMissionPopupOpen, setIsMissionPopupOpen] = useState(false);
+
   const items = [
-    { title: "Visi", image: "/assets/bunga.png" },
-    { title: "Misi", image: "/assets/gunung.png" },
+    { 
+      title: "Visi", 
+      image: "/assets/Visi.jpg", 
+      description: "Menjadi suatu lembaga pengembangan, pemanfaatan dan pelayanan Teknologi Pendidikan yang kreatif, inovatif dan mencerdaskan." 
+    },
+    { 
+      title: "Misi", 
+      image: "/assets/Misi.jpg", 
+      description: (
+        <div>
+          <p className="mb-2">Meningkatkan akses dan mutu pendidikan dengan mengembangkan media, model dan sistem pembelajaran berbasis...</p>
+          <button 
+            onClick={() => setIsMissionPopupOpen(true)}
+            className="text-blue-600 hover:text-blue-800 text-sm font-semibold"
+          >
+            Selengkapnya
+          </button>
+        </div>
+      )
+    },
   ];
 
   return (
     <section className="flex flex-wrap justify-center gap-9 mb-16 relative">
-      {items.map(({ title, image }) => (
+      {items.map(({ title, image, description }) => (
         <div key={title} className="w-auto relative">
           <img
             src={image}
@@ -83,13 +217,16 @@ const VisionMissionSection = () => {
             <h3 className="text-xl font-semibold text-[#223A5C] mb-2 text-left">
               {title}
             </h3>
-            <p className="text-sm text-gray-700 text-left">
-              Deskripsi tentang {title.toLowerCase()}, yang menggambarkan detail
-              dan aspek penting.
-            </p>
+            <div className="text-sm text-gray-700 text-left">
+              {description}
+            </div>
           </div>
         </div>
       ))}
+      <MissionPopup 
+        isOpen={isMissionPopupOpen} 
+        onClose={() => setIsMissionPopupOpen(false)} 
+      />
     </section>
   );
 };
@@ -194,11 +331,7 @@ const OrganizationTable = () => {
     ],
     "Kasubbag Tata Usaha": [
       { name: "Farah Sabrina, ST MT", subDepartment: "Kasubbag Tata Usaha", nip: "D121221089" },
-      { name: "Irma Purwati", subDepartment: "Pengolahan Data & Informasi", nip: "D121221097" },
-      { name: "M.HArpan Teguh S., S.Kom", subDepartment: "Tenaga Pendukung DI", nip: "D121221097" },
-      {name: "Musleha", subDepartment: "Penelaah Teknis Kebijakan", nip: "D121221098" },
-      { name: "Mirza Fahlevi, S.Pd", subDepartment: "Tenaga Pendukung Adum", nip: "D121221098" },
-      { name: "Rima Rahmanlyah, S.Kom", subDepartment: "Tenaga Pendukung Adum", nip: "D121221098" },
+      { name: "Soyule, ST MT", subDepartment: "Pengolahan Data & Informasi", nip: "D121221034" },
     ],
     "Kasi Pemanfaatan TI & Pengembangan DP": [
       { name: "Siti Aisyah Raodahtul Jannah, ST", subDepartment: "Pemanfaatan TI", nip: "D121221090" },

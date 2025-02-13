@@ -59,7 +59,7 @@ const InformasiKebudayaan = () => {
                     {/* Gambar di sebelah kiri dengan ukuran yang tetap */}
                     <div className="flex-shrink-0 w-[300px] h-auto mx-5">
                         <img
-                            src="/assets/logobtidp.jpg"
+                            src="/assets/logobtidp.png"
                             alt="Informasi Kebudayaan"
                             className="w-full h-auto object-cover"
                         />

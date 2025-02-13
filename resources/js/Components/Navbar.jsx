@@ -3,6 +3,22 @@ import { Link, usePage } from '@inertiajs/react';
 export default function Navbar() {
     const { auth } = usePage().props;
 
+    // Fungsi untuk Scroll ke bagian "Layanan Kami" dengan pas
+    const scrollToLayanan = (e) => {
+        e.preventDefault();
+        const layananSection = document.getElementById('layanan-kami');
+        if (layananSection) {
+            const navbarHeight = document.querySelector('nav').offsetHeight; // Tinggi navbar
+            const sectionTop = layananSection.getBoundingClientRect().top + window.scrollY; // Posisi section
+            
+            // Scroll dengan posisi yang pas di layar
+            window.scrollTo({
+                top: sectionTop - navbarHeight, 
+                behavior: 'smooth'
+            });
+        }
+    };
+
     return (
         <nav className="fixed top-0 left-0 w-full bg-[#223A5C] p-4 shadow-md z-50 pl-4">
             <div className="flex items-center justify-between">
@@ -15,9 +31,6 @@ export default function Navbar() {
                             className="h-10 mr-4 cursor-pointer"
                         />
                     </Link>
-                    <Link href={route('beranda')} className="text-white text-[22px] font-semibold cursor-pointer">
-                        BTIDP
-                    </Link>
                 </div>
 
                 {/* Menu navigasi di kanan */}
@@ -29,9 +42,13 @@ export default function Navbar() {
                         <Link href={route('tentang-kami')} className="text-white font-regular text-[16px] hover:text-gray-200">
                             Tentang Kami
                         </Link>
-                        <Link href={route('informasi-pendidikan')} className="text-white font-regular text-[16px] hover:text-gray-200">
+                        <a
+                            href="#layanan-kami"
+                            onClick={scrollToLayanan}
+                            className="text-white font-regular text-[16px] hover:text-gray-200 cursor-pointer"
+                        >
                             Layanan
-                        </Link>
+                        </a>
                         <Link href={route('informasi-kebudayaan')} className="text-white font-regular text-[16px] hover:text-gray-200">
                             Informasi Kebudayaan
                         </Link>
