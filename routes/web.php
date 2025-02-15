@@ -96,6 +96,12 @@ Route::prefix('admin')->group(function () {
                 'admin' => Auth::guard('admin')->user(),
             ]);
         })->name('admin.user');
+
+        Route::get('/struktur-organisasi', function () {
+            return Inertia::render('Admin/StrukturOrganisasi', [
+                'admin' => Auth::guard('admin')->user(),
+            ]);
+        })->name('admin.struktur-organisasi');
           
         Route::get('/data-pendidikan', function () {
             return Inertia::render('Admin/DataPendidikan', [
@@ -121,13 +127,6 @@ Route::prefix('admin')->group(function () {
             ]);
         })->name('admin.data-pendidikan.guru');
 
-        // Route::get('/agenda-btidp', function () {
-        //     return Inertia::render('Admin/AgendaBtidp', [
-        //         'admin' => Auth::user(),  // Kirim data admin ke Inertia
-        //     ]);
-        // })->name('admin.agenda-btidp');        
-
-        // Logout admin
         Route::post('logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
     });
 });
@@ -169,17 +168,8 @@ Route::middleware(['admin.auth'])->prefix('admin')->group(function () {
         ]);
     })->name('admin.agenda-btidp');  
    
-    // Profile routes
-    // Route::get('/profile', [AdminProfileController::class, 'edit'])->name('admin.profile');
-    // Route::patch('/profile', [AdminProfileController::class, 'update'])->name('admin.profile.update');
-   
-    // Logout route
     Route::post('/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
 });
-
-    // Route::post('/pendaftaran-kegiatan', [PendaftaranKegiatanController::class, 'store']);
-
-    // Route::post('/pendaftaran-kegiatan/{kegiatan_id}', [KegiatanController::class, 'daftar'])->name('pendaftaran-kegiatan');
 
 Route::get('/pendaftaran-kegiatan', [KegiatanController::class, 'daftarKegiatan'])
     ->name('pendaftaran-kegiatan')

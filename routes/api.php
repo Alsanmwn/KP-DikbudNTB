@@ -7,6 +7,8 @@ use App\Http\Controllers\KegiatanController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PendaftaranKegiatanController;
 use App\Http\Controllers\OrganizationController;
+use App\Http\Controllers\PegawaiController;
+use App\Http\Controllers\JabatanController;
 
 /*
 |--------------------------------------------------------------------------
@@ -63,6 +65,20 @@ Route::get('/kegiatan/{kegiatan}/pendaftar', [KegiatanController::class, 'getPen
 Route::get('/organization-members', [OrganizationController::class, 'getMembers']);
 Route::get('/department-staff', [OrganizationController::class, 'getDepartmentStaff']);
 
+Route::get('/struktur-organisasi', [OrganizationController::class, 'index']);
+Route::post('/struktur-organisasi', [OrganizationController::class, 'store']);
+Route::put('/struktur-organisasi/{id}', [OrganizationController::class, 'update']);
+Route::delete('/struktur-organisasi/{id}', [OrganizationController::class, 'destroy']);
+
+// Di routes/api.php, pastikan route API sudah terdaftar:
+Route::get('/pegawai', [PegawaiController::class, 'index']);
+Route::get('/jabatan', [JabatanController::class, 'index']);
+Route::get('/struktur-organisasi', [StrukturOrganisasiController::class, 'index']);
+
+// Tambahkan route test
+Route::get('/test', function() {
+    return response()->json(['message' => 'API berfungsi']);
+});
 
 
 

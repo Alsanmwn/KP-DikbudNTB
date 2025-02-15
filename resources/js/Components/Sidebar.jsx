@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, usePage, router } from '@inertiajs/react';
-import { UserIcon, HomeIcon, AcademicCapIcon, CalendarIcon, ChevronDownIcon, ChevronUpIcon,  ArrowRightOnRectangleIcon } from '@heroicons/react/24/outline';
+import { UserIcon, HomeIcon, AcademicCapIcon, CalendarIcon, ChevronDownIcon, ChevronUpIcon, ArrowRightOnRectangleIcon, BuildingOffice2Icon } from '@heroicons/react/24/outline';
 
 const Sidebar = () => {
     const { admin } = usePage().props;
@@ -9,24 +9,42 @@ const Sidebar = () => {
     const [isLoggingOut, setIsLoggingOut] = useState(false);
 
     const menuItems = [
-        { name: 'Dashboard', route: '/admin/dashboard', icon: <HomeIcon className="h-5 w-5 mr-3" /> },
-        {
-            name: 'User', 
+        {   name: 'Dashboard', 
+            route: '/admin/dashboard', 
+            icon: <HomeIcon className="h-5 w-5 mr-3" /> 
+        },
+        {   name: 'User', 
             route: '/admin/user', 
             icon: <UserIcon className="h-5 w-5 mr-3" /> 
+        },
+        {   name: 'Struktur Organisasi', 
+            route: '/admin/struktur-organisasi', 
+            icon: <BuildingOffice2Icon className="h-5 w-5 mr-3" /> 
         },
         {
             name: 'Data Pendidikan',
             icon: <AcademicCapIcon className="h-5 w-5 mr-3" />,
             dropdown: true,
             subItems: [
-                { name: 'Data Siswa', route: '/admin/data-pendidikan/siswa' },
-                { name: 'Data Guru', route: '/admin/data-pendidikan/guru' },
-                { name: 'Data Sekolah', route: '/admin/data-pendidikan/sekolah' },
+                {   name: 'Data Siswa',  
+                    route: '/admin/data-pendidikan/siswa' 
+                },
+                {   name: 'Data Guru', 
+                    route: '/admin/data-pendidikan/guru' 
+                },
+                {   name: 'Data Sekolah', 
+                    route: '/admin/data-pendidikan/sekolah' 
+                },
             ],
         },
-        { name: 'Agenda BTIDP', route: '/admin/agenda-btidp', icon: <CalendarIcon className="h-5 w-5 mr-3" /> },
-        { name: 'Ubah Profile', route: '/admin/profile', icon: <UserIcon className="h-5 w-5 mr-3" /> },
+        {   name: 'Agenda BTIDP', 
+            route: '/admin/agenda-btidp', 
+            icon: <CalendarIcon className="h-5 w-5 mr-3" /> 
+        },
+        {   name: 'Ubah Profile', 
+            route: '/admin/profile', 
+            icon: <UserIcon className="h-5 w-5 mr-3" /> 
+        },
     ];
 
     const handleLogout = () => {
@@ -105,7 +123,6 @@ const Sidebar = () => {
                     <ArrowRightOnRectangleIcon className="h-5 w-5 ml-2" />
                 </button>
             </div>
-
 
             <div className="px-4 py-2 text-sm text-center border-t border-gray-600">
                 © 2025 BTIDP
