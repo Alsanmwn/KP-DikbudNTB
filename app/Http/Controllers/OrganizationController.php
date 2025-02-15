@@ -1,49 +1,5 @@
 <?php
 
-// namespace App\Http\Controllers;
-
-// use App\Models\Pegawai;
-// use App\Models\Jabatan;
-// use Illuminate\Http\Request;
-
-// class OrganizationController extends Controller
-// {
-//     public function getStructure()
-//     {
-//         $structure = Pegawai::with(['jabatan' => function($query) {
-//             $query->select('jabatan.id', 'nama_jabatan');
-//         }])->get()->map(function($pegawai) {
-//             $mainPosition = $pegawai->jabatan->first();
-//             return [
-//                 'name' => $pegawai->nama,
-//                 'position' => $mainPosition ? $mainPosition->nama_jabatan : null,
-//                 'nip' => $pegawai->nip,
-//                 'activeYear' => $pegawai->tahun_aktif . '-Sekarang'
-//             ];
-//         });
-
-//         return response()->json($structure);
-//     }
-
-//     public function getDepartmentStaff($jabatanId)
-//     {
-//         $staff = Pegawai::whereHas('jabatan', function($query) use ($jabatanId) {
-//             $query->where('jabatan.id', $jabatanId);
-//         })->with(['jabatan' => function($query) {
-//             $query->select('jabatan.id', 'nama_jabatan');
-//         }])->get()->map(function($pegawai) {
-//             return [
-//                 'name' => $pegawai->nama,
-//                 'subDepartment' => $pegawai->jabatan->first()->pivot->peran ?? $pegawai->jabatan->first()->nama_jabatan,
-//                 'nip' => $pegawai->nip
-//             ];
-//         });
-
-//         return response()->json($staff);
-//     }
-// }
-
-
 namespace App\Http\Controllers;
 
 use App\Models\Pegawai;
@@ -52,6 +8,45 @@ use Illuminate\Http\Request;
 
 class OrganizationController extends Controller
 {
+    public function index()
+    {
+        $strukturOrganisasi = PegawaiJabatan::with(['pegawai', 'jabatan'])->get();
+        return response()->json($strukturOrganisasi);
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'pegawai_id' => 'required|exists:pegawai,id',
+            'jabatan_id' => 'required|exists:jabatan,id',
+            'peran' => 'nullable|string|max:255',
+        ]);
+
+        $organization = PegawaiJabatan::create($validated);
+        return response()->json($organization, 201);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $organization = PegawaiJabatan::findOrFail($id);
+        
+        $validated = $request->validate([
+            'pegawai_id' => 'required|exists:pegawai,id',
+            'jabatan_id' => 'required|exists:jabatan,id',
+            'peran' => 'nullable|string|max:255',
+        ]);
+
+        $organization->update($validated);
+        return response()->json($organization);
+    }
+
+    public function destroy($id)
+    {
+        $organization = PegawaiJabatan::findOrFail($id);
+        $organization->delete();
+        return response()->json(null, 204);
+    }
+    
     public function getMembers()
     {
         $members = Pegawai::join('pegawai_jabatan', 'pegawai.id', '=', 'pegawai_jabatan.pegawai_id')
