@@ -73,12 +73,19 @@ Route::delete('/struktur-organisasi/{id}', [OrganizationController::class, 'dest
 // Di routes/api.php, pastikan route API sudah terdaftar:
 Route::get('/pegawai', [PegawaiController::class, 'index']);
 Route::get('/jabatan', [JabatanController::class, 'index']);
-Route::get('/struktur-organisasi', [StrukturOrganisasiController::class, 'index']);
+// Route::get('/struktur-organisasi', [OrganizationController::class, 'index']);
 
 // Tambahkan route test
 Route::get('/test', function() {
     return response()->json(['message' => 'API berfungsi']);
 });
+
+// routes/api.php
+Route::apiResource('pegawai', PegawaiController::class);
+Route::apiResource('jabatan', JabatanController::class);
+// Route::apiResource('struktur-organisasi', PegawaiJabatanController::class);
+
+Route::get('struktur-organisasi-relations', [PegawaiJabatanController::class, 'getRelationalData']);
 
 
 

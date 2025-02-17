@@ -2,11 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class PegawaiJabatan extends Model
+class StrukturOrganisasi extends Model
 {
-    protected $table = 'pegawai_jabatan';
+    protected $fillable = ['pegawai_id', 'jabatan_id', 'peran'];
     
     public function pegawai()
     {
