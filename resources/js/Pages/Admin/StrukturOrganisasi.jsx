@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { MaterialReactTable } from 'material-react-table';
 import axios from 'axios';
+import { Edit, Trash } from 'lucide-react';
 import Sidebar from '@/Components/Sidebar';
 import { usePage } from '@inertiajs/react';
 
@@ -20,6 +21,11 @@ const StrukturOrganisasi = () => {
     const [modalMode, setModalMode] = useState('add'); // 'add' or 'edit'
     const [selectedData, setSelectedData] = useState(null);
     const [activeTab, setActiveTab] = useState('pegawai'); // 'pegawai', 'jabatan', or 'struktur'
+    
+    // Search and filter state
+    const [searchTerm, setSearchTerm] = useState('');
+    const [filterYear, setFilterYear] = useState('');
+    const [availableYears, setAvailableYears] = useState([]);
 
     // Form data state
     const [formData, setFormData] = useState({
@@ -36,48 +42,54 @@ const StrukturOrganisasi = () => {
         fetchData();
     }, []);
 
-    // const fetchData = async () => {
-    //     try {
-    //         setLoading(true);
-    //         const [pegawaiRes, jabatanRes, strukturRes] = await Promise.all([
-    //             axios.get('/api/pegawai'),
-    //             axios.get('/api/jabatan'),
-    //             axios.get('/api/struktur-organisasi')
-    //         ]);
-    //         setPegawai(pegawaiRes.data);
-    //         setJabatan(jabatanRes.data);
-    //         setStrukturOrganisasi(strukturRes.data);
-    //     } catch (error) {
-    //         console.error('Error fetching data:', error);
-    //         setError('Gagal mengambil data. Silakan coba lagi nanti.');
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // };
+    // Extract unique years from pegawai data for filtering
+    useEffect(() => {
+        if (pegawai.length > 0) {
+            const years = [...new Set(pegawai.map(p => p.tahun_aktif))].sort((a, b) => b - a);
+            setAvailableYears(years);
+        }
+    }, [pegawai]);
+
     const fetchData = async () => {
         try {
             setLoading(true);
-            console.log('Memulai fetch data...');
             
-            // Coba fetch satu per satu untuk identifikasi masalah
-            const pegawaiRes = await axios.get('/api/pegawai');
-            console.log('Data Pegawai:', pegawaiRes.data);
+            // Fetch all data from API endpoints
+            const [pegawaiRes, jabatanRes, strukturRes] = await Promise.all([
+                axios.get('/api/pegawai'),
+                axios.get('/api/jabatan'),
+                axios.get('/api/struktur-organisasi')
+            ]);
+            
             setPegawai(pegawaiRes.data);
-    
-            const jabatanRes = await axios.get('/api/jabatan');
-            console.log('Data Jabatan:', jabatanRes.data);
             setJabatan(jabatanRes.data);
-    
-            const strukturRes = await axios.get('/api/struktur-organisasi');
-            console.log('Data Struktur:', strukturRes.data);
             setStrukturOrganisasi(strukturRes.data);
-    
+            
         } catch (error) {
-            console.error('Error lengkap:', error);
-            console.error('Response error:', error.response);
-            console.error('Request error:', error.request);
-            console.error('Error config:', error.config);
-            setError(`Gagal mengambil data: ${error.message}`);
+            console.error('Error fetching data:', error.response?.data || error.message);
+            setError(`Error: ${error.response?.data?.error || error.message}`);
+            
+            // Try to fetch each data individually to identify the source of the error
+            try {
+                const pegawaiRes = await axios.get('/api/pegawai');
+                setPegawai(pegawaiRes.data);
+            } catch (pegawaiError) {
+                console.error('Error fetching pegawai:', pegawaiError.response?.data);
+            }
+    
+            try {
+                const jabatanRes = await axios.get('/api/jabatan');
+                setJabatan(jabatanRes.data);
+            } catch (jabatanError) {
+                console.error('Error fetching jabatan:', jabatanError.response?.data);
+            }
+    
+            try {
+                const strukturRes = await axios.get('/api/struktur-organisasi');
+                setStrukturOrganisasi(strukturRes.data);
+            } catch (strukturError) {
+                console.error('Error fetching struktur:', strukturError.response?.data);
+            }
         } finally {
             setLoading(false);
         }
@@ -101,7 +113,27 @@ const StrukturOrganisasi = () => {
     const handleEdit = (data) => {
         setModalMode('edit');
         setSelectedData(data);
-        setFormData(data);
+        
+        // For pegawai_jabatan (struktur), get complete data including relations
+        if (activeTab === 'struktur') {
+            const struktur = {...data};
+            // Get related data for form display
+            const selectedPegawai = pegawai.find(p => p.id === struktur.pegawai_id);
+            const selectedJabatan = jabatan.find(j => j.id === struktur.jabatan_id);
+            
+            if (selectedPegawai) {
+                struktur.pegawai_nama = selectedPegawai.nama;
+            }
+            
+            if (selectedJabatan) {
+                struktur.jabatan_nama = selectedJabatan.nama_jabatan;
+            }
+            
+            setFormData(struktur);
+        } else {
+            setFormData(data);
+        }
+        
         setIsModalOpen(true);
     };
 
@@ -126,7 +158,7 @@ const StrukturOrganisasi = () => {
             fetchData();
         } catch (error) {
             console.error('Error deleting data:', error);
-            setError('Gagal menghapus data.');
+            setError('Gagal menghapus data. ' + error.response?.data?.message || error.message);
         }
     };
 
@@ -168,10 +200,80 @@ const StrukturOrganisasi = () => {
             await axios[method](endpoint, data);
             fetchData();
             setIsModalOpen(false);
+            
+            // Show success message (you could add a toast notification here)
+            console.log(`Data berhasil ${modalMode === 'add' ? 'ditambahkan' : 'diperbarui'}`);
+            
         } catch (error) {
             console.error('Error submitting data:', error);
-            setError('Gagal menyimpan data.');
+            setError('Gagal menyimpan data. ' + (error.response?.data?.message || error.message));
         }
+    };
+
+    // Filter and search functions
+    const getFilteredData = () => {
+        let filteredData = [];
+        
+        switch (activeTab) {
+            case 'pegawai':
+                filteredData = pegawai;
+                
+                // Filter by year if selected
+                if (filterYear) {
+                    filteredData = filteredData.filter(p => p.tahun_aktif.toString() === filterYear);
+                }
+                
+                // Filter by search term
+                if (searchTerm) {
+                    const term = searchTerm.toLowerCase();
+                    filteredData = filteredData.filter(p => 
+                        p.nama.toLowerCase().includes(term) || 
+                        (p.nip && p.nip.toLowerCase().includes(term))
+                    );
+                }
+                break;
+                
+            case 'jabatan':
+                filteredData = jabatan;
+                
+                // Filter by search term
+                if (searchTerm) {
+                    const term = searchTerm.toLowerCase();
+                    filteredData = filteredData.filter(j => 
+                        j.nama_jabatan.toLowerCase().includes(term)
+                    );
+                }
+                break;
+                
+            case 'struktur':
+                filteredData = strukturOrganisasi;
+                
+                // Join with pegawai data for filtering by year
+                if (filterYear) {
+                    filteredData = filteredData.filter(s => {
+                        const relatedPegawai = pegawai.find(p => p.id === s.pegawai_id);
+                        return relatedPegawai && relatedPegawai.tahun_aktif.toString() === filterYear;
+                    });
+                }
+                
+                // Filter by search term
+                if (searchTerm) {
+                    const term = searchTerm.toLowerCase();
+                    filteredData = filteredData.filter(s => {
+                        const relatedPegawai = pegawai.find(p => p.id === s.pegawai_id);
+                        const relatedJabatan = jabatan.find(j => j.id === s.jabatan_id);
+                        
+                        return (
+                            (relatedPegawai && relatedPegawai.nama.toLowerCase().includes(term)) ||
+                            (relatedJabatan && relatedJabatan.nama_jabatan.toLowerCase().includes(term)) ||
+                            (s.peran && s.peran.toLowerCase().includes(term))
+                        );
+                    });
+                }
+                break;
+        }
+        
+        return filteredData;
     };
 
     const pegawaiColumns = useMemo(() => [
@@ -185,22 +287,24 @@ const StrukturOrganisasi = () => {
                 <div className="flex gap-2">
                     <button 
                         onClick={() => handleEdit(row.original)}
-                        className="px-2 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600"
+                        className="text-blue-500 hover:text-blue-700"
+                        title="Edit"
                     >
-                        Edit
+                        <Edit className="w-5 h-5" />
                     </button>
                     <button 
                         onClick={() => handleDelete(row.original.id)}
-                        className="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+                        className="text-red-500 hover:text-red-700"
+                        title="Hapus"
                     >
-                        Hapus
+                        <Trash className="w-5 h-5" />
                     </button>
                 </div>
             ),
-            size: 150,
+            size: 100,
         },
     ], []);
-
+    
     const jabatanColumns = useMemo(() => [
         { accessorKey: 'id', header: 'ID', size: 50 },
         { accessorKey: 'nama_jabatan', header: 'Nama Jabatan', size: 200 },
@@ -210,22 +314,24 @@ const StrukturOrganisasi = () => {
                 <div className="flex gap-2">
                     <button 
                         onClick={() => handleEdit(row.original)}
-                        className="px-2 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600"
+                        className="text-blue-500 hover:text-blue-700"
+                        title="Edit"
                     >
-                        Edit
+                        <Edit className="w-5 h-5" />
                     </button>
                     <button 
                         onClick={() => handleDelete(row.original.id)}
-                        className="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+                        className="text-red-500 hover:text-red-700"
+                        title="Hapus"
                     >
-                        Hapus
+                        <Trash className="w-5 h-5" />
                     </button>
                 </div>
             ),
-            size: 150,
+            size: 100,
         },
     ], []);
-
+    
     const strukturColumns = useMemo(() => [
         { accessorKey: 'id', header: 'ID', size: 50 },
         { 
@@ -233,7 +339,12 @@ const StrukturOrganisasi = () => {
             header: 'Pegawai',
             Cell: ({ row }) => {
                 const pegawaiData = pegawai.find(p => p.id === row.original.pegawai_id);
-                return pegawaiData?.nama || '-';
+                return pegawaiData ? (
+                    <div>
+                        <div>{pegawaiData.nama}</div>
+                        <div className="text-xs text-gray-500">NIP: {pegawaiData.nip || '-'}</div>
+                    </div>
+                ) : '-';
             },
             size: 200 
         },
@@ -253,19 +364,21 @@ const StrukturOrganisasi = () => {
                 <div className="flex gap-2">
                     <button 
                         onClick={() => handleEdit(row.original)}
-                        className="px-2 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600"
+                        className="text-blue-500 hover:text-blue-700"
+                        title="Edit"
                     >
-                        Edit
+                        <Edit className="w-5 h-5" />
                     </button>
                     <button 
                         onClick={() => handleDelete(row.original.id)}
-                        className="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+                        className="text-red-500 hover:text-red-700"
+                        title="Hapus"
                     >
-                        Hapus
+                        <Trash className="w-5 h-5" />
                     </button>
                 </div>
             ),
-            size: 150,
+            size: 100,
         },
     ], [pegawai, jabatan]);
 
@@ -278,37 +391,75 @@ const StrukturOrganisasi = () => {
                     {error && (
                         <div className="bg-red-100 text-red-700 p-4 mb-4 rounded">
                             {error}
+                            <button 
+                                onClick={() => setError(null)} 
+                                className="ml-2 text-red-800 font-bold"
+                            >
+                                ×
+                            </button>
                         </div>
                     )}
 
-                    <div className="mb-4">
-                        <div className="flex gap-4 mb-4">
-                            <button
-                                onClick={() => setActiveTab('pegawai')}
-                                className={`px-4 py-2 rounded ${activeTab === 'pegawai' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
-                            >
-                                Data Pegawai
-                            </button>
-                            <button
-                                onClick={() => setActiveTab('jabatan')}
-                                className={`px-4 py-2 rounded ${activeTab === 'jabatan' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
-                            >
-                                Data Jabatan
-                            </button>
-                            <button
-                                onClick={() => setActiveTab('struktur')}
-                                className={`px-4 py-2 rounded ${activeTab === 'struktur' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
-                            >
-                                Struktur Organisasi
-                            </button>
+                    <div className="mb-6">
+                        <h1 className="text-2xl font-bold mb-4">Struktur Organisasi</h1>
+                        <div className="flex flex-wrap items-center gap-4 mb-4">
+                            <div className="flex flex-wrap gap-2">
+                                <button
+                                    onClick={() => setActiveTab('pegawai')}
+                                    className={`px-4 py-2 rounded ${activeTab === 'pegawai' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+                                >
+                                    Data Pegawai
+                                </button>
+                                <button
+                                    onClick={() => setActiveTab('jabatan')}
+                                    className={`px-4 py-2 rounded ${activeTab === 'jabatan' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+                                >
+                                    Data Jabatan
+                                </button>
+                                <button
+                                    onClick={() => setActiveTab('struktur')}
+                                    className={`px-4 py-2 rounded ${activeTab === 'struktur' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+                                >
+                                    Pegawai Jabatan
+                                </button>
+                            </div>
                         </div>
 
-                        <button
-                            onClick={handleAdd}
-                            className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 mb-4"
-                        >
-                            Tambah Data
-                        </button>
+                        <div className="flex flex-wrap items-center gap-4 mb-4">
+                            <button
+                                onClick={handleAdd}
+                                className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+                            >
+                                Tambah Data
+                            </button>
+                            
+                            {/* Search field */}
+                            <div className="flex-1 max-w-md">
+                                <input
+                                    type="text"
+                                    placeholder="Cari..."
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    className="p-2 border border-gray-300 rounded w-full"
+                                />
+                            </div>
+                            
+                            {/* Year filter - only for pegawai and struktur */}
+                            {(activeTab === 'pegawai' || activeTab === 'struktur') && availableYears.length > 0 && (
+                                <div>
+                                    <select
+                                        value={filterYear}
+                                        onChange={(e) => setFilterYear(e.target.value)}
+                                        className="p-2 border border-gray-300 rounded"
+                                    >
+                                        <option value="">Semua Tahun</option>
+                                        {availableYears.map(year => (
+                                            <option key={year} value={year}>{year}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                            )}
+                        </div>
                     </div>
 
                     <MaterialReactTable
@@ -317,12 +468,23 @@ const StrukturOrganisasi = () => {
                             activeTab === 'jabatan' ? jabatanColumns :
                             strukturColumns
                         }
-                        data={
-                            activeTab === 'pegawai' ? pegawai :
-                            activeTab === 'jabatan' ? jabatan :
-                            strukturOrganisasi
-                        }
+                        data={getFilteredData()}
                         state={{ isLoading: loading }}
+                        enableColumnFilters
+                        enablePagination
+                        enableSorting
+                        initialState={{
+                            pagination: {
+                                pageSize: 10,
+                                pageIndex: 0,
+                            },
+                        }}
+                        muiTablePaginationProps={{
+                            rowsPerPageOptions: [10, 25, 50, 100],
+                            labelRowsPerPage: 'Baris per halaman',
+                            showFirstButton: true,
+                            showLastButton: true,
+                        }}
                     />
                 </div>
             </div>
@@ -388,7 +550,7 @@ const StrukturOrganisasi = () => {
                                     >
                                         <option value="">Pilih Pegawai</option>
                                         {pegawai.map(p => (
-                                            <option key={p.id} value={p.id}>{p.nama}</option>
+                                            <option key={p.id} value={p.id}>{p.nama} - {p.nip || 'No NIP'} ({p.tahun_aktif})</option>
                                         ))}
                                     </select>
                                     <select
