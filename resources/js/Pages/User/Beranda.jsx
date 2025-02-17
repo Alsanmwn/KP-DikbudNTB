@@ -99,23 +99,23 @@ export default function Beranda({ auth }) {
             {/* Statistik Section */}
             <section className="bg-white text-center py-12">
                 <h3 className="text-[25px] font-bold text-[#223A5C] mb-8" style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)' }}>Statistik</h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mx-auto max-w-6xl">
-                    <div className="p-6 border-2 border-[#0E2038] rounded-lg shadow-lg">
-                        <img src="/assets/School.png" alt="Sekolah" className="mx-auto mb-4 w-16" />
-                        <h4 className="text-xl font-semibold text-[#223A5C]">Sekolah</h4>
-                        <p className="text-xl font-bold text-black">350</p>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mx-auto max-w-6xl">
+                        <div className="p-6 border-2 border-[#0E2038] rounded-lg shadow-lg">
+                            <img src="/assets/School.png" alt="Sekolah" className="mx-auto mb-4 w-16" />
+                            <h4 className="text-xl font-semibold text-[#223A5C]">Sekolah</h4>
+                            <p className="text-xl font-bold">350</p>
+                        </div>
+                        <div className="p-6 border-2 border-[#0E2038] rounded-lg shadow-lg">
+                            <img src="/assets/Students.png" alt="Siswa" className="mx-auto mb-4 w-16" />
+                            <h4 className="text-xl font-semibold text-[#223A5C]">Siswa</h4>
+                            <p className="text-xl font-bold">120,000</p>
+                        </div>
+                        <div className="p-6 border-2 border-[#0E2038] rounded-lg shadow-lg">
+                            <img src="/assets/Training.png" alt="Guru" className="mx-auto mb-4 w-16" />
+                            <h4 className="text-xl font-semibold text-[#223A5C]">Guru</h4>
+                            <p className="text-xl font-bold">8,500</p>
+                        </div>
                     </div>
-                    <div className="p-6 border-2 border-[#0E2038] rounded-lg shadow-lg">
-                        <img src="/assets/Students.png" alt="Siswa" className="mx-auto mb-4 w-16" />
-                        <h4 className="text-xl font-semibold text-[#223A5C]">Siswa</h4>
-                        <p className="text-xl font-bold text-black">120,000</p>
-                    </div>
-                    <div className="p-6 border-2 border-[#0E2038] rounded-lg shadow-lg">
-                        <img src="/assets/Training.png" alt="Guru" className="mx-auto mb-4 w-16" />
-                        <h4 className="text-xl font-semibold text-[#223A5C]">Guru</h4>
-                        <p className="text-xl font-bold text-black">8,500</p>
-                    </div>
-                </div>
             </section>
            
             {/* Profil Kami */}
@@ -315,7 +315,7 @@ export default function Beranda({ auth }) {
                             <Calendar
                                 onChange={setDate}
                                 value={date}
-                                className="custom-calendar text-black"
+                                className="custom-calendar"
                             />
                         </div>
                         <p className="text-white mt-4">
@@ -347,15 +347,15 @@ export default function Beranda({ auth }) {
                 </button>
             )}
 
-            <section className="bg-white text-center py-16 pb-16">
+            <section id="layanan-kami" className="bg-white text-center py-16 pb-16 min-h-screen">    
                 <h3 className="text-[25px] font-bold text-[#223A5C] mb-8" style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)' }}>Layanan Kami</h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mx-auto max-w-6xl">
                     <div className="p-8 border-2 border-[#0E2038] rounded-lg shadow-lg">
                         <img src="/assets/letter.png" alt="Sekolah" className="mx-auto mb-4 w-24" />
                         <Link href="User/pengajuan-surat">
-                            <h4 className="text-xl font-semibold text-black">Pengajuan Surat</h4>
+                            <h4 className="text-xl font-semibold text-[#223A5C]">Layanan Pendidikan</h4>
                         </Link>
-                        <p className="text-xl font-reguler mt-3 text-black">
+                        <p className="text-xl font-reguler mt-3">
                             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus vitae eleifend lectus. Duis dignissim
                             nibh porta, sodales nibh ullamcorper, cursus nunc. In eget tempor tortor.
                         </p>
@@ -363,9 +363,9 @@ export default function Beranda({ auth }) {
                     <div className="p-8 border-2 border-[#0E2038] rounded-lg shadow-lg">
                         <img src="/assets/Data.png" alt="Siswa" className="mx-auto mb-4 w-24" />
                         <Link href="User/data-pendidikan">
-                            <h4 className="text-xl font-semibold text-black">Data Pendidikan</h4>
+                            <h4 className="text-xl font-semibold text-[#223A5C]">Data Pendidikan</h4>
                         </Link>
-                        <p className="text-xl font-reguler mt-3 text-black">
+                        <p className="text-xl font-reguler mt-3">
                             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus vitae eleifend lectus. Duis dignissim
                             nibh porta, sodales nibh ullamcorper, cursus nunc. In eget tempor tortor.
                         </p>
@@ -373,11 +373,11 @@ export default function Beranda({ auth }) {
                     <div className="p-8 border-2 border-[#0E2038] rounded-lg shadow-lg">
                         <img src="/assets/Study.png" alt="Guru" className="mx-auto mb-4 w-24" />
                         <a href="https://ayomi.vercel.app/" target="_blank" rel="noopener noreferrer">
-                            <h4 className="text-xl font-semibold text-black">
+                            <h4 className="text-xl font-semibold text-[#223A5C]">
                                 Rumah Belajar
                             </h4>
                         </a>
-                        <p className="text-xl font-reguler mt-3 text-black">
+                        <p className="text-xl font-reguler mt-3">
                             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus vitae eleifend lectus. Duis dignissim
                             nibh porta, sodales nibh ullamcorper, cursus nunc. In eget tempor tortor.
                         </p>

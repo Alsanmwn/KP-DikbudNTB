@@ -15,12 +15,11 @@ const Footer = () => {
 
         {/* Section 2: Categories (Center aligned in grid, title left-aligned) */}
         <div className="flex flex-col items-center justify-center md:items-start md:justify-start text-left">
-          <h3 className="text-2xl font-semibold mb-6 text-left">Category</h3> {/* Rata kiri untuk judul */}
+          <h3 className="text-2xl font-semibold mb-6 text-left">Layanan</h3> {/* Rata kiri untuk judul */}
           <ul className="space-y-4 text-lg">
-            <li>Academic Scholar</li>
-            <li>Non-Academic Scholar</li>
-            <li>Bantuan</li>
-            <li>Penelitian</li>
+            <li>Pengajuan Surat</li>
+            <li>Data Pendidikan</li>
+            <li>Rumah Belajar</li>
           </ul>
         </div>
 

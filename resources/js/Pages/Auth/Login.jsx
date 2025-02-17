@@ -33,20 +33,20 @@ export default function Login({ status, canResetPassword }) {
 
             <form onSubmit={submit}>
                 {/* Gambar logo */}
-                <div className="flex items-center mb-4">
+                <div className="flex justify-center items-center mb-4">
                     <img
-                        src="/assets/logocontoh.jpg"
+                        src="/assets/logobtidp.png"
                         alt="Logo"
-                        className="h-90 w-25"
+                        className="w-[150px] h-[50px] md:w-[130px] md:h-[100px] lg:w-[220px] lg:h-[120px]"
                     />
                 </div>
 
-                {/* Judul di atas email */}
+                {/* Judul di atas email
                 <div className="mb-4 text-center">
                     <h1 className="text-2xl font-bold text-white">
                         Login nama website
                     </h1>
-                </div>
+                </div> */}
 
                 <div>
                     <InputLabel htmlFor="email" value="Email" className="text-white" />
