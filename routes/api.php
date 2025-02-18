@@ -9,6 +9,8 @@ use App\Http\Controllers\PendaftaranKegiatanController;
 use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\JabatanController;
+use App\Http\Controllers\PegawaiJabatanController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -62,18 +64,21 @@ Route::middleware(['auth:admin'])->prefix('admin')->group(function () {
 
 Route::get('/kegiatan/{kegiatan}/pendaftar', [KegiatanController::class, 'getPendaftar']);
 
-Route::get('/organization-members', [OrganizationController::class, 'getMembers']);
-Route::get('/department-staff', [OrganizationController::class, 'getDepartmentStaff']);
+Route::get('/struktur-organisasi', [PegawaiJabatanController::class, 'index']);
+Route::post('/struktur-organisasi', [PegawaiJabatanController::class, 'store']);
+Route::put('/struktur-organisasi/{id}', [PegawaiJabatanController::class, 'update']);
+Route::delete('/struktur-organisasi/{id}', [PegawaiJabatanController::class, 'destroy']);
 
-Route::get('/struktur-organisasi', [OrganizationController::class, 'index']);
-Route::post('/struktur-organisasi', [OrganizationController::class, 'store']);
-Route::put('/struktur-organisasi/{id}', [OrganizationController::class, 'update']);
-Route::delete('/struktur-organisasi/{id}', [OrganizationController::class, 'destroy']);
+
+Route::get('/organization-members', [PegawaiJabatanController::class, 'getMembers']);
+Route::get('/department-staff', [PegawaiJabatanController::class, 'getDepartmentStaff']);
+
+// In your routes/api.php
+Route::apiResource('struktur-organisasi', PegawaiJabatanController::class);
 
 // Di routes/api.php, pastikan route API sudah terdaftar:
 Route::get('/pegawai', [PegawaiController::class, 'index']);
-Route::get('/jabatan', [JabatanController::class, 'index']);
-// Route::get('/struktur-organisasi', [OrganizationController::class, 'index']);
+// Route::get('/jabatan', [JabatanController::class, 'index']);
 
 // Tambahkan route test
 Route::get('/test', function() {
@@ -85,8 +90,24 @@ Route::apiResource('pegawai', PegawaiController::class);
 Route::apiResource('jabatan', JabatanController::class);
 // Route::apiResource('struktur-organisasi', PegawaiJabatanController::class);
 
-Route::get('struktur-organisasi-relations', [PegawaiJabatanController::class, 'getRelationalData']);
+// Route::get('struktur-organisasi-relations', [PegawaiJabatanController::class, 'getRelationalData']);
 
+// Route::delete('/api/jabatan/{id}', 'JabatanController@destroy');
+
+Route::get('/jabatan', [JabatanController::class, 'index']);
+Route::post('/jabatan', [JabatanController::class, 'store']);
+Route::get('/jabatan/{id}', [JabatanController::class, 'show']);
+Route::put('/jabatan/{id}', [JabatanController::class, 'update']);
+Route::delete('/jabatan/{id}', [JabatanController::class, 'destroy']);
+
+// Route::prefix('api')->group(function () {
+//     Route::get('/pegawai-jabatan', [PegawaiJabatanController::class, 'index']);
+//     Route::post('/pegawai-jabatan', [PegawaiJabatanController::class, 'store']);
+//     Route::put('/pegawai-jabatan/{id}', [PegawaiJabatanController::class, 'update']);
+//     Route::delete('/pegawai-jabatan/{id}', [PegawaiJabatanController::class, 'destroy']);
+// });
+
+Route::apiResource('pegawai-jabatan', PegawaiJabatanController::class);
 
 
 

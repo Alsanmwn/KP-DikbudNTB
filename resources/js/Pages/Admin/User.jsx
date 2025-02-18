@@ -3,8 +3,8 @@ import { MaterialReactTable } from 'material-react-table';
 import axios from 'axios';
 import Sidebar from '@/Components/Sidebar';
 import { usePage } from '@inertiajs/react';
+import { Edit, Trash } from 'lucide-react';
 
-// Set up axios defaults
 axios.defaults.baseURL = window.location.origin;
 axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
@@ -38,14 +38,13 @@ const User = () => {
     const handleDelete = async (id) => {
         if (!window.confirm('Apakah Anda yakin ingin menghapus pengguna ini?')) return;
         try {
-            const response = await axios.delete(`/api/users/${id}`);
+            await axios.delete(`/api/users/${id}`);
             setUsers(users.filter(user => user.id !== id));
         } catch (error) {
             console.error('Error deleting user:', error);
             setError('Gagal menghapus pengguna.');
         }
     };
-    
 
     const handleEdit = (user) => {
         setEditUser(user);
@@ -69,10 +68,9 @@ const User = () => {
             console.error('Error updating user:', error);
             setError('Gagal memperbarui pengguna.');
         }
-    };      
+    };
 
     const columns = useMemo(() => [
-        { accessorKey: 'id', header: 'No', size: 50 },
         { accessorKey: 'name', header: 'Nama', size: 200 },
         { accessorKey: 'email', header: 'Email', size: 200 },
         {
@@ -88,23 +86,21 @@ const User = () => {
             header: 'Aksi',
             Cell: ({ row }) => (
                 <div className="flex gap-2">
-                    <button 
-                        onClick={() => handleEdit(row.original)} 
-                        className="px-2 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 disabled:opacity-50"
-                        disabled={loading}
+                    <button onClick={() => handleEdit(row.original)} 
+                        className="text-blue-500 hover:text-blue-700"
+                        title="Edit"
                     >
-                        Edit
+                        <Edit className="w-5 h-5" />
                     </button>
-                    <button 
-                        onClick={() => handleDelete(row.original.id)} 
-                        className="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 disabled:opacity-50"
-                        disabled={loading}
+                    <button onClick={() => handleDelete(row.original.id)} 
+                        className="text-red-500 hover:text-red-700"
+                        title="Hapus"
                     >
-                        Hapus
+                        <Trash className="w-5 h-5" />
                     </button>
                 </div>
             ),
-            size: 150,
+            size: 100,
         },
     ], [users, loading]);
 

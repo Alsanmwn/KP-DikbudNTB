@@ -58,7 +58,7 @@ const StrukturOrganisasi = () => {
             const [pegawaiRes, jabatanRes, strukturRes] = await Promise.all([
                 axios.get('/api/pegawai'),
                 axios.get('/api/jabatan'),
-                axios.get('/api/struktur-organisasi')
+                axios.get('/api/pegawai-jabatan')
             ]);
             
             setPegawai(pegawaiRes.data);
@@ -85,7 +85,7 @@ const StrukturOrganisasi = () => {
             }
     
             try {
-                const strukturRes = await axios.get('/api/struktur-organisasi');
+                const strukturRes = await axios.get('/api/pegawai-jabatan');
                 setStrukturOrganisasi(strukturRes.data);
             } catch (strukturError) {
                 console.error('Error fetching struktur:', strukturError.response?.data);
@@ -98,15 +98,24 @@ const StrukturOrganisasi = () => {
     const handleAdd = () => {
         setModalMode('add');
         setSelectedData(null);
-        setFormData({
-            nama: '',
-            nip: '',
-            tahun_aktif: new Date().getFullYear(),
-            nama_jabatan: '',
-            pegawai_id: '',
-            jabatan_id: '',
-            peran: ''
-        });
+        // Reset form data based on active tab
+        if (activeTab === 'struktur') {
+            setFormData({
+                pegawai_id: '',
+                jabatan_id: '',
+                peran: ''
+            });
+        } else if (activeTab === 'pegawai') {
+            setFormData({
+                nama: '',
+                nip: '',
+                tahun_aktif: new Date().getFullYear()
+            });
+        } else if (activeTab === 'jabatan') {
+            setFormData({
+                nama_jabatan: ''
+            });
+        }
         setIsModalOpen(true);
     };
 
@@ -114,22 +123,20 @@ const StrukturOrganisasi = () => {
         setModalMode('edit');
         setSelectedData(data);
         
-        // For pegawai_jabatan (struktur), get complete data including relations
         if (activeTab === 'struktur') {
-            const struktur = {...data};
-            // Get related data for form display
-            const selectedPegawai = pegawai.find(p => p.id === struktur.pegawai_id);
-            const selectedJabatan = jabatan.find(j => j.id === struktur.jabatan_id);
+            // Make a copy of the struktur data
+            const struktur = { ...data };
             
-            if (selectedPegawai) {
-                struktur.pegawai_nama = selectedPegawai.nama;
-            }
-            
-            if (selectedJabatan) {
-                struktur.jabatan_nama = selectedJabatan.nama_jabatan;
-            }
-            
-            setFormData(struktur);
+            // setFormData({
+            //     ...struktur,
+            //     pegawai_id: String(struktur.pegawai_id), // Convert to string for select input
+            //     jabatan_id: String(struktur.jabatan_id)  // Convert to string for select input
+            // });
+            setFormData({
+                ...struktur,
+                pegawai_id: String(struktur.pegawai_id || ''), // Handle null/undefined
+                jabatan_id: String(struktur.jabatan_id || '')  // Handle null/undefined
+            });
         } else {
             setFormData(data);
         }
@@ -137,12 +144,12 @@ const StrukturOrganisasi = () => {
         setIsModalOpen(true);
     };
 
-    const handleDelete = async (id) => {
+    const handleDelete = async (id, tipe) => {
         if (!window.confirm('Apakah Anda yakin ingin menghapus data ini?')) return;
         
         try {
             let endpoint;
-            switch (activeTab) {
+            switch (tipe) {
                 case 'pegawai':
                     endpoint = `/api/pegawai/${id}`;
                     break;
@@ -150,15 +157,17 @@ const StrukturOrganisasi = () => {
                     endpoint = `/api/jabatan/${id}`;
                     break;
                 case 'struktur':
-                    endpoint = `/api/struktur-organisasi/${id}`;
+                    endpoint = `/api/pegawai-jabatan/${id}`;
                     break;
+                default:
+                    throw new Error('Tipe yang ditentukan tidak valid');
             }
             
             await axios.delete(endpoint);
             fetchData();
         } catch (error) {
-            console.error('Error deleting data:', error);
-            setError('Gagal menghapus data. ' + error.response?.data?.message || error.message);
+            console.error('Error menghapus data:', error);
+            setError(`Gagal menghapus data: ${error.message}`);
         }
     };
 
@@ -186,13 +195,29 @@ const StrukturOrganisasi = () => {
                         nama_jabatan: formData.nama_jabatan
                     };
                     break;
+                // case 'struktur':
+                //     endpoint = modalMode === 'add' ? '/api/struktur-organisasi' : `/api/struktur-organisasi/${selectedData.id}`;
+                //     method = modalMode === 'add' ? 'post' : 'put';
+                //     data = {
+                //         pegawai_id: Number(formData.pegawai_id), // Convert string to number
+                //         jabatan_id: Number(formData.jabatan_id), // Convert string to number
+                //         peran: formData.peran
+                //     };
+                //     break;
                 case 'struktur':
-                    endpoint = modalMode === 'add' ? '/api/struktur-organisasi' : `/api/struktur-organisasi/${selectedData.id}`;
+                    endpoint = modalMode === 'add' ? '/api/pegawai-jabatan' : `/api/pegawai-jabatan/${selectedData.id}`;
                     method = modalMode === 'add' ? 'post' : 'put';
+                    
+                    // Validasi data sebelum dikirim
+                    if (!formData.pegawai_id || !formData.jabatan_id) {
+                        setError('Pegawai dan Jabatan harus dipilih');
+                        return; // Berhenti jika validasi gagal
+                    }
+                    
                     data = {
-                        pegawai_id: formData.pegawai_id,
-                        jabatan_id: formData.jabatan_id,
-                        peran: formData.peran
+                        pegawai_id: parseInt(formData.pegawai_id, 10),
+                        jabatan_id: parseInt(formData.jabatan_id, 10),
+                        peran: formData.peran || ''
                     };
                     break;
             }
@@ -277,7 +302,6 @@ const StrukturOrganisasi = () => {
     };
 
     const pegawaiColumns = useMemo(() => [
-        { accessorKey: 'id', header: 'ID', size: 50 },
         { accessorKey: 'nama', header: 'Nama', size: 200 },
         { accessorKey: 'nip', header: 'NIP', size: 150 },
         { accessorKey: 'tahun_aktif', header: 'Tahun Aktif', size: 100 },
@@ -293,7 +317,7 @@ const StrukturOrganisasi = () => {
                         <Edit className="w-5 h-5" />
                     </button>
                     <button 
-                        onClick={() => handleDelete(row.original.id)}
+                        onClick={() => handleDelete(row.original.id, 'pegawai')}
                         className="text-red-500 hover:text-red-700"
                         title="Hapus"
                     >
@@ -306,7 +330,6 @@ const StrukturOrganisasi = () => {
     ], []);
     
     const jabatanColumns = useMemo(() => [
-        { accessorKey: 'id', header: 'ID', size: 50 },
         { accessorKey: 'nama_jabatan', header: 'Nama Jabatan', size: 200 },
         {
             header: 'Aksi',
@@ -320,7 +343,7 @@ const StrukturOrganisasi = () => {
                         <Edit className="w-5 h-5" />
                     </button>
                     <button 
-                        onClick={() => handleDelete(row.original.id)}
+                        onClick={() => handleDelete(row.original.id, 'jabatan')}
                         className="text-red-500 hover:text-red-700"
                         title="Hapus"
                     >
@@ -333,7 +356,6 @@ const StrukturOrganisasi = () => {
     ], []);
     
     const strukturColumns = useMemo(() => [
-        { accessorKey: 'id', header: 'ID', size: 50 },
         { 
             accessorKey: 'pegawai_id', 
             header: 'Pegawai',
@@ -343,6 +365,7 @@ const StrukturOrganisasi = () => {
                     <div>
                         <div>{pegawaiData.nama}</div>
                         <div className="text-xs text-gray-500">NIP: {pegawaiData.nip || '-'}</div>
+                        <div className="text-xs text-gray-500">Tahun: {pegawaiData.tahun_aktif}</div>
                     </div>
                 ) : '-';
             },
@@ -370,7 +393,7 @@ const StrukturOrganisasi = () => {
                         <Edit className="w-5 h-5" />
                     </button>
                     <button 
-                        onClick={() => handleDelete(row.original.id)}
+                        onClick={() => handleDelete(row.original.id, 'struktur')}
                         className="text-red-500 hover:text-red-700"
                         title="Hapus"
                     >
@@ -404,24 +427,24 @@ const StrukturOrganisasi = () => {
                         <h1 className="text-2xl font-bold mb-4">Struktur Organisasi</h1>
                         <div className="flex flex-wrap items-center gap-4 mb-4">
                             <div className="flex flex-wrap gap-2">
-                                <button
-                                    onClick={() => setActiveTab('pegawai')}
-                                    className={`px-4 py-2 rounded ${activeTab === 'pegawai' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
-                                >
-                                    Data Pegawai
-                                </button>
-                                <button
-                                    onClick={() => setActiveTab('jabatan')}
-                                    className={`px-4 py-2 rounded ${activeTab === 'jabatan' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
-                                >
-                                    Data Jabatan
-                                </button>
-                                <button
-                                    onClick={() => setActiveTab('struktur')}
-                                    className={`px-4 py-2 rounded ${activeTab === 'struktur' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
-                                >
-                                    Pegawai Jabatan
-                                </button>
+                            <button
+                                onClick={() => setActiveTab('pegawai')}
+                                className={`px-4 py-2 rounded ${activeTab === 'pegawai' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+                            >
+                                Data Pegawai
+                            </button>
+                            <button
+                                onClick={() => setActiveTab('jabatan')}
+                                className={`px-4 py-2 rounded ${activeTab === 'jabatan' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+                            >
+                                Data Jabatan
+                            </button>
+                            <button
+                                onClick={() => setActiveTab('struktur')}
+                                className={`px-4 py-2 rounded ${activeTab === 'struktur' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+                            >
+                                Pegawai Jabatan
+                            </button>
                             </div>
                         </div>
 
@@ -503,85 +526,103 @@ const StrukturOrganisasi = () => {
                         <form onSubmit={handleSubmit}>
                             {activeTab === 'pegawai' && (
                                 <>
-                                    <input
-                                        type="text"
-                                        value={formData.nama}
-                                        onChange={e => setFormData({ ...formData, nama: e.target.value })}
-                                        className="border p-2 w-full mb-2"
-                                        placeholder="Nama Pegawai"
-                                        required
-                                    />
-                                    <input
-                                        type="text"
-                                        value={formData.nip}
-                                        onChange={e => setFormData({ ...formData, nip: e.target.value })}
-                                        className="border p-2 w-full mb-2"
-                                        placeholder="NIP"
-                                    />
-                                    <input
-                                        type="number"
-                                        value={formData.tahun_aktif}
-                                        onChange={e => setFormData({ ...formData, tahun_aktif: e.target.value })}
-                                        className="border p-2 w-full mb-4"
-                                        placeholder="Tahun Aktif"
-                                        required
-                                    />
+                                    <div className="mb-4">
+                                        <label className="block text-sm font-medium text-gray-700">Nama Pegawai</label>
+                                        <input
+                                            type="text"
+                                            value={formData.nama || ''}
+                                            onChange={e => setFormData({ ...formData, nama: e.target.value })}
+                                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                                            placeholder="Nama Pegawai"
+                                            required
+                                        />
+                                    </div>
+                                    <div className="mb-4">
+                                        <label className="block text-sm font-medium text-gray-700">NIP</label>
+                                        <input
+                                            type="text"
+                                            value={formData.nip || ''}
+                                            onChange={e => setFormData({ ...formData, nip: e.target.value })}
+                                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                                            placeholder="NIP"
+                                        />
+                                    </div>
+                                    <div className="mb-4">
+                                        <label className="block text-sm font-medium text-gray-700">Tahun Aktif</label>
+                                        <input
+                                            type="number"
+                                            value={formData.tahun_aktif || new Date().getFullYear()}
+                                            onChange={e => setFormData({ ...formData, tahun_aktif: e.target.value })}
+                                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                                            placeholder="Tahun Aktif"
+                                            required
+                                            min="2000"
+                                            max="2100"
+                                        />
+                                    </div>
                                 </>
                             )}
 
                             {activeTab === 'jabatan' && (
-                                <input
-                                    type="text"
-                                    value={formData.nama_jabatan}
-                                    onChange={e => setFormData({ ...formData, nama_jabatan: e.target.value })}
-                                    className="border p-2 w-full mb-4"
-                                    placeholder="Nama Jabatan"
-                                    required
-                                />
+                                <div className="mb-4">
+                                    <label className="block text-sm font-medium text-gray-700">Nama Jabatan</label>
+                                    <input
+                                        type="text"
+                                        value={formData.nama_jabatan || ''}
+                                        onChange={e => setFormData({ ...formData, nama_jabatan: e.target.value })}
+                                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                                        placeholder="Nama Jabatan"
+                                        required
+                                    />
+                                </div>
                             )}
 
                             {activeTab === 'struktur' && (
                                 <>
-                                    <select
-                                        value={formData.pegawai_id}
-                                        onChange={e => setFormData({ ...formData, pegawai_id: e.target.value })}
-                                        className="border p-2 w-full mb-2"
-                                        required
-                                    >
-                                        <option value="">Pilih Pegawai</option>
-                                        {pegawai.map(p => (
-                                            <option key={p.id} value={p.id}>{p.nama} - {p.nip || 'No NIP'} ({p.tahun_aktif})</option>
-                                        ))}
-                                    </select>
-                                    <select
-                                        value={formData.jabatan_id}
-                                        onChange={e => setFormData({ ...formData, jabatan_id: e.target.value })}
-                                        className="border p-2 w-full mb-2"
-                                        required
-                                    >
-                                        <option value="">Pilih Jabatan</option>
-                                        {jabatan.map(j => (
-                                            <option key={j.id} value={j.id}>{j.nama_jabatan}</option>
-                                        ))}
-                                    </select>
-                                    <input
-                                        type="text"
-                                        value={formData.peran}
-                                        onChange={e => setFormData({ ...formData, peran: e.target.value })}
-                                        className="border p-2 w-full mb-4"
-                                        placeholder="Peran"
-                                    />
+                                    <div className="mb-4">
+                                        <label className="block text-sm font-medium text-gray-700">Pegawai</label>
+                                        <select
+                                            value={formData.pegawai_id || ''}
+                                            onChange={e => setFormData({ ...formData, pegawai_id: e.target.value })}
+                                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                                            required
+                                        >
+                                            <option value="">Pilih Pegawai</option>
+                                            {pegawai.map(p => (
+                                                <option key={p.id} value={p.id}>
+                                                    {p.nama} - {p.nip || 'No NIP'} ({p.tahun_aktif})
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                    <div className="mb-4">
+                                        <label className="block text-sm font-medium text-gray-700">Jabatan</label>
+                                        <select
+                                            value={formData.jabatan_id || ''}
+                                            onChange={e => setFormData({ ...formData, jabatan_id: e.target.value })}
+                                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                                            required
+                                        >
+                                            <option value="">Pilih Jabatan</option>
+                                            {jabatan.map(j => (
+                                                <option key={j.id} value={j.id}>{j.nama_jabatan}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                    <div className="mb-4">
+                                        <label className="block text-sm font-medium text-gray-700">Peran</label>
+                                        <input
+                                            type="text"
+                                            value={formData.peran || ''}
+                                            onChange={e => setFormData({ ...formData, peran: e.target.value })}
+                                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                                            placeholder="Peran"
+                                        />
+                                    </div>
                                 </>
                             )}
 
-                            <div className="flex justify-end gap-2">
-                                <button
-                                    type="submit"
-                                    className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                                    disabled={loading}
-                                >
-                                    {loading ? 'Menyimpan...' : 'Simpan'}
-                                </button>
+                            <div className="flex justify-end gap-2 mt-6">
                                 <button
                                     type="button"
                                     onClick={() => setIsModalOpen(false)}
@@ -589,6 +630,13 @@ const StrukturOrganisasi = () => {
                                     disabled={loading}
                                 >
                                     Batal
+                                </button>
+                                <button
+                                    type="submit"
+                                    className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                                    disabled={loading}
+                                >
+                                    {loading ? 'Menyimpan...' : 'Simpan'}
                                 </button>
                             </div>
                         </form>

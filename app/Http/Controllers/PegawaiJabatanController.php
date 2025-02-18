@@ -2,182 +2,149 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Pegawai;
 use App\Models\Jabatan;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Validator;
+use App\Models\PegawaiJabatan;
+// use App\Models\StrukturOrganisasi;
+use Illuminate\Http\Request;
 
 class PegawaiJabatanController extends Controller
 {
-    /**
-     * Display a listing of the strukturOrganisasi.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    // public function index()
+    // {
+    //     return PegawaiJabatan::with(['pegawai', 'jabatan'])->get();
+    // }
+
+    // public function store(Request $request)
+    // {
+    //     try {
+    //         $validated = $request->validate([
+    //             'pegawai_id' => 'required|exists:pegawai,id',
+    //             'jabatan_id' => 'required|exists:jabatan,id',
+    //             'peran' => 'nullable|string'
+    //         ]);
+            
+    //         $strukturOrganisasi = StrukturOrganisasi::create($validated);
+    //         return response()->json($strukturOrganisasi, 201);
+    //     } catch (\Exception $e) {
+    //         \Log::error('Create error: ' . $e->getMessage());
+    //         return response()->json(['error' => $e->getMessage()], 500);
+    //     }
+    // }
+
+    // public function update(Request $request, $id)
+    // {
+    //     try {
+    //         $validated = $request->validate([
+    //             'pegawai_id' => 'required|exists:pegawai,id',
+    //             'jabatan_id' => 'required|exists:jabatan,id',
+    //             'peran' => 'nullable|string'
+    //         ]);
+            
+    //         $strukturOrganisasi = StrukturOrganisasi::findOrFail($id);
+    //         $strukturOrganisasi->update($validated);
+            
+    //         return response()->json($strukturOrganisasi);
+    //     } catch (\Exception $e) {
+    //         \Log::error('Update error: ' . $e->getMessage());
+    //         return response()->json(['error' => $e->getMessage()], 500);
+    //     }
+    // }
+
+    // public function destroy($id)
+    // {
+    //     try {
+    //         $strukturOrganisasi = StrukturOrganisasi::findOrFail($id);
+    //         $strukturOrganisasi->delete();
+            
+    //         return response()->json(['message' => 'Data berhasil dihapus']);
+    //     } catch (\Exception $e) {
+    //         \Log::error('Delete error: ' . $e->getMessage());
+    //         return response()->json(['error' => $e->getMessage()], 500);
+    //     }
+    // }
     public function index()
     {
-        // Retrieve all records from the pegawai_jabatan pivot table
-        $strukturOrganisasi = DB::table('pegawai_jabatan')
-            ->select('pegawai_jabatan.*')
-            ->get();
+        $pegawaiJabatan = PegawaiJabatan::with(['pegawai', 'jabatan'])->get()
+            ->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'pegawai_id' => $item->pegawai_id,
+                    'jabatan_id' => $item->jabatan_id,
+                    'peran' => $item->peran,
+                    'pegawai' => $item->pegawai,
+                    'jabatan' => $item->jabatan,
+                    'created_at' => $item->created_at,
+                    'updated_at' => $item->updated_at,
+                ];
+            });
         
-        return response()->json($strukturOrganisasi);
+        return response()->json($pegawaiJabatan);
     }
 
-    /**
-     * Store a newly created strukturOrganisasi in database.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $validated = $request->validate([
             'pegawai_id' => 'required|exists:pegawai,id',
             'jabatan_id' => 'required|exists:jabatan,id',
-            'peran' => 'nullable|string|max:255',
+            'peran' => 'nullable|string'
         ]);
 
-        if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()], 422);
-        }
-
-        // Check for existing relationship to avoid duplicates
-        $exists = DB::table('pegawai_jabatan')
-            ->where('pegawai_id', $request->pegawai_id)
-            ->where('jabatan_id', $request->jabatan_id)
-            ->exists();
-
-        if ($exists) {
-            return response()->json(['error' => 'Hubungan pegawai dan jabatan ini sudah ada.'], 422);
-        }
-
-        // Insert to pivot table
-        $id = DB::table('pegawai_jabatan')->insertGetId([
-            'pegawai_id' => $request->pegawai_id,
-            'jabatan_id' => $request->jabatan_id,
-            'peran' => $request->peran,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        // Return the created record
-        $strukturOrganisasi = DB::table('pegawai_jabatan')->find($id);
+        $pegawaiJabatan = PegawaiJabatan::create($validated);
         
-        return response()->json($strukturOrganisasi, 201);
+        return response()->json($pegawaiJabatan->load(['pegawai', 'jabatan']), 201);
     }
 
-    /**
-     * Display the specified strukturOrganisasi.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        $strukturOrganisasi = DB::table('pegawai_jabatan')->find($id);
-        
-        if (!$strukturOrganisasi) {
-            return response()->json(['error' => 'Data struktur organisasi tidak ditemukan'], 404);
-        }
-
-        return response()->json($strukturOrganisasi);
-    }
-
-    /**
-     * Update the specified strukturOrganisasi in database.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, $id)
     {
-        $strukturOrganisasi = DB::table('pegawai_jabatan')->find($id);
-        
-        if (!$strukturOrganisasi) {
-            return response()->json(['error' => 'Data struktur organisasi tidak ditemukan'], 404);
-        }
-
-        $validator = Validator::make($request->all(), [
+        $validated = $request->validate([
             'pegawai_id' => 'required|exists:pegawai,id',
             'jabatan_id' => 'required|exists:jabatan,id',
-            'peran' => 'nullable|string|max:255',
+            'peran' => 'nullable|string'
         ]);
 
-        if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()], 422);
-        }
-
-        // Check for existing relationship to avoid duplicates
-        $exists = DB::table('pegawai_jabatan')
-            ->where('pegawai_id', $request->pegawai_id)
-            ->where('jabatan_id', $request->jabatan_id)
-            ->where('id', '!=', $id)
-            ->exists();
-
-        if ($exists) {
-            return response()->json(['error' => 'Hubungan pegawai dan jabatan ini sudah ada.'], 422);
-        }
-
-        // Update the record
-        DB::table('pegawai_jabatan')
-            ->where('id', $id)
-            ->update([
-                'pegawai_id' => $request->pegawai_id,
-                'jabatan_id' => $request->jabatan_id,
-                'peran' => $request->peran,
-                'updated_at' => now(),
-            ]);
-
-        // Return the updated record
-        $updatedStruktureOrganisasi = DB::table('pegawai_jabatan')->find($id);
+        $pegawaiJabatan = PegawaiJabatan::findOrFail($id);
+        $pegawaiJabatan->update($validated);
         
-        return response()->json($updatedStruktureOrganisasi);
+        return response()->json($pegawaiJabatan->load(['pegawai', 'jabatan']));
     }
 
-    /**
-     * Remove the specified strukturOrganisasi from database.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
-        $strukturOrganisasi = DB::table('pegawai_jabatan')->find($id);
+        $pegawaiJabatan = PegawaiJabatan::findOrFail($id);
+        $pegawaiJabatan->delete();
         
-        if (!$strukturOrganisasi) {
-            return response()->json(['error' => 'Data struktur organisasi tidak ditemukan'], 404);
-        }
-
-        DB::table('pegawai_jabatan')->where('id', $id)->delete();
-
-        return response()->json(['message' => 'Data struktur organisasi berhasil dihapus']);
+        return response()->json(null, 204);
     }
-
-    /**
-     * Get all structure data with related pegawai and jabatan information
-     * 
-     * @return \Illuminate\Http\Response
-     */
-    public function getRelationalData()
+    
+    public function getMembers()
     {
-        $strukturWithRelations = DB::table('pegawai_jabatan')
-            ->join('pegawai', 'pegawai_jabatan.pegawai_id', '=', 'pegawai.id')
-            ->join('jabatan', 'pegawai_jabatan.jabatan_id', '=', 'jabatan.id')
+        $members = Pegawai::join('pegawai_jabatan', 'pegawai.id', '=', 'pegawai_jabatan.pegawai_id')
+            ->join('jabatan', 'jabatan.id', '=', 'pegawai_jabatan.jabatan_id')
             ->select(
-                'pegawai_jabatan.id',
-                'pegawai_jabatan.pegawai_id',
-                'pegawai_jabatan.jabatan_id',
-                'pegawai_jabatan.peran',
-                'pegawai.nama as pegawai_nama',
-                'pegawai.nip as pegawai_nip',
-                'pegawai.tahun_aktif as pegawai_tahun_aktif',
-                'jabatan.nama_jabatan'
+                'pegawai.nama as name',
+                'jabatan.nama_jabatan as position',
+                'pegawai.nip',
+                'pegawai.tahun_aktif as activeYear'
             )
             ->get();
 
-        return response()->json($strukturWithRelations);
+        return response()->json($members);
+    }
+
+    public function getDepartmentStaff()
+    {
+        $departmentStaff = Pegawai::join('pegawai_jabatan', 'pegawai.id', '=', 'pegawai_jabatan.pegawai_id')
+            ->join('jabatan', 'jabatan.id', '=', 'pegawai_jabatan.jabatan_id')
+            ->select(
+                'jabatan.nama_jabatan as department',
+                'pegawai.nama as name',
+                'pegawai_jabatan.peran as subDepartment',
+                'pegawai.nip'
+            )
+            ->get()
+            ->groupBy('department');
+
+        return response()->json($departmentStaff);
     }
 }

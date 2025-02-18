@@ -15,4 +15,15 @@ class Pegawai extends Model
                     ->withPivot('peran')
                     ->withTimestamps();
     }
+
+    public static function boot()
+    {
+        parent::boot();
+    
+        static::deleting(function ($pegawai) {
+            $pegawai->jabatan()->detach();
+        });
+    }    
+
 }
+
