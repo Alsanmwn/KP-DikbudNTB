@@ -8,15 +8,6 @@ use Illuminate\Validation\Rule;
 
 class PegawaiController extends Controller
 {
-    // public function index()
-    // {
-    //     return response()->json(Pegawai::all());
-    // }
-    // public function index()
-    // {
-    //     return Pegawai::all(); // Pastikan data di-return dalam format JSON
-    // }
-    // PegawaiController.php
     public function index()
     {
         try {
@@ -53,9 +44,21 @@ class PegawaiController extends Controller
         return response()->json($pegawai);
     }
 
-    public function destroy(Pegawai $pegawai)
+    // public function destroy(Pegawai $pegawai)
+    // {
+    //     $pegawai->delete();
+    //     return response()->json(null, 204);
+    // }
+    public function destroy($id)
     {
-        $pegawai->delete();
-        return response()->json(null, 204);
+        try {
+            $pegawai = Pegawai::findOrFail($id);
+            $pegawai->delete();
+            return response()->json(['message' => 'Pegawai berhasil dihapus']);
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                'message' => 'Data pegawai tidak ditemukan'
+            ], 404);
+        }
     }
 }

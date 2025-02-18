@@ -184,18 +184,21 @@ const AgendaBTIDP = () => {
               setIsModalOpen(true);
             }}
             className="text-blue-500 hover:text-blue-700"
+            title="Edit"
           >
             <Edit className="w-5 h-5" />
           </button>
           <button
             onClick={() => handleDeleteKegiatan(row.original.id)}
             className="text-red-500 hover:text-red-700"
+            title="Hapus"
           >
             <Trash className="w-5 h-5" />
           </button>
           <button
             onClick={() => fetchRegistrants(row.original.id)}
             className="text-green-500 hover:text-green-700"
+            title="Lihat Peserta"
           >
             <Users className="w-5 h-5" />
           </button>
