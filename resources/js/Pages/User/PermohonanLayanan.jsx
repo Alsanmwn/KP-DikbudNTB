@@ -1,21 +1,34 @@
 import React, { useState } from 'react';
 import Navbar from '@/Components/Navbar';
 import Footer from '@/Components/Footer';
+import axios from 'axios';
 
-const PengajuanSurat = ({ auth }) => {
+const PermohonanLayanan = ({ auth }) => {
     const [formData, setFormData] = useState({
         nama: '',
         email: '',
         alamatSekolah: '',
         namaKegiatan: '',
         keperluan: '',
+        customKeperluan: '',
         kontak: '',
         files: [],
     });
 
+    const [showCustomKeperluan, setShowCustomKeperluan] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
+
+        if (name === "keperluan") {
+            setShowCustomKeperluan(value === "Konsultasi yang Lain");
+            if (value !== "Konsultasi yang Lain") {
+                setFormData((prev) => ({ ...prev, customKeperluan: '' }));
+            }
+        }
     };
 
     const handleFileChange = (e) => {
@@ -32,10 +45,54 @@ const PengajuanSurat = ({ auth }) => {
         setFormData({ ...formData, files: newFiles });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Data terkirim:', formData);
-        alert('Permohonan layanan pendidikan berhasil dikirim!');
+        setLoading(true);
+        setError(null);
+
+        try {
+            const formDataToSend = new FormData();
+            
+            // Append text fields
+            Object.keys(formData).forEach(key => {
+                if (key !== 'files') {
+                    formDataToSend.append(key, formData[key]);
+                }
+            });
+            
+            // Append files
+            formData.files.forEach(file => {
+                formDataToSend.append('files[]', file);
+            });
+
+            const response = await axios.post('/api/permohonan-layanan', formDataToSend, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'Accept': 'application/json',
+                }
+            });
+
+            alert('Permohonan layanan berhasil dikirim!');
+            
+            // Reset form
+            setFormData({
+                nama: '',
+                email: '',
+                alamatSekolah: '',
+                namaKegiatan: '',
+                keperluan: '',
+                customKeperluan: '',
+                kontak: '',
+                files: [],
+            });
+            setShowCustomKeperluan(false);
+            
+        } catch (err) {
+            setError(err.response?.data?.message || 'Terjadi kesalahan saat mengirim permohonan.');
+            alert('Gagal mengirim permohonan. Silakan coba lagi.');
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -64,7 +121,7 @@ const PengajuanSurat = ({ auth }) => {
                                 value={formData.nama} 
                                 onChange={handleChange} 
                                 required 
-                                className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                                className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black" 
                             />
                         </div>
                         <div>
@@ -75,7 +132,7 @@ const PengajuanSurat = ({ auth }) => {
                                 value={formData.email} 
                                 onChange={handleChange} 
                                 required 
-                                className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                                className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black" 
                             />
                         </div>
                         <div>
@@ -86,7 +143,7 @@ const PengajuanSurat = ({ auth }) => {
                                 value={formData.alamatSekolah} 
                                 onChange={handleChange} 
                                 required 
-                                className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                                className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black" 
                             />
                         </div>
                         <div>
@@ -97,7 +154,7 @@ const PengajuanSurat = ({ auth }) => {
                                 value={formData.namaKegiatan} 
                                 onChange={handleChange} 
                                 required 
-                                className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                                className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black" 
                             />
                         </div>
                         <div>
@@ -106,12 +163,29 @@ const PengajuanSurat = ({ auth }) => {
                                 name="keperluan" 
                                 value={formData.keperluan} 
                                 onChange={handleChange} 
-                                className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black">
+                                <option value="">Pilih Keperluan</option>
                                 <option value="Permintaan Data">Permintaan Data</option>
                                 <option value="Permintaan Narasumber">Permintaan Narasumber</option>
                                 <option value="Konsultasi yang Lain">Konsultasi yang Lain</option>
                             </select>
                         </div>
+
+                        {/* Input tambahan jika "Konsultasi yang Lain" dipilih */}
+                        {showCustomKeperluan && (
+                            <div>
+                                <label className="block text-left font-medium text-[#223A5C]">Jelaskan Konsultasi</label>
+                                <input 
+                                    type="text" 
+                                    name="customKeperluan" 
+                                    value={formData.customKeperluan} 
+                                    onChange={handleChange} 
+                                    required 
+                                    className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black" 
+                                />
+                            </div>
+                        )}
+
                         <div>
                             <label className="block text-left font-medium text-[#223A5C]">Upload PDF (Maksimal 3)</label>
                             <input 
@@ -119,20 +193,18 @@ const PengajuanSurat = ({ auth }) => {
                                 accept="application/pdf" 
                                 multiple 
                                 onChange={handleFileChange} 
-                                className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                                className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black" 
                             />
                             <div className="mt-2 space-y-2">
                                 {formData.files.map((file, index) => (
                                     <div key={index} className="flex items-center justify-between bg-white p-2 border rounded-md shadow-sm">
                                         <span className="text-sm text-gray-700 truncate">📄 {file.name}</span>
-                                        <div className="flex gap-2">
-                                            <a href={URL.createObjectURL(file)} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline text-sm">Lihat</a>
-                                            <button type="button" onClick={() => handleDeleteFile(index)} className="text-red-500 hover:underline text-sm">Hapus</button>
-                                        </div>
+                                        <button type="button" onClick={() => handleDeleteFile(index)} className="text-red-500 hover:underline text-sm">Hapus</button>
                                     </div>
                                 ))}
                             </div>
                         </div>
+
                         <div>
                             <label className="block text-left font-medium text-[#223A5C]">Kontak</label>
                             <input 
@@ -141,7 +213,7 @@ const PengajuanSurat = ({ auth }) => {
                                 value={formData.kontak} 
                                 onChange={handleChange} 
                                 required 
-                                className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                                className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black" 
                             />
                         </div>
                         <button 
@@ -157,4 +229,4 @@ const PengajuanSurat = ({ auth }) => {
     );
 };
 
-export default PengajuanSurat;
+export default PermohonanLayanan;

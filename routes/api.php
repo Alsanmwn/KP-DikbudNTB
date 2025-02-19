@@ -10,6 +10,7 @@ use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\JabatanController;
 use App\Http\Controllers\PegawaiJabatanController;
+use App\Http\Controllers\PermohonanLayananController;
 
 
 /*
@@ -109,5 +110,5 @@ Route::delete('/jabatan/{id}', [JabatanController::class, 'destroy']);
 
 Route::apiResource('pegawai-jabatan', PegawaiJabatanController::class);
 
-
+Route::post('/permohonan-layanan', [PermohonanLayananController::class, 'store']);
 

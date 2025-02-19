@@ -50,9 +50,9 @@ Route::get('/dashboard', function () {
     return Inertia::render('User/Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::get('User/pengajuan-surat', function () {
-    return Inertia::render('User/PengajuanSurat');
-})->name('pengajuan-surat');
+Route::get('User/permohonan-layanan', function () {
+    return Inertia::render('User/PermohonanLayanan');
+})->name('permohonan-layanan');
 
 Route::get('User/Beranda/agenda-btidp', function () {
     return Inertia::render('User/Beranda/AgendaBtidp');
