@@ -1,21 +1,13 @@
-// src/components/CulturalInfo.js
-
 import React from 'react';
-import Navbar from '@/Components/Navbar'; // Pastikan jalur impor sesuai dengan struktur proyek Anda
+import Navbar from '@/Components/Navbar'; 
 import Footer from '@/Components/Footer';
 
 const InformasiKebudayaan = () => {
     return (
         <>
-            <Navbar /> {/* Menambahkan Navbar di atas section */}
+            <Navbar />
             <section
-                className="flex flex-col items-center pb-16 mx-100  mt-16" // Menambahkan margin atas
-                // style={{
-                //     backgroundImage: 'url(/assets/Gradasi2.jpeg)', // Ganti dengan path gambar Anda
-                //     backgroundSize: 'cover', // Mengatur gambar agar menutupi seluruh area
-                //     backgroundPosition: 'center', // Mengatur posisi gambar di tengah
-                //     backgroundRepeat: 'no-repeat' // Mencegah gambar diulang
-                // }}
+                className="flex flex-col items-center pb-16 mx-100  mt-16" 
             >
                 <h3
                     className="text-[25px] font-bold text-center text-[#223A5C] mb-8 mt-8"

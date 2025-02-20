@@ -3,15 +3,13 @@ import { Link, usePage } from '@inertiajs/react';
 export default function Navbar() {
     const { auth } = usePage().props;
 
-    // Fungsi untuk Scroll ke bagian "Layanan Kami" dengan pas
     const scrollToLayanan = (e) => {
         e.preventDefault();
         const layananSection = document.getElementById('layanan-kami');
         if (layananSection) {
-            const navbarHeight = document.querySelector('nav').offsetHeight; // Tinggi navbar
-            const sectionTop = layananSection.getBoundingClientRect().top + window.scrollY; // Posisi section
+            const navbarHeight = document.querySelector('nav').offsetHeight;
+            const sectionTop = layananSection.getBoundingClientRect().top + window.scrollY; 
             
-            // Scroll dengan posisi yang pas di layar
             window.scrollTo({
                 top: sectionTop - navbarHeight, 
                 behavior: 'smooth'

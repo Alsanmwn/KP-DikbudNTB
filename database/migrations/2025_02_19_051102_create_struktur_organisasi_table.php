@@ -29,7 +29,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('pegawai_id')->constrained('pegawai')->onDelete('cascade');
             $table->foreignId('jabatan_id')->constrained('jabatan')->onDelete('cascade');
-            $table->string('peran')->nullable(); // Contoh: "Tenaga Pendukung DI", "Anggota", dll.
+            $table->string('peran')->nullable(); 
             $table->timestamps();
         });
     }

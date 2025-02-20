@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, usePage, router } from '@inertiajs/react';
-import { UserIcon, HomeIcon, AcademicCapIcon, CalendarIcon, ChevronDownIcon, ChevronUpIcon, ArrowRightOnRectangleIcon, BuildingOffice2Icon } from '@heroicons/react/24/outline';
+import { UserIcon, HomeIcon, AcademicCapIcon, CalendarIcon, ChevronDownIcon, ChevronUpIcon, ArrowRightOnRectangleIcon, BuildingOffice2Icon, ClipboardDocumentIcon } from '@heroicons/react/24/outline';
 
 const Sidebar = () => {
     const { admin } = usePage().props;
@@ -40,6 +40,12 @@ const Sidebar = () => {
         {   name: 'Agenda BTIDP', 
             route: '/admin/agenda-btidp', 
             icon: <CalendarIcon className="h-5 w-5 mr-3" /> 
+        },
+        { 
+            name: 'Permohonan Layanan', 
+            route: '/admin/permohonan-layanan', 
+            icon: <ClipboardDocumentIcon className="h-5 w-5 mr-3" 
+            /> 
         },
         {   name: 'Ubah Profile', 
             route: '/admin/profile', 

@@ -95,9 +95,6 @@ const EventCard = ({ event }) => {
   );
 };
 
-
-
-
 // Rest of the code remains the same as in the original file
 const EventsList = ({ filteredEvents }) => {
   if (filteredEvents.length === 0) {

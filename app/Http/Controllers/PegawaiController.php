@@ -1,5 +1,5 @@
 <?php
-// app/Http/Controllers/PegawaiController.php
+
 namespace App\Http\Controllers;
 
 use App\Models\Pegawai;
@@ -44,11 +44,6 @@ class PegawaiController extends Controller
         return response()->json($pegawai);
     }
 
-    // public function destroy(Pegawai $pegawai)
-    // {
-    //     $pegawai->delete();
-    //     return response()->json(null, 204);
-    // }
     public function destroy($id)
     {
         try {

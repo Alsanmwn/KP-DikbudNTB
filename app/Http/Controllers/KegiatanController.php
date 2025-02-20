@@ -14,7 +14,6 @@ class KegiatanController extends Controller
     {
         $kegiatan = Kegiatan::all()->map(function ($item) {
             if ($item->gambar) {
-                // Pastikan path gambar tidak mengandung 'public/'
                 $item->gambar = str_replace('public/', '', $item->gambar);
             }
             return $item;
@@ -26,9 +25,8 @@ class KegiatanController extends Controller
     {
         $kegiatan = Kegiatan::findOrFail($id);
        
-        // Transform the image URL if needed
         if ($kegiatan->gambar) {
-            $kegiatan->gambar = $kegiatan->gambar; // The storage path will be prepended in the frontend
+            $kegiatan->gambar = $kegiatan->gambar; 
         }
        
         return Inertia::render('User/DetailKegiatan', [
@@ -75,7 +73,6 @@ class KegiatanController extends Controller
         ]);
 
         if ($request->hasFile('gambar')) {
-            // Delete old image if there's a new one
             if ($kegiatan->gambar) {
                 Storage::disk('public')->delete($kegiatan->gambar);
             }
@@ -96,7 +93,6 @@ class KegiatanController extends Controller
         return response()->json(null, 204);
     }
 
-    // Di KegiatanController atau di route lain
     public function checkImagePaths()
     {
         $kegiatan = Kegiatan::all();
@@ -121,23 +117,11 @@ class KegiatanController extends Controller
         ]);
     }
 
-    // public function daftarKegiatan(Request $request)
-    // {
-    //     $kegiatan_data = Kegiatan::findOrFail($request->kegiatan_id);
-        
-    //     return Inertia::render('User/DaftarKegiatan', [ // Sesuaikan dengan path yang benar
-    //         'auth' => [
-    //             'user' => Auth::user()
-    //         ],
-    //         'kegiatan_data' => $kegiatan_data
-    //     ]);
-    // }
-
     public function daftarKegiatan(Request $request)
     {
         $kegiatan_data = Kegiatan::findOrFail($request->kegiatan_id);
         
-        return Inertia::render('User/PendaftaranKegiatan', [ // Sesuaikan dengan path yang benar
+        return Inertia::render('User/PendaftaranKegiatan', [ 
             'auth' => [
                 'user' => Auth::user()
             ],
@@ -148,7 +132,7 @@ class KegiatanController extends Controller
     public function getPendaftar(Kegiatan $kegiatan)
     {
         \Log::info('Fetching registrants for kegiatan: ' . $kegiatan->id);
-        $pendaftar = $kegiatan->pendaftaran()->get(); // Changed from pendaftar to pendaftaran
+        $pendaftar = $kegiatan->pendaftaran()->get(); 
         \Log::info('Found pendaftar:', $pendaftar->toArray());
         
         return $pendaftar;

@@ -112,3 +112,8 @@ Route::apiResource('pegawai-jabatan', PegawaiJabatanController::class);
 
 Route::post('/permohonan-layanan', [PermohonanLayananController::class, 'store']);
 
+// Route::get('/api/permohonanlayanans', [PermohonanLayananController::class, 'index']);
+Route::get('/permohonan-layanan', [PermohonanLayananController::class, 'index']);
+Route::post('/permohonan-layanan', [PermohonanLayananController::class, 'store']);
+Route::put('/permohonan-layanan/{id}', [PermohonanLayananController::class, 'update']);
+Route::delete('/permohonan-layanan/{id}', [PermohonanLayananController::class, 'destroy']);

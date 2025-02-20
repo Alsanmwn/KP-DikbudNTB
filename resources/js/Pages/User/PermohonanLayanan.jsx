@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import Navbar from '@/Components/Navbar';
 import Footer from '@/Components/Footer';
-import axios from 'axios';
 
 const PermohonanLayanan = ({ auth }) => {
     const [formData, setFormData] = useState({
@@ -16,8 +15,6 @@ const PermohonanLayanan = ({ auth }) => {
     });
 
     const [showCustomKeperluan, setShowCustomKeperluan] = useState(false);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -47,53 +44,47 @@ const PermohonanLayanan = ({ auth }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setLoading(true);
-        setError(null);
-
+    
+        const formDataToSend = new FormData();
+        formDataToSend.append('nama', formData.nama);
+        formDataToSend.append('email', formData.email);
+        formDataToSend.append('alamatSekolah', formData.alamatSekolah);
+        formDataToSend.append('namaKegiatan', formData.namaKegiatan);
+        formDataToSend.append('keperluan', formData.keperluan);
+        formDataToSend.append('customKeperluan', formData.customKeperluan);
+        formDataToSend.append('kontak', formData.kontak);
+    
+        formData.files.forEach((file, index) => {
+            formDataToSend.append(`files[]`, file);
+        });
+    
         try {
-            const formDataToSend = new FormData();
-            
-            // Append text fields
-            Object.keys(formData).forEach(key => {
-                if (key !== 'files') {
-                    formDataToSend.append(key, formData[key]);
-                }
+            const response = await fetch('http://127.0.0.1:8000/api/permohonan-layanan', {
+                method: 'POST',
+                body: formDataToSend,
             });
-            
-            // Append files
-            formData.files.forEach(file => {
-                formDataToSend.append('files[]', file);
-            });
-
-            const response = await axios.post('/api/permohonan-layanan', formDataToSend, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                    'Accept': 'application/json',
-                }
-            });
-
-            alert('Permohonan layanan berhasil dikirim!');
-            
-            // Reset form
-            setFormData({
-                nama: '',
-                email: '',
-                alamatSekolah: '',
-                namaKegiatan: '',
-                keperluan: '',
-                customKeperluan: '',
-                kontak: '',
-                files: [],
-            });
-            setShowCustomKeperluan(false);
-            
-        } catch (err) {
-            setError(err.response?.data?.message || 'Terjadi kesalahan saat mengirim permohonan.');
-            alert('Gagal mengirim permohonan. Silakan coba lagi.');
-        } finally {
-            setLoading(false);
+    
+            const result = await response.json();
+            if (response.ok) {
+                alert(result.message);
+                setFormData({
+                    nama: '',
+                    email: '',
+                    alamatSekolah: '',
+                    namaKegiatan: '',
+                    keperluan: '',
+                    customKeperluan: '',
+                    kontak: '',
+                    files: [],
+                });
+            } else {
+                alert('Gagal mengirim permohonan');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Terjadi kesalahan saat mengirim data');
         }
-    };
+    };    
 
     return (
         <div className="bg-gray-50 text-black/50 dark:bg-black dark:text-white/50 min-h-screen flex flex-col">

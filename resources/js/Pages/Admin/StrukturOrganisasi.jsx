@@ -18,9 +18,9 @@ const StrukturOrganisasi = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [modalMode, setModalMode] = useState('add'); // 'add' or 'edit'
+    const [modalMode, setModalMode] = useState('add'); 
     const [selectedData, setSelectedData] = useState(null);
-    const [activeTab, setActiveTab] = useState('pegawai'); // 'pegawai', 'jabatan', or 'struktur'
+    const [activeTab, setActiveTab] = useState('pegawai'); 
     
     // Search and filter state
     const [searchTerm, setSearchTerm] = useState('');
@@ -127,15 +127,10 @@ const StrukturOrganisasi = () => {
             // Make a copy of the struktur data
             const struktur = { ...data };
             
-            // setFormData({
-            //     ...struktur,
-            //     pegawai_id: String(struktur.pegawai_id), // Convert to string for select input
-            //     jabatan_id: String(struktur.jabatan_id)  // Convert to string for select input
-            // });
             setFormData({
                 ...struktur,
-                pegawai_id: String(struktur.pegawai_id || ''), // Handle null/undefined
-                jabatan_id: String(struktur.jabatan_id || '')  // Handle null/undefined
+                pegawai_id: String(struktur.pegawai_id || ''), 
+                jabatan_id: String(struktur.jabatan_id || '') 
             });
         } else {
             setFormData(data);
@@ -195,15 +190,6 @@ const StrukturOrganisasi = () => {
                         nama_jabatan: formData.nama_jabatan
                     };
                     break;
-                // case 'struktur':
-                //     endpoint = modalMode === 'add' ? '/api/struktur-organisasi' : `/api/struktur-organisasi/${selectedData.id}`;
-                //     method = modalMode === 'add' ? 'post' : 'put';
-                //     data = {
-                //         pegawai_id: Number(formData.pegawai_id), // Convert string to number
-                //         jabatan_id: Number(formData.jabatan_id), // Convert string to number
-                //         peran: formData.peran
-                //     };
-                //     break;
                 case 'struktur':
                     endpoint = modalMode === 'add' ? '/api/pegawai-jabatan' : `/api/pegawai-jabatan/${selectedData.id}`;
                     method = modalMode === 'add' ? 'post' : 'put';
