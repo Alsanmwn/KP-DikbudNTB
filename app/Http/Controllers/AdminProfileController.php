@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Http\Controllers;
-
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -18,7 +16,6 @@ class AdminProfileController extends Controller
             'admin' => $request->user(),
         ]);
     }
-
 
     public function update(Request $request)
     {

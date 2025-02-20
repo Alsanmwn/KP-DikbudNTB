@@ -26,7 +26,6 @@ class PendaftaranKegiatanController extends Controller
 
             Log::info('Data tervalidasi:', $validated);
 
-            // Coba membuat record baru
             $pendaftaran = PendaftaranKegiatan::create([
                 'namaLengkap' => $validated['namaLengkap'],
                 'jenisKelamin' => $validated['jenisKelamin'],

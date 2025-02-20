@@ -127,6 +127,12 @@ Route::prefix('admin')->group(function () {
             ]);
         })->name('admin.data-pendidikan.guru');
 
+        Route::get('/permohonan-layanan', function () {
+            return Inertia::render('Admin/PermohonanLayanan', [
+                'admin' => Auth::guard('admin')->user(),
+            ]);
+        })->name('admin.permohonan-layanan-pendidikan');
+
         Route::post('logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
     });
 });

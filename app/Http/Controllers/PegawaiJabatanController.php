@@ -5,64 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Pegawai;
 use App\Models\Jabatan;
 use App\Models\PegawaiJabatan;
-// use App\Models\StrukturOrganisasi;
 use Illuminate\Http\Request;
 
 class PegawaiJabatanController extends Controller
 {
-    // public function index()
-    // {
-    //     return PegawaiJabatan::with(['pegawai', 'jabatan'])->get();
-    // }
-
-    // public function store(Request $request)
-    // {
-    //     try {
-    //         $validated = $request->validate([
-    //             'pegawai_id' => 'required|exists:pegawai,id',
-    //             'jabatan_id' => 'required|exists:jabatan,id',
-    //             'peran' => 'nullable|string'
-    //         ]);
-            
-    //         $strukturOrganisasi = StrukturOrganisasi::create($validated);
-    //         return response()->json($strukturOrganisasi, 201);
-    //     } catch (\Exception $e) {
-    //         \Log::error('Create error: ' . $e->getMessage());
-    //         return response()->json(['error' => $e->getMessage()], 500);
-    //     }
-    // }
-
-    // public function update(Request $request, $id)
-    // {
-    //     try {
-    //         $validated = $request->validate([
-    //             'pegawai_id' => 'required|exists:pegawai,id',
-    //             'jabatan_id' => 'required|exists:jabatan,id',
-    //             'peran' => 'nullable|string'
-    //         ]);
-            
-    //         $strukturOrganisasi = StrukturOrganisasi::findOrFail($id);
-    //         $strukturOrganisasi->update($validated);
-            
-    //         return response()->json($strukturOrganisasi);
-    //     } catch (\Exception $e) {
-    //         \Log::error('Update error: ' . $e->getMessage());
-    //         return response()->json(['error' => $e->getMessage()], 500);
-    //     }
-    // }
-
-    // public function destroy($id)
-    // {
-    //     try {
-    //         $strukturOrganisasi = StrukturOrganisasi::findOrFail($id);
-    //         $strukturOrganisasi->delete();
-            
-    //         return response()->json(['message' => 'Data berhasil dihapus']);
-    //     } catch (\Exception $e) {
-    //         \Log::error('Delete error: ' . $e->getMessage());
-    //         return response()->json(['error' => $e->getMessage()], 500);
-    //     }
-    // }
     public function index()
     {
         $pegawaiJabatan = PegawaiJabatan::with(['pegawai', 'jabatan'])->get()

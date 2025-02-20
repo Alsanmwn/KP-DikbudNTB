@@ -1,11 +1,9 @@
-// resources/js/Pages/Admin/AgendaBtidp.jsx
-
 import React from 'react';
-import Sidebar from '@/Components/Sidebar'; // Pastikan Sidebar sudah ada
+import Sidebar from '@/Components/Sidebar'; 
 import { usePage, router } from '@inertiajs/react';
 
 const Guru = () => {
-    const { admin } = usePage().props; // Mendapatkan data admin
+    const { admin } = usePage().props;
 
     const handleLogout = () => {
         router.post('/admin/logout');
