@@ -183,4 +183,14 @@ Route::get('/pendaftaran-kegiatan', [KegiatanController::class, 'daftarKegiatan'
 
 Route::get('/pendaftaran-kegiatan', [KegiatanController::class, 'daftarKegiatan'])->name('pendaftaran-kegiatan');
 
+Route::get('storage/{filename}', function ($filename) {
+    $path = storage_path('app/public/' . $filename);
+    
+    if (!File::exists($path)) {
+        abort(404);
+    }
+    
+    return Response::file($path);
+})->where('filename', '.*');
+
 require __DIR__.'/auth.php';
