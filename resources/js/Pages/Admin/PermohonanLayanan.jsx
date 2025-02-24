@@ -88,22 +88,39 @@ const PermohonanLayanan = () => {
             accessorKey: 'files',
             header: 'Files',
             Cell: ({ row }) => {
-                const files = JSON.parse(row.original.files || '[]');
-                return files.length ? (
-                    <div className="flex gap-2">
-                        {files.map((file, index) => (
-                            <a 
-                                key={index}
-                                href={file}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-blue-500 hover:text-blue-700"
-                            >
-                                <FileText className="w-5 h-5" />
-                            </a>
-                        ))}
-                    </div>
-                ) : '-';
+                try {
+                    const files = JSON.parse(row.original.files || '[]');
+                    return files.length ? (
+                        <div className="flex gap-2">
+                            {files.map((file, index) => {
+                                // Tambahkan base URL jika file path relatif
+                                const fullUrl = file.startsWith('http') ? file : `/storage/${file}`;
+                                return (
+                                    <a 
+                                        key={index}
+                                        href={fullUrl}
+                                        onClick={(e) => {
+                                            if (file.toLowerCase().endsWith('.pdf')) {
+                                                e.preventDefault();
+                                                window.open(fullUrl, '_blank', 'noopener,noreferrer');
+                                            }
+                                        }}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="flex items-center gap-2 text-blue-500 hover:text-blue-700"
+                                        title={fullUrl}
+                                    >
+                                        <FileText className="w-5 h-5" />
+                                        {file.toLowerCase().endsWith('.pdf') && <span className="text-xs">PDF</span>}
+                                    </a>
+                                );
+                            })}
+                        </div>
+                    ) : '-';
+                } catch (error) {
+                    console.error('Kesalahan saat membaca file:', error);
+                    return <div className="text-red-500">Gagal memuat file</div>;
+                }
             },
             size: 150,
             minSize: 150
