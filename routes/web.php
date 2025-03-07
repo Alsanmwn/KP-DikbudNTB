@@ -173,6 +173,34 @@ Route::middleware(['admin.auth'])->prefix('admin')->group(function () {
             'admin' => Auth::user(),  // Kirim data admin ke Inertia
         ]);
     })->name('admin.agenda-btidp');  
+
+       // User management
+       Route::get('/user', function () {
+        return Inertia::render('Admin/User', [
+            'admin' => Auth::guard('admin')->user(),  // Gunakan guard 'admin'
+        ]);
+    })->name('admin.user');
+
+    // Struktur Organisasi
+    Route::get('/struktur-organisasi', function () {
+        return Inertia::render('Admin/StrukturOrganisasi', [
+            'admin' => Auth::guard('admin')->user(),  // Gunakan guard 'admin'
+        ]);
+    })->name('admin.struktur-organisasi');
+
+    // Permohonan Layanan
+    Route::get('/permohonan-layanan', function () {
+        return Inertia::render('Admin/PermohonanLayanan', [
+            'admin' => Auth::guard('admin')->user(),  // Gunakan guard 'admin'
+        ]);
+    })->name('admin.permohonan-layanan');
+
+    // Ubah Profile
+    Route::get('/ubah-profile', function () {
+        return Inertia::render('Admin/UbahProfile', [
+            'admin' => Auth::guard('admin')->user(),  // Gunakan guard 'admin'
+        ]);
+    })->name('admin.ubah-profile');
    
     Route::post('/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
 });
