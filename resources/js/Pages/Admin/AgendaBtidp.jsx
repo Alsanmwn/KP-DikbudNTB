@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { MaterialReactTable } from 'material-react-table';
-import { PlusCircle, Edit, Trash, Users } from 'lucide-react';
+import { PlusCircle, Edit, Trash, Users, Link as LinkIcon } from 'lucide-react';
 import axios from 'axios';
 import Sidebar from '@/Components/Sidebar';
 
@@ -18,7 +18,8 @@ const AgendaBTIDP = () => {
     waktu: '',
     lokasi: '',
     gambar: null,
-    status: 'open for public'
+    status: 'open for public',
+    link_kegiatan: ''
   });
   const [imagePreview, setImagePreview] = useState('');
 
@@ -126,7 +127,8 @@ const AgendaBTIDP = () => {
       waktu: '',
       lokasi: '',
       gambar: null,
-      status: 'open for public'
+      status: 'open for public',
+      link_kegiatan: ''
     });
     setImagePreview('');
   };
@@ -151,6 +153,23 @@ const AgendaBTIDP = () => {
         <div className="truncate max-w-[200px]" title={cell.getValue()}>
           {cell.getValue() || 'Tidak ada deskripsi'}
         </div>
+      ),
+    },
+    {
+      accessorKey: 'link_kegiatan',
+      header: 'Link Kegiatan',
+      Cell: ({ cell }) => (
+        cell.getValue() ? 
+          <a 
+            href={cell.getValue()} 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="text-blue-600 hover:text-blue-800 underline flex items-center"
+          >
+            <LinkIcon className="w-4 h-4 mr-1" />
+            Link Kegiatan
+          </a> 
+          : 'Tidak ada link'
       ),
     },
     {
@@ -379,6 +398,16 @@ const AgendaBTIDP = () => {
                     className="w-full p-2 border rounded"
                     rows="4"
                   ></textarea>
+                </div>
+                <div className="col-span-2">
+                  <label className="block mb-2">Link Kegiatan</label>
+                  <input
+                    type="url"
+                    value={currentKegiatan.link_kegiatan || ''}
+                    onChange={(e) => setCurrentKegiatan({ ...currentKegiatan, link_kegiatan: e.target.value })}
+                    className="w-full p-2 border rounded"
+                    placeholder="https://example.com/event"
+                  />
                 </div>
                 <div className="col-span-2">
                   <label className="block mb-2">Gambar</label>
