@@ -11,6 +11,9 @@ use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\JabatanController;
 use App\Http\Controllers\PegawaiJabatanController;
 use App\Http\Controllers\PermohonanLayananController;
+use App\Http\Controllers\SekolahController;
+use App\Http\Controllers\SiswaController;
+use App\Http\Controllers\GuruController;
 
 
 /*
@@ -117,3 +120,13 @@ Route::get('/permohonan-layanan', [PermohonanLayananController::class, 'index'])
 Route::post('/permohonan-layanan', [PermohonanLayananController::class, 'store']);
 Route::put('/permohonan-layanan/{id}', [PermohonanLayananController::class, 'update']);
 Route::delete('/permohonan-layanan/{id}', [PermohonanLayananController::class, 'destroy']);
+
+// Route::get('/sekolah-summary', [SekolahController::class, 'summaryAll']);
+// Route::get('/sekolah-summary/{kabupaten}', [SekolahController::class, 'summaryByKabupaten']);
+// Route::get('/sekolah-detail/{kabupaten}/{kecamatan}', [SekolahController::class, 'detailByKecamatan']);
+// Route::get('/sekolah-full/{id}', [SekolahController::class, 'detailSekolah']);
+
+Route::get('/sekolah-summary', [SekolahController::class, 'getSekolahSummary']);
+Route::get('/sekolah-summary/{kabupaten}', [SekolahController::class, 'getSekolahSummaryByKabupaten']);
+Route::get('/sekolah-detail/{kabupaten}/{kecamatan}', [SekolahController::class, 'getSekolahDetail']);
+Route::get('/sekolah-full/{id}', [SekolahController::class, 'getSekolahFull']);

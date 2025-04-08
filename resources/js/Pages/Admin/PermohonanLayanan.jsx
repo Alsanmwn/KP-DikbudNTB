@@ -3,11 +3,13 @@ import { MaterialReactTable } from 'material-react-table';
 import axios from 'axios';
 import Sidebar from '@/Components/Sidebar';
 import { usePage } from '@inertiajs/react';
-import { Edit, Trash, FileText } from 'lucide-react';
+import { Edit, Trash, FileText, User as UserIcon } from 'lucide-react';
+
 
 axios.defaults.baseURL = window.location.origin;
 axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+
 
 const PermohonanLayanan = () => {
     const { admin } = usePage().props;
@@ -17,9 +19,11 @@ const PermohonanLayanan = () => {
     const [editPermohonan, setEditPermohonan] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
+
     useEffect(() => {
         fetchPermohonan();
     }, []);
+
 
     const fetchPermohonan = async () => {
         try {
@@ -35,6 +39,7 @@ const PermohonanLayanan = () => {
         }
     };
 
+
     const handleDelete = async (id) => {
         if (!window.confirm('Apakah Anda yakin ingin menghapus permohonan ini?')) return;
         try {
@@ -46,15 +51,17 @@ const PermohonanLayanan = () => {
         }
     };
 
+
     const handleEdit = (permohonan) => {
         setEditPermohonan(permohonan);
         setIsModalOpen(true);
     };
 
+
     const handleSaveEdit = async () => {
         try {
             const response = await axios.put(`/api/permohonan-layanan/${editPermohonan.id}`, editPermohonan);
-            const updatedList = permohonanList.map(item => 
+            const updatedList = permohonanList.map(item =>
                 item.id === editPermohonan.id ? response.data : item
             );
             setPermohonanList(updatedList);
@@ -66,18 +73,19 @@ const PermohonanLayanan = () => {
         }
     };
 
+
     const columns = useMemo(() => [
         { accessorKey: 'nama', header: 'Nama', size: 200, minSize: 200 },
         { accessorKey: 'email', header: 'Email', size: 250, minSize: 250 },
         { accessorKey: 'alamat_sekolah', header: 'Alamat Sekolah', size: 300, minSize: 300 },
         { accessorKey: 'nama_kegiatan', header: 'Nama Kegiatan', size: 250, minSize: 250 },
-        { 
+        {
             accessorKey: 'keperluan',
             header: 'Keperluan',
-            size: 200, 
+            size: 200,
             minSize: 200
         },
-        { 
+        {
             accessorKey: 'custom_keperluan',  // Dipindahkan setelah keperluan
             header: 'Custom Keperluan',
             size: 300,
@@ -96,7 +104,7 @@ const PermohonanLayanan = () => {
                                 // Tambahkan base URL jika file path relatif
                                 const fullUrl = file.startsWith('http') ? file : `/storage/${file}`;
                                 return (
-                                    <a 
+                                    <a
                                         key={index}
                                         href={fullUrl}
                                         onClick={(e) => {
@@ -139,14 +147,14 @@ const PermohonanLayanan = () => {
             header: 'Aksi',
             Cell: ({ row }) => (
                 <div className="flex gap-3">
-                    <button 
+                    <button
                         onClick={() => handleEdit(row.original)}
                         className="text-blue-500 hover:text-blue-700"
                         title="Edit"
                     >
                         <Edit className="w-5 h-5" />
                     </button>
-                    <button 
+                    <button
                         onClick={() => handleDelete(row.original.id)}
                         className="text-red-500 hover:text-red-700"
                         title="Hapus"
@@ -160,6 +168,7 @@ const PermohonanLayanan = () => {
         },
     ], []);    
 
+
     const formFields = [
         { name: 'nama', label: 'Nama', type: 'text' },
         { name: 'email', label: 'Email', type: 'email' },
@@ -170,12 +179,19 @@ const PermohonanLayanan = () => {
         { name: 'kontak', label: 'Kontak', type: 'text' },
     ];
 
+
     return (
         <div className="flex h-screen overflow-hidden bg-gray-100">
             <Sidebar />
             <div className="flex-1 flex flex-col overflow-hidden">
-                <nav className="bg-white shadow-sm p-4 flex-none">
-                    Welcome, {admin.name}
+                <nav className="bg-white shadow-sm p-4 flex justify-between items-center">
+                    <div className="font-semibold text-lg"></div>
+                    <div className="flex items-center gap-2 text-gray-700">
+                        <span className="text-base font-medium">{admin.name}</span>
+                        <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white">
+                            <UserIcon className="w-5 h-5" />
+                        </div>
+                    </div>
                 </nav>
                 <div className="flex-1 overflow-hidden p-6">
                     {error && (
@@ -184,9 +200,9 @@ const PermohonanLayanan = () => {
                         </div>
                     )}
                     <div className="h-full overflow-auto bg-white rounded-lg shadow">
-                        <MaterialReactTable 
-                            columns={columns} 
-                            data={permohonanList} 
+                        <MaterialReactTable
+                            columns={columns}
+                            data={permohonanList}
                             state={{ isLoading: loading }}
                             initialState={{ density: 'comfortable' }}
                             enableColumnResizing
@@ -205,18 +221,19 @@ const PermohonanLayanan = () => {
                 </div>
             </div>
 
+
             {isModalOpen && editPermohonan && (
                 <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
                     <div className="bg-white p-6 rounded shadow-lg max-w-lg w-full">
                         <h2 className="text-lg font-semibold mb-4">Edit Permohonan Layanan</h2>
                         {formFields.map((field) => (
-                            <input 
+                            <input
                                 key={field.name}
                                 type={field.type}
                                 value={editPermohonan[field.name] || ''}
-                                onChange={e => setEditPermohonan({ 
-                                    ...editPermohonan, 
-                                    [field.name]: e.target.value 
+                                onChange={e => setEditPermohonan({
+                                    ...editPermohonan,
+                                    [field.name]: e.target.value
                                 })}
                                 className="border p-2 w-full mb-2"
                                 placeholder={field.label}
@@ -224,14 +241,14 @@ const PermohonanLayanan = () => {
                             />
                         ))}
                         <div className="flex gap-2 mt-4">
-                            <button 
+                            <button
                                 onClick={handleSaveEdit}
                                 className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
                                 disabled={loading}
                             >
                                 {loading ? 'Menyimpan...' : 'Simpan'}
                             </button>
-                            <button 
+                            <button
                                 onClick={() => setIsModalOpen(false)}
                                 className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 disabled:opacity-50"
                                 disabled={loading}
@@ -245,5 +262,6 @@ const PermohonanLayanan = () => {
         </div>
     );
 };
+
 
 export default PermohonanLayanan;

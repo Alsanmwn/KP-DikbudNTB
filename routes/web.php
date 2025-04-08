@@ -9,6 +9,18 @@ use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\AdminProfileController;
 use App\Http\Controllers\KegiatanController;
 use App\Http\Controllers\PendaftaranKegiatanController;
+// use App\Http\Controllers\SekolahController;
+// use App\Http\Controllers\GuruController;
+// use App\Http\Controllers\SiswaController;
+
+// Route::get('/', function () {
+//     return redirect('/sekolah');
+// });
+
+// Route::resource('sekolah', SekolahController::class);
+// Route::resource('guru', GuruController::class);
+// Route::resource('siswa', SiswaController::class);
+
 
 Route::get('/', function () {
     return Inertia::render('User/Beranda', [

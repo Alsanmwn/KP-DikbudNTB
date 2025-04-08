@@ -3,11 +3,14 @@ import { MaterialReactTable } from 'material-react-table';
 import axios from 'axios';
 import Sidebar from '@/Components/Sidebar';
 import { usePage } from '@inertiajs/react';
-import { Edit, Trash } from 'lucide-react';
+import { Edit, Trash, User as UserIcon } from 'lucide-react';
+import { Link } from '@inertiajs/react';
+
 
 axios.defaults.baseURL = window.location.origin;
 axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+
 
 const User = () => {
     const { admin } = usePage().props;
@@ -17,9 +20,11 @@ const User = () => {
     const [editUser, setEditUser] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
+
     useEffect(() => {
         fetchUsers();
     }, []);
+
 
     const fetchUsers = async () => {
         try {
@@ -35,6 +40,7 @@ const User = () => {
         }
     };
 
+
     const handleDelete = async (id) => {
         if (!window.confirm('Apakah Anda yakin ingin menghapus pengguna ini?')) return;
         try {
@@ -46,10 +52,12 @@ const User = () => {
         }
     };
 
+
     const handleEdit = (user) => {
         setEditUser(user);
         setIsModalOpen(true);
     };
+
 
     const handleSaveEdit = async () => {
         try {
@@ -57,8 +65,8 @@ const User = () => {
                 name: editUser.name,
                 email: editUser.email
             });
-    
-            const updatedUsers = users.map(user => 
+   
+            const updatedUsers = users.map(user =>
                 user.id === editUser.id ? response.data : user
             );
             setUsers(updatedUsers);
@@ -69,6 +77,7 @@ const User = () => {
             setError('Gagal memperbarui pengguna.');
         }
     };
+
 
     const columns = useMemo(() => [
         { accessorKey: 'name', header: 'Nama', size: 200 },
@@ -86,13 +95,13 @@ const User = () => {
             header: 'Aksi',
             Cell: ({ row }) => (
                 <div className="flex gap-2">
-                    <button onClick={() => handleEdit(row.original)} 
+                    <button onClick={() => handleEdit(row.original)}
                         className="text-blue-500 hover:text-blue-700"
                         title="Edit"
                     >
                         <Edit className="w-5 h-5" />
                     </button>
-                    <button onClick={() => handleDelete(row.original.id)} 
+                    <button onClick={() => handleDelete(row.original.id)}
                         className="text-red-500 hover:text-red-700"
                         title="Hapus"
                     >
@@ -104,54 +113,64 @@ const User = () => {
         },
     ], [users, loading]);
 
+
     return (
         <div className="flex min-h-screen bg-gray-100">
             <Sidebar />
             <div className="flex-1">
-                <nav className="bg-white shadow-sm p-4">Welcome, {admin.name}</nav>
+            <nav className="bg-white shadow-sm p-4 flex justify-between items-center">
+                <div className="font-semibold text-lg"></div>
+                <Link href={route('admin.profile')} className="flex items-center gap-2 text-gray-700 hover:text-blue-600 transition-colors">
+                    <span className="text-base font-medium">{admin.name}</span>
+                    <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white">
+                        <UserIcon className="w-5 h-5" />
+                    </div>
+                </Link>
+            </nav>
                 <div className="p-6">
                     {error && (
                         <div className="bg-red-100 text-red-700 p-4 mb-4 rounded">
                             {error}
                         </div>
                     )}
-                    <MaterialReactTable 
-                        columns={columns} 
-                        data={users} 
+                    <MaterialReactTable
+                        columns={columns}
+                        data={users}
                         state={{ isLoading: loading }}
                     />
                 </div>
             </div>
 
+
             {isModalOpen && editUser && (
                 <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
                     <div className="bg-white p-6 rounded shadow-lg max-w-lg w-full">
                         <h2 className="text-lg font-semibold mb-4">Edit Pengguna</h2>
-                        <input 
-                            type="text" 
-                            value={editUser?.name || ''} 
-                            onChange={e => setEditUser({ ...editUser, name: e.target.value })} 
-                            className="border p-2 w-full mb-2" 
+                        <input
+                            type="text"
+                            value={editUser?.name || ''}
+                            onChange={e => setEditUser({ ...editUser, name: e.target.value })}
+                            className="border p-2 w-full mb-2"
                             placeholder="Nama"
                             disabled={loading}
                         />
-                        <input 
-                            type="email" 
-                            value={editUser?.email || ''} 
-                            onChange={e => setEditUser({ ...editUser, email: e.target.value })} 
-                            className="border p-2 w-full mb-4" 
+                        <input
+                            type="email"
+                            value={editUser?.email || ''}
+                            onChange={e => setEditUser({ ...editUser, email: e.target.value })}
+                            className="border p-2 w-full mb-4"
                             placeholder="Email"
                             disabled={loading}
                         />
-                        <button 
-                            onClick={handleSaveEdit} 
+                        <button
+                            onClick={handleSaveEdit}
                             className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
                             disabled={loading}
                         >
                             {loading ? 'Menyimpan...' : 'Simpan'}
                         </button>
-                        <button 
-                            onClick={() => setIsModalOpen(false)} 
+                        <button
+                            onClick={() => setIsModalOpen(false)}
                             className="px-4 py-2 bg-gray-500 text-white rounded ml-2 hover:bg-gray-600 disabled:opacity-50"
                             disabled={loading}
                         >
@@ -163,5 +182,6 @@ const User = () => {
         </div>
     );
 };
+
 
 export default User;
