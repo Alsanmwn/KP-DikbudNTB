@@ -2,60 +2,103 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Siswa;
 use App\Models\Sekolah;
+use App\Models\Siswa;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class SiswaController extends Controller
 {
-    public function index()
+    // Get student summary by Kabupaten
+    public function siswaSummary()
     {
-        $siswa = Siswa::with('sekolah')->get();
-        return view('siswa.index', compact('siswa'));
+        $data = DB::table('siswas')
+            ->join('sekolahs', 'siswas.sekolah_id', '=', 'sekolahs.id')
+            ->select(
+                'sekolahs.kabupaten as wilayah',
+                DB::raw('SUM(CASE WHEN sekolahs.bp = "SMA" AND siswas.jenis_kelamin = "Laki-laki" THEN 1 ELSE 0 END) as sma_l'),
+                DB::raw('SUM(CASE WHEN sekolahs.bp = "SMA" AND siswas.jenis_kelamin = "Perempuan" THEN 1 ELSE 0 END) as sma_p'),
+                DB::raw('SUM(CASE WHEN sekolahs.bp = "SMK" AND siswas.jenis_kelamin = "Laki-laki" THEN 1 ELSE 0 END) as smk_l'),
+                DB::raw('SUM(CASE WHEN sekolahs.bp = "SMK" AND siswas.jenis_kelamin = "Perempuan" THEN 1 ELSE 0 END) as smk_p'),
+                DB::raw('SUM(CASE WHEN sekolahs.bp = "SLB" AND siswas.jenis_kelamin = "Laki-laki" THEN 1 ELSE 0 END) as slb_l'),
+                DB::raw('SUM(CASE WHEN sekolahs.bp = "SLB" AND siswas.jenis_kelamin = "Perempuan" THEN 1 ELSE 0 END) as slb_p')
+            )
+            ->groupBy('sekolahs.kabupaten')
+            ->get();
+
+        return response()->json($data);
     }
 
-    public function create()
+    // Get student summary by Kecamatan for a specific Kabupaten
+    public function siswaSummaryByKabupaten($kabupaten)
     {
-        $sekolah = Sekolah::all();
-        return view('siswa.create', compact('sekolah'));
+        $data = DB::table('siswas')
+            ->join('sekolahs', 'siswas.sekolah_id', '=', 'sekolahs.id')
+            ->where('sekolahs.kabupaten', $kabupaten)
+            ->select(
+                'sekolahs.kecamatan as wilayah',
+                DB::raw('SUM(CASE WHEN sekolahs.bp = "SMA" AND siswas.jenis_kelamin = "Laki-laki" THEN 1 ELSE 0 END) as sma_l'),
+                DB::raw('SUM(CASE WHEN sekolahs.bp = "SMA" AND siswas.jenis_kelamin = "Perempuan" THEN 1 ELSE 0 END) as sma_p'),
+                DB::raw('SUM(CASE WHEN sekolahs.bp = "SMK" AND siswas.jenis_kelamin = "Laki-laki" THEN 1 ELSE 0 END) as smk_l'),
+                DB::raw('SUM(CASE WHEN sekolahs.bp = "SMK" AND siswas.jenis_kelamin = "Perempuan" THEN 1 ELSE 0 END) as smk_p'),
+                DB::raw('SUM(CASE WHEN sekolahs.bp = "SLB" AND siswas.jenis_kelamin = "Laki-laki" THEN 1 ELSE 0 END) as slb_l'),
+                DB::raw('SUM(CASE WHEN sekolahs.bp = "SLB" AND siswas.jenis_kelamin = "Perempuan" THEN 1 ELSE 0 END) as slb_p')
+            )
+            ->groupBy('sekolahs.kecamatan')
+            ->get();
+
+        return response()->json($data);
     }
 
-    public function store(Request $request)
+    // Get student counts by school for a specific Kecamatan
+    public function siswaBySekolah($kabupaten, $kecamatan)
     {
-        $validated = $request->validate([
-            'sekolah_id' => 'required|exists:sekolahs,id',
-            'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
-        ]);
+        $data = DB::table('siswas')
+            ->join('sekolahs', 'siswas.sekolah_id', '=', 'sekolahs.id')
+            ->where('sekolahs.kabupaten', $kabupaten)
+            ->where('sekolahs.kecamatan', $kecamatan)
+            ->select(
+                'sekolahs.id',
+                'sekolahs.nama as wilayah',
+                'sekolahs.bp',
+                DB::raw('SUM(CASE WHEN siswas.jenis_kelamin = "Laki-laki" THEN 1 ELSE 0 END) as siswa_l'),
+                DB::raw('SUM(CASE WHEN siswas.jenis_kelamin = "Perempuan" THEN 1 ELSE 0 END) as siswa_p')
+            )
+            ->groupBy('sekolahs.id', 'sekolahs.nama', 'sekolahs.bp')
+            ->get()
+            ->map(function($item) {
+                // Transform data to match expected structure in frontend
+                $bp = $item->bp;
+                $result = [
+                    'id' => $item->id,
+                    'wilayah' => $item->wilayah,
+                ];
+                
+                if ($bp == 'SMA') {
+                    $result['sma_l'] = $item->siswa_l;
+                    $result['sma_p'] = $item->siswa_p;
+                } else if ($bp == 'SMK') {
+                    $result['smk_l'] = $item->siswa_l;
+                    $result['smk_p'] = $item->siswa_p;
+                } else if ($bp == 'SLB') {
+                    $result['slb_l'] = $item->siswa_l;
+                    $result['slb_p'] = $item->siswa_p;
+                }
+                
+                return $result;
+            });
 
-        Siswa::create($validated);
-        return redirect()->route('siswa.index')->with('success', 'Data siswa berhasil ditambahkan');
+        return response()->json($data);
     }
 
-    public function show(Siswa $siswa)
+    // Get student details for a specific school
+    public function siswaDetail($schoolId)
     {
-        return view('siswa.show', compact('siswa'));
-    }
+        $siswa = DB::table('siswas')
+            ->where('sekolah_id', $schoolId)
+            ->select('id', 'jenis_kelamin')
+            ->get();
 
-    public function edit(Siswa $siswa)
-    {
-        $sekolah = Sekolah::all();
-        return view('siswa.edit', compact('siswa', 'sekolah'));
-    }
-
-    public function update(Request $request, Siswa $siswa)
-    {
-        $validated = $request->validate([
-            'sekolah_id' => 'required|exists:sekolahs,id',
-            'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
-        ]);
-
-        $siswa->update($validated);
-        return redirect()->route('siswa.index')->with('success', 'Data siswa berhasil diupdate');
-    }
-
-    public function destroy(Siswa $siswa)
-    {
-        $siswa->delete();
-        return redirect()->route('siswa.index')->with('success', 'Data siswa berhasil dihapus');
+        return response()->json($siswa);
     }
 }

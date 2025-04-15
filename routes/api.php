@@ -121,12 +121,30 @@ Route::post('/permohonan-layanan', [PermohonanLayananController::class, 'store']
 Route::put('/permohonan-layanan/{id}', [PermohonanLayananController::class, 'update']);
 Route::delete('/permohonan-layanan/{id}', [PermohonanLayananController::class, 'destroy']);
 
-// Route::get('/sekolah-summary', [SekolahController::class, 'summaryAll']);
-// Route::get('/sekolah-summary/{kabupaten}', [SekolahController::class, 'summaryByKabupaten']);
-// Route::get('/sekolah-detail/{kabupaten}/{kecamatan}', [SekolahController::class, 'detailByKecamatan']);
-// Route::get('/sekolah-full/{id}', [SekolahController::class, 'detailSekolah']);
-
 Route::get('/sekolah-summary', [SekolahController::class, 'getSekolahSummary']);
 Route::get('/sekolah-summary/{kabupaten}', [SekolahController::class, 'getSekolahSummaryByKabupaten']);
 Route::get('/sekolah-detail/{kabupaten}/{kecamatan}', [SekolahController::class, 'getSekolahDetail']);
 Route::get('/sekolah-full/{id}', [SekolahController::class, 'getSekolahFull']);
+
+Route::get('/siswa-summary', [SiswaController::class, 'siswaSummary']);
+Route::get('/siswa-summary/{kabupaten}', [SiswaController::class, 'siswaSummaryByKabupaten']);
+Route::get('/siswa-by-sekolah/{kabupaten}/{kecamatan}', [SiswaController::class, 'siswaBySekolah']);
+Route::get('/siswa-detail/{schoolId}', [SiswaController::class, 'siswaDetail']);
+
+Route::get('/guru-summary', [GuruController::class, 'guruSummary']);
+Route::get('/guru-summary/{kabupaten}', [GuruController::class, 'guruSummaryByKabupaten']);
+Route::get('/guru-by-sekolah/{kabupaten}/{kecamatan}', [GuruController::class, 'guruBySekolah']);
+Route::get('/guru-detail/{schoolId}', [GuruController::class, 'guruDetail']);
+
+
+Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+    return $request->user();
+});
+
+// Sekolah API Routes
+Route::get('/sekolah', [SekolahController::class, 'index']);
+Route::post('/sekolah', [SekolahController::class, 'store']);
+Route::get('/sekolah/{id}', [SekolahController::class, 'show']);
+Route::put('/sekolah/{id}', [SekolahController::class, 'update']);
+Route::delete('/sekolah/{id}', [SekolahController::class, 'destroy']);
+

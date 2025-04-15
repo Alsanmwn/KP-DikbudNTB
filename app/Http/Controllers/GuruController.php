@@ -1,144 +1,102 @@
 <?php
 
-// namespace App\Http\Controllers;
-
-// use Illuminate\Http\Request;
-
-// class GuruController extends Controller
-// {
-//     /**
-//      * Display a listing of the resource.
-//      *
-//      * @return \Illuminate\Http\Response
-//      */
-//     public function index()
-//     {
-//         //
-//     }
-
-//     /**
-//      * Show the form for creating a new resource.
-//      *
-//      * @return \Illuminate\Http\Response
-//      */
-//     public function create()
-//     {
-//         //
-//     }
-
-//     /**
-//      * Store a newly created resource in storage.
-//      *
-//      * @param  \Illuminate\Http\Request  $request
-//      * @return \Illuminate\Http\Response
-//      */
-//     public function store(Request $request)
-//     {
-//         //
-//     }
-
-//     /**
-//      * Display the specified resource.
-//      *
-//      * @param  int  $id
-//      * @return \Illuminate\Http\Response
-//      */
-//     public function show($id)
-//     {
-//         //
-//     }
-
-//     /**
-//      * Show the form for editing the specified resource.
-//      *
-//      * @param  int  $id
-//      * @return \Illuminate\Http\Response
-//      */
-//     public function edit($id)
-//     {
-//         //
-//     }
-
-//     /**
-//      * Update the specified resource in storage.
-//      *
-//      * @param  \Illuminate\Http\Request  $request
-//      * @param  int  $id
-//      * @return \Illuminate\Http\Response
-//      */
-//     public function update(Request $request, $id)
-//     {
-//         //
-//     }
-
-//     /**
-//      * Remove the specified resource from storage.
-//      *
-//      * @param  int  $id
-//      * @return \Illuminate\Http\Response
-//      */
-//     public function destroy($id)
-//     {
-//         //
-//     }
-// }
-
 namespace App\Http\Controllers;
 
 use App\Models\Guru;
 use App\Models\Sekolah;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class GuruController extends Controller
 {
-    public function index()
+    // Add these methods to your GuruController:
+
+    public function guruSummary()
     {
-        $guru = Guru::with('sekolah')->get();
-        return view('guru.index', compact('guru'));
+        $data = DB::table('gurus')
+            ->join('sekolahs', 'gurus.sekolah_id', '=', 'sekolahs.id')
+            ->select(
+                'sekolahs.kabupaten as wilayah',
+                DB::raw('SUM(CASE WHEN sekolahs.bp = "SMA" AND gurus.jenis_kelamin = "Laki-laki" THEN 1 ELSE 0 END) as sma_l'),
+                DB::raw('SUM(CASE WHEN sekolahs.bp = "SMA" AND gurus.jenis_kelamin = "Perempuan" THEN 1 ELSE 0 END) as sma_p'),
+                DB::raw('SUM(CASE WHEN sekolahs.bp = "SMK" AND gurus.jenis_kelamin = "Laki-laki" THEN 1 ELSE 0 END) as smk_l'),
+                DB::raw('SUM(CASE WHEN sekolahs.bp = "SMK" AND gurus.jenis_kelamin = "Perempuan" THEN 1 ELSE 0 END) as smk_p'),
+                DB::raw('SUM(CASE WHEN sekolahs.bp = "SLB" AND gurus.jenis_kelamin = "Laki-laki" THEN 1 ELSE 0 END) as slb_l'),
+                DB::raw('SUM(CASE WHEN sekolahs.bp = "SLB" AND gurus.jenis_kelamin = "Perempuan" THEN 1 ELSE 0 END) as slb_p')
+            )
+            ->groupBy('sekolahs.kabupaten')
+            ->get();
+
+        return response()->json($data);
     }
 
-    public function create()
+    public function guruSummaryByKabupaten($kabupaten)
     {
-        $sekolah = Sekolah::all();
-        return view('guru.create', compact('sekolah'));
+        $data = DB::table('gurus')
+            ->join('sekolahs', 'gurus.sekolah_id', '=', 'sekolahs.id')
+            ->where('sekolahs.kabupaten', $kabupaten)
+            ->select(
+                'sekolahs.kecamatan as wilayah',
+                DB::raw('SUM(CASE WHEN sekolahs.bp = "SMA" AND gurus.jenis_kelamin = "Laki-laki" THEN 1 ELSE 0 END) as sma_l'),
+                DB::raw('SUM(CASE WHEN sekolahs.bp = "SMA" AND gurus.jenis_kelamin = "Perempuan" THEN 1 ELSE 0 END) as sma_p'),
+                DB::raw('SUM(CASE WHEN sekolahs.bp = "SMK" AND gurus.jenis_kelamin = "Laki-laki" THEN 1 ELSE 0 END) as smk_l'),
+                DB::raw('SUM(CASE WHEN sekolahs.bp = "SMK" AND gurus.jenis_kelamin = "Perempuan" THEN 1 ELSE 0 END) as smk_p'),
+                DB::raw('SUM(CASE WHEN sekolahs.bp = "SLB" AND gurus.jenis_kelamin = "Laki-laki" THEN 1 ELSE 0 END) as slb_l'),
+                DB::raw('SUM(CASE WHEN sekolahs.bp = "SLB" AND gurus.jenis_kelamin = "Perempuan" THEN 1 ELSE 0 END) as slb_p')
+            )
+            ->groupBy('sekolahs.kecamatan')
+            ->get();
+
+        return response()->json($data);
     }
 
-    public function store(Request $request)
+    public function guruBySekolah($kabupaten, $kecamatan)
     {
-        $validated = $request->validate([
-            'sekolah_id' => 'required|exists:sekolahs,id',
-            'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
-        ]);
+        $data = DB::table('gurus')
+            ->join('sekolahs', 'gurus.sekolah_id', '=', 'sekolahs.id')
+            ->where('sekolahs.kabupaten', $kabupaten)
+            ->where('sekolahs.kecamatan', $kecamatan)
+            ->select(
+                'sekolahs.id',
+                'sekolahs.nama as wilayah',
+                'sekolahs.bp',
+                DB::raw('SUM(CASE WHEN gurus.jenis_kelamin = "Laki-laki" THEN 1 ELSE 0 END) as guru_l'),
+                DB::raw('SUM(CASE WHEN gurus.jenis_kelamin = "Perempuan" THEN 1 ELSE 0 END) as guru_p')
+            )
+            ->groupBy('sekolahs.id', 'sekolahs.nama', 'sekolahs.bp')
+            ->get()
+            ->map(function($item) {
+                // Transform data to match expected structure in frontend
+                $bp = $item->bp;
+                $result = [
+                    'id' => $item->id,
+                    'wilayah' => $item->wilayah,
+                ];
+                
+                if ($bp == 'SMA') {
+                    $result['sma_l'] = $item->guru_l;
+                    $result['sma_p'] = $item->guru_p;
+                } else if ($bp == 'SMK') {
+                    $result['smk_l'] = $item->guru_l;
+                    $result['smk_p'] = $item->guru_p;
+                } else if ($bp == 'SLB') {
+                    $result['slb_l'] = $item->guru_l;
+                    $result['slb_p'] = $item->guru_p;
+                }
+                
+                return $result;
+            });
 
-        Guru::create($validated);
-        return redirect()->route('guru.index')->with('success', 'Data guru berhasil ditambahkan');
+        return response()->json($data);
     }
 
-    public function show(Guru $guru)
+    public function guruDetail($schoolId)
     {
-        return view('guru.show', compact('guru'));
-    }
+        $guru = DB::table('gurus')
+            ->where('sekolah_id', $schoolId)
+            ->select('id', 'jenis_kelamin')
+            ->get();
 
-    public function edit(Guru $guru)
-    {
-        $sekolah = Sekolah::all();
-        return view('guru.edit', compact('guru', 'sekolah'));
-    }
-
-    public function update(Request $request, Guru $guru)
-    {
-        $validated = $request->validate([
-            'sekolah_id' => 'required|exists:sekolahs,id',
-            'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
-        ]);
-
-        $guru->update($validated);
-        return redirect()->route('guru.index')->with('success', 'Data guru berhasil diupdate');
-    }
-
-    public function destroy(Guru $guru)
-    {
-        $guru->delete();
-        return redirect()->route('guru.index')->with('success', 'Data guru berhasil dihapus');
+        return response()->json($guru);
     }
 }
