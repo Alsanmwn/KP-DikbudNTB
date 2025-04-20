@@ -1,23 +1,28 @@
 <?php
 
+
 namespace App\Http\Controllers;
+
 
 use App\Models\Sekolah;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
+
 class SekolahController extends Controller
 {
     public function index()
     {
-        $sekolah = Sekolah::all();
-        return view('sekolah.index', compact('sekolah'));
+        // $sekolah = Sekolah::all();
+        // return view('sekolah.index', compact('sekolah'));
+        return response()->json(Sekolah::all());
     }
-
+   
     public function create()
     {
         return view('sekolah.create');
     }
+
 
     public function store(Request $request)
     {
@@ -33,19 +38,23 @@ class SekolahController extends Controller
             'kode_pos' => 'required',
         ]);
 
+
         Sekolah::create($request->all());
         return redirect()->route('sekolah.index')->with('success', 'Data sekolah berhasil ditambahkan');
     }
+
 
     public function show(Sekolah $sekolah)
     {
         return view('sekolah.show', compact('sekolah'));
     }
 
+
     public function edit(Sekolah $sekolah)
     {
         return view('sekolah.edit', compact('sekolah'));
     }
+
 
     public function update(Request $request, Sekolah $sekolah)
     {
@@ -53,13 +62,16 @@ class SekolahController extends Controller
         return redirect()->route('sekolah.index')->with('success', 'Data sekolah berhasil diupdate');
     }
 
+
     public function destroy(Sekolah $sekolah)
     {
         $sekolah->delete();
         return redirect()->route('sekolah.index')->with('success', 'Data sekolah berhasil dihapus');
     }
 
+
     // Tambahkan metode-metode berikut di SekolahController atau buat ApiSekolahController baru
+
 
     public function getSekolahSummary()
     {
@@ -78,9 +90,10 @@ class SekolahController extends Controller
             )
             ->groupBy('kabupaten')
             ->get();
-            
+           
         return response()->json($data);
     }
+
 
     public function getSekolahSummaryByKabupaten($kabupaten)
     {
@@ -100,28 +113,30 @@ class SekolahController extends Controller
             )
             ->groupBy('kecamatan')
             ->get();
-            
+           
         return response()->json($data);
     }
+
 
     public function getSekolahDetail($kabupaten, $kecamatan)
     {
         // Mengambil daftar sekolah di kecamatan dan kabupaten tertentu
         $data = Sekolah::where('kabupaten', $kabupaten)
             ->where('kecamatan', $kecamatan)
-            ->select('id', 'nama', 'npsn', 'bp', 'status', 
-                    'jumlah_guru', 'jumlah_pegawai', 
+            ->select('id', 'nama', 'npsn', 'bp', 'status',
+                    'jumlah_guru', 'jumlah_pegawai',
                     'ruang_kelas', 'ruang_lab', 'ruang_perpus')
             ->get();
-            
+           
         return response()->json($data);
     }
+
 
     public function getSekolahFull($id)
 {
     // Mengambil detail lengkap sekolah berdasarkan ID
     $sekolah = Sekolah::findOrFail($id);
-    
+   
     return response()->json([
         'id' => $sekolah->id,
         'nama' => $sekolah->nama,
@@ -144,3 +159,5 @@ class SekolahController extends Controller
     ]);
 }
 }
+
+

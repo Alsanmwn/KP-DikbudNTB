@@ -148,3 +148,22 @@ Route::get('/sekolah/{id}', [SekolahController::class, 'show']);
 Route::put('/sekolah/{id}', [SekolahController::class, 'update']);
 Route::delete('/sekolah/{id}', [SekolahController::class, 'destroy']);
 
+// Route to get all schools for dropdown
+Route::get('/sekolahs', [SekolahController::class, 'index']);
+
+// API routes for Siswa CRUD operations
+Route::get('/siswa', [SiswaController::class, 'index']);
+Route::post('/siswa', [SiswaController::class, 'store']);
+Route::get('/siswa/{id}', [SiswaController::class, 'show']);
+Route::put('/siswa/{id}', [SiswaController::class, 'update']);
+Route::delete('/siswa/{id}', [SiswaController::class, 'destroy']);
+
+// Existing API routes
+Route::get('/siswa-summary', [SiswaController::class, 'siswaSummary']);
+Route::get('/siswa-summary/{kabupaten}', [SiswaController::class, 'siswaSummaryByKabupaten']);
+Route::get('/siswa-by-sekolah/{kabupaten}/{kecamatan}', [SiswaController::class, 'siswaBySekolah']);
+Route::get('/siswa-detail/{schoolId}', [SiswaController::class, 'siswaDetail']);
+
+Route::post('/api/siswa/batch-add', [SiswaController::class, 'batchAdd']);
+
+Route::post('/siswa/batch-add', [SiswaController::class, 'batchAdd']);
