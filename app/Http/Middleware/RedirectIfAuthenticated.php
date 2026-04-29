@@ -1,7 +1,5 @@
 <?php
 
-// app/Http/Middleware/RedirectIfAuthenticated.php
-
 namespace App\Http\Middleware;
 
 use App\Providers\RouteServiceProvider;

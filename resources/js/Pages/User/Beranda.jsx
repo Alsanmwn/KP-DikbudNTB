@@ -2,11 +2,10 @@ import React from 'react';
 import { useState, useEffect } from 'react';
 import { Link } from '@inertiajs/react';
 import Navbar from '@/Components/Navbar';
-import Footer from '@/Components/Footer'; // Impor Footer
+import Footer from '@/Components/Footer'; 
 import Calendar from "react-calendar";
-import "react-calendar/dist/Calendar.css"; // Import default styles
+import "react-calendar/dist/Calendar.css"; 
 import axios from 'axios';
-import { FaClock, FaMapMarkerAlt } from 'react-icons/fa'
 
 export default function Beranda({ auth }) {
     const [showScrollToTop, setShowScrollToTop] = useState(false);
@@ -28,13 +27,13 @@ export default function Beranda({ auth }) {
             try {
                 const response = await axios.get('/api/kegiatan');
                 const today = new Date();
-                today.setHours(0, 0, 0, 0);  // Set the current date to 00:00 for comparison
+                today.setHours(0, 0, 0, 0);  
     
                 // Filter kegiatan yang belum terjadi dan urutkan berdasarkan tanggal
                 const upcomingKegiatan = response.data
                     .filter(kegiatan => new Date(kegiatan.tanggal) >= today)
                     .sort((a, b) => new Date(a.tanggal) - new Date(b.tanggal))
-                    .slice(0, 5); // Limit to 5 kegiatan to match the existing UI
+                    .slice(0, 5); 
     
                 // Kegiatan yang sudah dilakukan
                 const pastKegiatan = response.data
@@ -45,10 +44,10 @@ export default function Beranda({ auth }) {
                 // Menambahkan kondisi status "closed" sehari sebelum kegiatan
                 const updatedUpcomingKegiatan = upcomingKegiatan.map(kegiatan => {
                     const kegiatanDate = new Date(kegiatan.tanggal);
-                    kegiatanDate.setHours(0, 0, 0, 0); // Pastikan waktu di-set ke 00:00 untuk perbandingan
+                    kegiatanDate.setHours(0, 0, 0, 0); 
     
                     // Jika tanggal kegiatan adalah besok, ubah status menjadi "closed"
-                    if (kegiatanDate - today <= 24 * 60 * 60 * 1000) {  // 24 jam dalam milidetik
+                    if (kegiatanDate - today <= 24 * 60 * 60 * 1000) { 
                         kegiatan.status = 'closed';
                     }
     
@@ -71,11 +70,10 @@ export default function Beranda({ auth }) {
     };
 
     return (
-        <div className="bg-gray-50 text-black/50 dark:bg-black dark:text-white/50 min-h-screen flex flex-col">
+        <div className="text-black/50 dark:text-white/50 min-h-screen flex flex-col">
             <header className="w-full">
                 <Navbar auth={auth} />
             </header>
-
 
             {/* Hero Section */}
             <div className="relative flex justify-center items-center flex-1 mb-1">
@@ -95,34 +93,51 @@ export default function Beranda({ auth }) {
                 </div>
             </div>
 
-
             {/* Statistik Section */}
             <section className="bg-white text-center py-12">
-                <h3 className="text-[25px] font-bold text-[#223A5C] mb-8" style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)' }}>Statistik</h3>
+                <h3
+                    className="text-[25px] font-bold text-[#223A5C] mb-8"
+                    style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)' }}
+                >
+                    Statistik
+                </h3>
+
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mx-auto max-w-6xl">
-                    <div className="p-6 border-2 border-[#0E2038] rounded-lg shadow-lg">
+                    
+                    <div
+                        className="p-6 rounded-lg"
+                        style={{ boxShadow: '0 0 15px rgba(0,0,0,0.15)' }}
+                    >
                         <img src="/assets/School.png" alt="Sekolah" className="mx-auto mb-4 w-16" />
                         <h4 className="text-xl font-semibold text-[#223A5C]">Sekolah</h4>
                         <p className="text-xl font-bold text-black">350</p>
                     </div>
-                    <div className="p-6 border-2 border-[#0E2038] rounded-lg shadow-lg">
+
+                    <div
+                        className="p-6  rounded-lg"
+                        style={{ boxShadow: '0 0 15px rgba(0,0,0,0.15)' }}
+                    >
                         <img src="/assets/Students.png" alt="Siswa" className="mx-auto mb-4 w-16" />
                         <h4 className="text-xl font-semibold text-[#223A5C]">Siswa</h4>
                         <p className="text-xl font-bold text-black">120,000</p>
                     </div>
-                    <div className="p-6 border-2 border-[#0E2038] rounded-lg shadow-lg">
+
+                    <div
+                        className="p-6 rounded-lg"
+                        style={{ boxShadow: '0 0 15px rgba(0,0,0,0.15)' }}
+                    >
                         <img src="/assets/Training.png" alt="Guru" className="mx-auto mb-4 w-16" />
                         <h4 className="text-xl font-semibold text-[#223A5C]">Guru</h4>
                         <p className="text-xl font-bold text-black">8,500</p>
                     </div>
+
                 </div>
             </section>
-           
+
             {/* Profil Kami */}
             <section className="bg-white text-center py-3 pb-16">
                 <h3 className="text-[25px] font-bold text-[#223A5C] mb-8" style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)' }}>Profil Kami</h3>
                 <div className="flex items-center justify-center space-x-14 max-w-6xl mx-auto">
-                    {/* Gambar yang dapat diklik */}
                     <div className="relative">
                         <a href="https://www.youtube.com/@btidpntbchannel4371" target="_blank" rel="noopener noreferrer">
                             <img
@@ -130,7 +145,6 @@ export default function Beranda({ auth }) {
                                 alt="Profil Kami"
                                 className="w-[548px] h-[305px] object-cover rounded-[10px] shadow-lg cursor-pointer"
                             />
-                            {/* Logo YouTube di tengah gambar */}
                             <div className="absolute inset-0 flex justify-center items-center">
                                 <a href="https://www.youtube.com/@btidpntbchannel4371" target="_blank" rel="noopener noreferrer">
                                     <img
@@ -143,15 +157,15 @@ export default function Beranda({ auth }) {
                         </a>
                     </div>
 
-
                     {/* Judul dan Deskripsi */}
                     <div className="text-left max-w-lg">
                         <h4 className="text-[20px] font-bold text-[#223A5C] mb-4">Channel Kami</h4>
                         <p className="text-[18px] text-[#555] text-justify">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus vitae eleifend lectus.
-                            Duis dignissim nibh porta, sodales nibh ullamcorper, cursus nunc. In eget tempor tortor.
-                            Morbi rhoncus purus id libero rhoncus, ac eleifend lacus auctor. Curabitur eleifend, nisl
-                            in malesuada faucibus, dui elit bibendum lectus, eget aliquet purus sem ac risus.
+                            Channel YouTube BTIDP NTB Channel merupakan media digital yang digunakan untuk menyampaikan informasi, publikasi 
+                            kegiatan, dan edukasi kepada masyarakat di Nusa Tenggara Barat. Channel ini menampilkan berbagai konten seperti 
+                            dokumentasi acara resmi, sosialisasi program, serta informasi layanan publik yang relevan. Melalui platform ini, 
+                            instansi berupaya membangun komunikasi yang lebih terbuka, transparan, dan mudah diakses oleh masyarakat luas. 
+                            Dengan penyajian berbasis video, konten menjadi lebih menarik, informatif, dan efektif dalam menjangkau berbagai kalangan.
                         </p>
                     </div>
                 </div>
@@ -164,7 +178,6 @@ export default function Beranda({ auth }) {
                     Dokumentasi Kegiatan
                 </h3>
                 <div className="flex justify-between mx-auto max-w-6xl gap-3">
-                {/* Kiri */}
                 <div className="space-y-4 ">
                     {pastKegiatanList.slice(0, 2).map((kegiatan, index) => (
                         <div key={kegiatan.id} className="relative">
@@ -192,7 +205,6 @@ export default function Beranda({ auth }) {
                     ))}
                 </div>
 
-                {/* Tengah */}
                 {pastKegiatanList.length > 2 && (
                     <div className="relative">
                         <img
@@ -214,7 +226,6 @@ export default function Beranda({ auth }) {
                     </div>
                 )}
 
-                {/* Kanan */}
                 <div className="space-y-4">
                     {pastKegiatanList.slice(3, 5).map((kegiatan, index) => (
                         <div key={kegiatan.id} className="relative">
@@ -242,7 +253,6 @@ export default function Beranda({ auth }) {
                     ))}
                 </div>
             </div>
-
             </section>
 
             <section className="bg-white text-center pb-4">
@@ -256,14 +266,14 @@ export default function Beranda({ auth }) {
                 {/* Kegiatan List */}
                 <div className="w-full md:w-[70%] space-y-6 mt-8">
                     {kegiatanList.slice(0, 3).map(kegiatan => (
-                        <div key={kegiatan.id} className="w-full md:w-[770px] h-[240px] p-6 border-2 border-[#0E2038] rounded-lg shadow-lg relative flex items-center">
+                        <div key={kegiatan.id} className="w-full md:w-[770px] h-[240px] p-6 border-1 border-[#0E2038] rounded-lg relative flex items-center" style={{ boxShadow: '0 0 15px rgba(0,0,0,0.15)' }}>
                             <img
                                 src={`/storage/${kegiatan.gambar}`}
                                 alt={kegiatan.nama}
                                 className="w-[200px] h-[236px] object-cover rounded-md"
                                 style={{ marginLeft: "-24px" }}
                                 onError={(e) => {
-                                    console.log('Error loading image:', kegiatan.gambar); // Debug
+                                    console.log('Error loading image:', kegiatan.gambar); 
                                     e.target.src = '/default-image.jpg';
                                 }}
                             />
@@ -289,6 +299,7 @@ export default function Beranda({ auth }) {
                                     <div className={`py-1 px-1 w-[140px] text-center rounded-lg shadow-lg text-[10px] ${kegiatan.status === 'open for public' ? 'bg-green-500' : 'bg-blue-500'}`}>
                                         {kegiatan.status}
                                     </div>
+                                    
                                     {/* Cek jika status kegiatan bukan 'closed' */}
                                     {kegiatan.status !== 'closed' && (
                                         <Link
@@ -345,30 +356,30 @@ export default function Beranda({ auth }) {
                 </button>
             )}
 
-            <section id="layanan-kami" className="bg-white text-center py-16 pb-16 min-h-screen">    
+            <section id="layanan-kami" className="bg-white text-center py-16 pb-16 min-h-screen mb-20">    
                 <h3 className="text-[25px] font-bold text-[#223A5C] mb-8" style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)' }}>Layanan Kami</h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mx-auto max-w-6xl">
-                    <div className="p-8 border-2 border-[#0E2038] rounded-lg shadow-lg">
+                    <div className="p-8 border-1 border-[#0E2038] rounded-lg shadow-lg">
                         <img src="/assets/letter.png" alt="Sekolah" className="mx-auto mb-4 w-24" />
                         <Link href="User/permohonan-layanan">
                             <h4 className="text-xl font-semibold text-[#223A5C]">Layanan Pendidikan</h4>
                         </Link>
                         <p className="text-xl font-reguler mt-3 text-black">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus vitae eleifend lectus. Duis dignissim
-                            nibh porta, sodales nibh ullamcorper, cursus nunc. In eget tempor tortor.
+                            Permohonan Layanan Pendidikan merupakan formulir pengajuan untuk kebutuhan seperti permintaan data, narasumber, atau konsultasi. 
+                            Dokumen pendukung dapat diunggah dalam format PDF. Layanan ini memudahkan proses komunikasi dan pengajuan secara terstruktur, cepat, dan efisien.
                         </p>
                     </div>
-                    <div className="p-8 border-2 border-[#0E2038] rounded-lg shadow-lg">
+                    <div className="p-8 border-1 border-[#0E2038] rounded-lg shadow-lg">
                         <img src="/assets/Data.png" alt="Siswa" className="mx-auto mb-4 w-24" />
                         <Link href="User/data-pendidikan">
                             <h4 className="text-xl font-semibold text-[#223A5C]">Data Pendidikan</h4>
                         </Link>
                         <p className="text-xl font-reguler mt-3 text-black">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus vitae eleifend lectus. Duis dignissim
-                            nibh porta, sodales nibh ullamcorper, cursus nunc. In eget tempor tortor.
+                            Data pendidikan merupakan layanan informasi yang menyediakan data peserta didik pada berbagai jenjang, meliputi SD, SMP, SMA, serta pendidikan luar 
+                            biasa seperti SDLB, SMPLB, dan SMALB. 
                         </p>
                     </div>
-                    <div className="p-8 border-2 border-[#0E2038] rounded-lg shadow-lg">
+                    <div className="p-8 border-1 border-[#0E2038] rounded-lg shadow-lg">
                         <img src="/assets/Study.png" alt="Guru" className="mx-auto mb-4 w-24" />
                         <a href="https://ayomi.vercel.app/" target="_blank" rel="noopener noreferrer">
                             <h4 className="text-xl font-semibold text-[#223A5C]">
@@ -376,8 +387,8 @@ export default function Beranda({ auth }) {
                             </h4>
                         </a>
                         <p className="text-xl font-reguler mt-3 text-black">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus vitae eleifend lectus. Duis dignissim
-                            nibh porta, sodales nibh ullamcorper, cursus nunc. In eget tempor tortor.
+                            Rumah belajar menyediakan platform pembelajaran digital dengan tujuan menyediakan akses terhadap video pembelajaran, 
+                            materi edukatif, soal latihan dan konten pembelajaran interaktif untuk peserta didik jenjang SD, SMP, SMA serta SDLB, SMPLB, SMALB.
                         </p>
                     </div>
                 </div>

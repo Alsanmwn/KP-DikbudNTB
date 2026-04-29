@@ -1,6 +1,6 @@
 <?php
 
-
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\KegiatanController;
@@ -11,6 +11,9 @@ use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\JabatanController;
 use App\Http\Controllers\PegawaiJabatanController;
 use App\Http\Controllers\PermohonanLayananController;
+use App\Http\Controllers\SekolahController;
+use App\Http\Controllers\SiswaController;
+use App\Http\Controllers\GuruController;
 
 
 /*
@@ -42,15 +45,16 @@ Route::post('/api/kegiatan', [KegiatanController::class, 'store']); // Untuk men
 Route::post('/api/kegiatan/{id}', [KegiatanController::class, 'update']); // Untuk memperbarui kegiatan
 Route::get('/kegiatan/{id}', [KegiatanController::class, 'show']);
 
-Route::get('/users', function () {
-    return response()->json(User::all());
-});
+// Route::get('/users', function () {
+//     return response()->json(User::all());
+// });
 
 Route::get('/users', [UserController::class, 'index']);
 Route::put('/users/{user}', [UserController::class, 'update']);
 Route::delete('/users/{user}', [UserController::class, 'destroy']);
+Route::put('/users/{user}', [UserController::class, 'update']);
 
-Route::post('/pendaftaran-kegiatan', [PendaftaranKegiatanController::class, 'store']);
+// Route::post('/pendaftaran-kegiatan', [PendaftaranKegiatanController::class, 'store']);
 
 Route::middleware(['auth:admin'])->prefix('admin')->group(function () {
     // User Management API
@@ -110,6 +114,8 @@ Route::delete('/jabatan/{id}', [JabatanController::class, 'destroy']);
 
 Route::apiResource('pegawai-jabatan', PegawaiJabatanController::class);
 
+Route::put('/permohonan-layanan/{id}/status', [PermohonanLayananController::class, 'updateStatus']);
+
 Route::post('/permohonan-layanan', [PermohonanLayananController::class, 'store']);
 
 // Route::get('/api/permohonanlayanans', [PermohonanLayananController::class, 'index']);
@@ -117,3 +123,57 @@ Route::get('/permohonan-layanan', [PermohonanLayananController::class, 'index'])
 Route::post('/permohonan-layanan', [PermohonanLayananController::class, 'store']);
 Route::put('/permohonan-layanan/{id}', [PermohonanLayananController::class, 'update']);
 Route::delete('/permohonan-layanan/{id}', [PermohonanLayananController::class, 'destroy']);
+
+Route::get('/sekolah-summary', [SekolahController::class, 'getSekolahSummary']);
+Route::get('/sekolah-summary/{kabupaten}', [SekolahController::class, 'getSekolahSummaryByKabupaten']);
+Route::get('/sekolah-detail/{kabupaten}/{kecamatan}', [SekolahController::class, 'getSekolahDetail']);
+Route::get('/sekolah-full/{id}', [SekolahController::class, 'getSekolahFull']);
+
+Route::get('/siswa-summary', [SiswaController::class, 'siswaSummary']);
+Route::get('/siswa-summary/{kabupaten}', [SiswaController::class, 'siswaSummaryByKabupaten']);
+Route::get('/siswa-by-sekolah/{kabupaten}/{kecamatan}', [SiswaController::class, 'siswaBySekolah']);
+Route::get('/siswa-detail/{schoolId}', [SiswaController::class, 'siswaDetail']);
+
+Route::get('/guru-summary', [GuruController::class, 'guruSummary']);
+Route::get('/guru-summary/{kabupaten}', [GuruController::class, 'guruSummaryByKabupaten']);
+Route::get('/guru-by-sekolah/{kabupaten}/{kecamatan}', [GuruController::class, 'guruBySekolah']);
+Route::get('/guru-detail/{schoolId}', [GuruController::class, 'guruDetail']);
+
+
+Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+    return $request->user();
+});
+
+// Sekolah API Routes
+Route::get('/sekolah', [SekolahController::class, 'index']);
+Route::post('/sekolah', [SekolahController::class, 'store']);
+Route::get('/sekolah/{id}', [SekolahController::class, 'show']);
+Route::put('/sekolah/{id}', [SekolahController::class, 'update']);
+Route::delete('/sekolah/{id}', [SekolahController::class, 'destroy']);
+
+// Route to get all schools for dropdown
+Route::get('/sekolahs', [SekolahController::class, 'index']);
+
+// API routes for Siswa CRUD operations
+Route::get('/siswa', [SiswaController::class, 'index']);
+Route::post('/siswa', [SiswaController::class, 'store']);
+Route::get('/siswa/{id}', [SiswaController::class, 'show']);
+Route::put('/siswa/{id}', [SiswaController::class, 'update']);
+Route::delete('/siswa/{id}', [SiswaController::class, 'destroy']);
+
+// Existing API routes
+Route::get('/siswa-summary', [SiswaController::class, 'siswaSummary']);
+Route::get('/siswa-summary/{kabupaten}', [SiswaController::class, 'siswaSummaryByKabupaten']);
+Route::get('/siswa-by-sekolah/{kabupaten}/{kecamatan}', [SiswaController::class, 'siswaBySekolah']);
+Route::get('/siswa-detail/{schoolId}', [SiswaController::class, 'siswaDetail']);
+
+Route::post('/api/siswa/batch-add', [SiswaController::class, 'batchAdd']);
+
+Route::post('/siswa/batch-add', [SiswaController::class, 'batchAdd']);
+
+// Guru API routes
+Route::get('/guru', [App\Http\Controllers\GuruController::class, 'index']);
+Route::post('/guru/batch-add', [App\Http\Controllers\GuruController::class, 'batchAdd']);
+Route::get('/guru/summary', [App\Http\Controllers\GuruController::class, 'summary']);
+Route::get('/guru/school/{schoolId}', [App\Http\Controllers\GuruController::class, 'bySchool']);
+

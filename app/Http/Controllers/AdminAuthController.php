@@ -22,7 +22,11 @@ class AdminAuthController extends Controller
 
         if (Auth::guard('admin')->attempt($credentials)) {
             $request->session()->regenerate();
-            return redirect()->intended('/admin/dashboard');
+
+            // ✅ UBAH DI SINI (tanpa redirect langsung)
+            return back()->with([
+                'success' => true
+            ]);
         }
 
         return back()->withErrors([

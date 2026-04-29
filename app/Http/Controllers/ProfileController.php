@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\PermohonanLayanan;
+use App\Models\PendaftaranKegiatan;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -15,6 +17,9 @@ class ProfileController extends Controller
 {
     public function edit(Request $request): Response
     {
+
+        $user = $request->user();
+
         return Inertia::render('Profile/Edit', [
             'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
             'status' => session('status'),
@@ -25,6 +30,28 @@ class ProfileController extends Controller
                     'email' => $request->user()->email,
                 ],
             ],
+
+            // // Riwayat permohonan layanan milik user yang login
+            // 'permohonan_layanan' => PermohonanLayanan::where('user_id', $user->id)
+            //     ->latest()
+            //     ->get(),
+
+            // ✅ PERMOHONAN LAYANAN (pakai email karena tidak ada user_id)
+            'permohonan_layanan' => PermohonanLayanan::where('email', $user->email)
+                ->latest()
+                ->get(),
+
+            // // Riwayat pendaftaran kegiatan milik user yang login
+            // 'pendaftaran_kegiatan' => PendaftaranKegiatan::with('kegiatan')
+            //     ->where('user_id', $user->id)
+            //     ->latest()
+            //     ->get(),
+            
+            // ✅ PENDAFTARAN KEGIATAN
+            'pendaftaran_kegiatan' => PendaftaranKegiatan::with('kegiatan')
+                ->where('user_id', $user->id) // pastikan ini ada di tabel
+                ->latest()
+                ->get(),
         ]);
     }
     
