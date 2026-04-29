@@ -17,7 +17,7 @@ class Kegiatan extends Model
         'lokasi',
         'gambar',
         'status',
-        // 'link_pendaftaran',
+        'tipe',
         'link_kegiatan'
     ];
 

@@ -1,6 +1,6 @@
 <?php
 
-
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\KegiatanController;
@@ -45,15 +45,16 @@ Route::post('/api/kegiatan', [KegiatanController::class, 'store']); // Untuk men
 Route::post('/api/kegiatan/{id}', [KegiatanController::class, 'update']); // Untuk memperbarui kegiatan
 Route::get('/kegiatan/{id}', [KegiatanController::class, 'show']);
 
-Route::get('/users', function () {
-    return response()->json(User::all());
-});
+// Route::get('/users', function () {
+//     return response()->json(User::all());
+// });
 
 Route::get('/users', [UserController::class, 'index']);
 Route::put('/users/{user}', [UserController::class, 'update']);
 Route::delete('/users/{user}', [UserController::class, 'destroy']);
+Route::put('/users/{user}', [UserController::class, 'update']);
 
-Route::post('/pendaftaran-kegiatan', [PendaftaranKegiatanController::class, 'store']);
+// Route::post('/pendaftaran-kegiatan', [PendaftaranKegiatanController::class, 'store']);
 
 Route::middleware(['auth:admin'])->prefix('admin')->group(function () {
     // User Management API
@@ -113,6 +114,8 @@ Route::delete('/jabatan/{id}', [JabatanController::class, 'destroy']);
 
 Route::apiResource('pegawai-jabatan', PegawaiJabatanController::class);
 
+Route::put('/permohonan-layanan/{id}/status', [PermohonanLayananController::class, 'updateStatus']);
+
 Route::post('/permohonan-layanan', [PermohonanLayananController::class, 'store']);
 
 // Route::get('/api/permohonanlayanans', [PermohonanLayananController::class, 'index']);
@@ -167,3 +170,10 @@ Route::get('/siswa-detail/{schoolId}', [SiswaController::class, 'siswaDetail']);
 Route::post('/api/siswa/batch-add', [SiswaController::class, 'batchAdd']);
 
 Route::post('/siswa/batch-add', [SiswaController::class, 'batchAdd']);
+
+// Guru API routes
+Route::get('/guru', [App\Http\Controllers\GuruController::class, 'index']);
+Route::post('/guru/batch-add', [App\Http\Controllers\GuruController::class, 'batchAdd']);
+Route::get('/guru/summary', [App\Http\Controllers\GuruController::class, 'summary']);
+Route::get('/guru/school/{schoolId}', [App\Http\Controllers\GuruController::class, 'bySchool']);
+

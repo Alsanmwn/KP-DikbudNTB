@@ -5,31 +5,66 @@ import Footer from '@/Components/Footer';
 import { FaMapMarkerAlt, FaClock, FaCalendarAlt } from 'react-icons/fa';
 
 const DetailKegiatan = ({ auth, kegiatan }) => {
-    const currentDate = new Date(); // Mendapatkan tanggal saat ini
-    const kegiatanDate = new Date(kegiatan.tanggal); // Mengambil tanggal kegiatan
+    const currentDate = new Date();
+    const kegiatanDate = new Date(kegiatan.tanggal);
     const oneDayBefore = new Date(kegiatanDate);
-    oneDayBefore.setDate(kegiatanDate.getDate() - 1); // Mengurangi 1 hari dari tanggal kegiatan
+    oneDayBefore.setDate(kegiatanDate.getDate() - 1);
 
-    const isRegistrationClosed = currentDate >= oneDayBefore; // Mengecek apakah sudah lewat 1 hari sebelum kegiatan
+    const isRegistrationClosed = currentDate >= oneDayBefore;
+    const userRole = auth.user?.role;
+    const canRegister = userRole === 'anggota' ||
+                       (userRole === 'umum' && kegiatan.tipe === 'public');
 
-    const handleDaftar = () => {
-        console.log('Kegiatan ID:', kegiatan.id);
-        console.log('Nama Kegiatan:', kegiatan.nama);
-        
-        router.get(route('pendaftaran-kegiatan'), {
-            kegiatan_id: kegiatan.id,
-            nama_kegiatan: kegiatan.nama
-        });
+    const renderDaftarButton = () => {
+        if (isRegistrationClosed) {
+            return (
+                <p className="text-red-500 text-[16px] mb-4">
+                    Pendaftaran sudah ditutup, satu hari sebelum kegiatan.
+                </p>
+            );
+        }
+
+        if (!auth.user) {
+            return (
+                <div>
+                    <p className="text-red-500 text-[16px] mb-4">
+                        Anda harus login terlebih dahulu untuk mendaftar kegiatan.
+                    </p>
+                        <a href="/login"
+                            className="inline-block bg-blue-500 text-white py-3 px-6 rounded-lg text-[18px] hover:bg-blue-600 transition mb-10">
+                            Login Sekarang
+                        </a>
+                </div>
+            );
+        }
+
+        if (!canRegister) {
+            return (
+                <p className="text-red-500 text-[16px] mb-10">
+                    Kegiatan ini hanya tersedia untuk anggota.
+                </p>
+            );
+        }
+
+        return (
+            <Link
+                href={route('pendaftaran-kegiatan', {
+                    kegiatan_id: kegiatan.id,
+                    nama_kegiatan: kegiatan.nama
+                })}
+                className="inline-block bg-blue-500 text-white py-3 px-6 rounded-lg text-[18px] hover:bg-blue-600 transition mb-10"
+            >
+                Daftar Sekarang
+            </Link>
+        );
     };
 
     return (
-        <div className="bg-gray-50 text-black/50 dark:bg-black dark:text-white/50 min-h-screen flex flex-col">
-            {/* Header */}
+        <div className=" text-black/50 dark:text-white/50 min-h-screen flex flex-col">
             <header className="w-full">
                 <Navbar auth={auth} />
             </header>
 
-            {/* Hero Section */}
             <div className="relative flex justify-center items-center flex-1 mb-10">
                 <img
                     src="/assets/landingpage.png"
@@ -39,19 +74,44 @@ const DetailKegiatan = ({ auth, kegiatan }) => {
             </div>
 
             <section className="bg-white text-center pb-16">
-                <h3 className="text-[25px] font-bold text-[#223A5C] mb-8" style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)' }}>Detail Kegiatan</h3>
+                <h3
+                    className="text-[25px] font-bold text-[#223A5C] mb-8"
+                    style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)' }}
+                >
+                    Detail Kegiatan
+                </h3>
+
                 <div className="flex flex-col lg:flex-row items-stretch justify-center lg:space-x-10 max-w-6xl mx-auto">
-                    {/* Teks di sebelah kiri */}
                     <div className="text-left max-w-lg flex flex-col items-stretch">
+                        {/* Deskripsi */}
                         <div>
+                            <h2 className="text-[28px] font-bold text-[#223A5C] mb-4">
+                                {kegiatan.nama}
+                            </h2>
+
                             <p className="text-[20px] font-regular text-[#223A5C] text-justify mb-6">
                                 {kegiatan.deskripsi}
                             </p>
                         </div>
 
+                        {/* Badge Tipe Kegiatan */}
+                        <div className="mb-6">
+                            <span
+                                className={`inline-block px-4 py-1 rounded-full text-white text-[14px] font-semibold ${
+                                    kegiatan.tipe === 'anggota'
+                                        ? 'bg-purple-500'
+                                        : 'bg-green-500'
+                                }`}
+                            >
+                                {kegiatan.tipe === 'anggota' ? 'Open for Anggota' : 'Open for Public'}
+                            </span>
+                        </div>
+
                         {/* Waktu dan Tempat */}
                         <div className="mb-10">
-                            <h4 className="text-[22px] font-bold text-[#223A5C] mb-6">Waktu dan Tempat:</h4>
+                            <h4 className="text-[22px] font-bold text-[#223A5C] mb-6">
+                                Waktu dan Tempat:
+                            </h4>
                             <div className="flex flex-col space-y-4 text-[18px] text-[#555]">
                                 <div className="flex items-center space-x-3">
                                     <FaMapMarkerAlt className="text-[#223A5C]" />
@@ -59,7 +119,10 @@ const DetailKegiatan = ({ auth, kegiatan }) => {
                                 </div>
                                 <div className="flex items-center space-x-3">
                                     <FaCalendarAlt className="text-[#223A5C]" />
-                                    <span>Tanggal: {new Date(kegiatan.tanggal).toLocaleDateString('id-ID')}</span>
+                                    <span>
+                                        Tanggal:{' '}
+                                        {new Date(kegiatan.tanggal).toLocaleDateString('id-ID')}
+                                    </span>
                                 </div>
                                 <div className="flex items-center space-x-3">
                                     <FaClock className="text-[#223A5C]" />
@@ -68,39 +131,23 @@ const DetailKegiatan = ({ auth, kegiatan }) => {
                             </div>
                         </div>
 
-                        {/* Button Daftar Sekarang */}
+                        {/* Tombol Daftar */}
                         <div>
-                            <h4 className="text-[22px] font-bold text-[#223A5C] mb-6">Daftar Kegiatan:</h4>
-                            {isRegistrationClosed ? (
-                                <p className="text-red-500 text-[16px] mb-4">Pendaftaran sudah ditutup, satu hari sebelum kegiatan.</p>
-                            ) : !auth.user ? (
-                                <div>
-                                    <p className="text-red-500 text-[16px] mb-4">Anda harus login terlebih dahulu untuk mendaftar kegiatan.</p>
-                                    <a
-                                        href="/login"
-                                        className="inline-block bg-blue-500 text-white py-3 px-6 rounded-lg text-[18px] hover:bg-blue-600 transition"
-                                    >
-                                        Login Sekarang
-                                    </a>
-                                </div>
-                            ) : (
-                                <Link
-                                    href={route('pendaftaran-kegiatan', { 
-                                        kegiatan_id: kegiatan.id,
-                                        nama_kegiatan: kegiatan.nama 
-                                    })}
-                                    className="inline-block bg-blue-500 text-white py-3 px-6 rounded-lg text-[18px] hover:bg-blue-600 transition"
-                                >
-                                    Daftar Sekarang
-                                </Link>
-                            )}
+                            <h4 className="text-[22px] font-bold text-[#223A5C] mb-6">
+                                Daftar Kegiatan:
+                            </h4>
+                            {renderDaftarButton()}
                         </div>
                     </div>
 
-                    {/* Gambar di sebelah kanan */}
+                    {/* Kanan - Gambar */}
                     <div className="relative mt-10 lg:mt-0 lg:ml-10">
                         <img
-                            src={kegiatan.gambar ? `/storage/${kegiatan.gambar}` : "/assets/logobtidp.jpg"}
+                            src={
+                                kegiatan.gambar
+                                    ? `/storage/${kegiatan.gambar}`
+                                    : '/assets/logobtidp.jpg'
+                            }
                             alt={kegiatan.nama}
                             className="w-[450px] h-[350px] object-cover rounded-[10px] shadow-lg"
                         />

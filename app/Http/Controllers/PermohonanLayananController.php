@@ -35,6 +35,7 @@ class PermohonanLayananController extends Controller
         }
 
         $permohonan = PermohonanLayanan::create([
+            'user_id' => auth()->id(),
             'nama' => $request->nama,
             'email' => $request->email,
             'alamat_sekolah' => $request->alamatSekolah,
@@ -43,6 +44,8 @@ class PermohonanLayananController extends Controller
             'custom_keperluan' => $request->customKeperluan,
             'kontak' => $request->kontak,
             'files' => json_encode($filesPaths)
+            // 'files' => $filesPaths
+
         ]);
 
         return response()->json([
@@ -70,10 +73,68 @@ class PermohonanLayananController extends Controller
         return $permohonan;
     }
 
-    public function destroy($id)
-    {
-        $permohonan = PermohonanLayanan::findOrFail($id);
-        $permohonan->delete();
-        return response()->json(['message' => 'Permohonan deleted successfully']);
+// public function destroy($id)
+// {
+//     $permohonan = PermohonanLayanan::findOrFail($id);
+
+//     if (auth()->check() && $permohonan->user_id !== auth()->id()) {
+//         abort(403);
+//     }
+
+//     // 🔥 FIX DI SINI
+//     $files = $permohonan->files;
+
+//     // kalau string → decode dulu
+//     if (is_string($files)) {
+//         $files = json_decode($files, true);
+//     }
+
+//     if (is_array($files)) {
+//         foreach ($files as $filePath) {
+//             Storage::disk('public')->delete($filePath);
+//         }
+//     }
+
+//     $permohonan->delete();
+
+//     return back()->with('success', 'Permohonan berhasil dibatalkan.');
+// }
+
+public function destroy($id)
+{
+    $permohonan = PermohonanLayanan::findOrFail($id);
+
+    // Jika user_id null (data lama), atau tidak cocok → tolak
+    if ($permohonan->user_id !== null && $permohonan->user_id !== auth()->id()) {
+        abort(403, 'Anda tidak memiliki akses.');
     }
+
+    // Hapus files jika ada
+    if (is_array($permohonan->files)) {
+        foreach ($permohonan->files as $filePath) {
+            Storage::disk('public')->delete($filePath);
+        }
+    }
+
+    $permohonan->delete();
+
+    return back()->with('success', 'Permohonan berhasil dibatalkan.');
+}
+
+public function updateStatus(Request $request, $id)
+{
+    $request->validate([
+        'status' => 'required|in:menunggu,diproses,disetujui,ditolak,selesai',
+        'catatan_admin' => 'nullable|string|max:1000',
+    ]);
+
+    $permohonan = PermohonanLayanan::findOrFail($id);
+    $permohonan->update([
+        'status' => $request->status,
+        'catatan_admin' => $request->catatan_admin,
+    ]);
+
+    return response()->json($permohonan);
+}
+
 }

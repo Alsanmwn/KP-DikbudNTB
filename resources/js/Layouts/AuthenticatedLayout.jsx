@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import ApplicationLogo from '@/Components/ApplicationLogo';
 import Dropdown from '@/Components/Dropdown';
+import Navbar from '@/Components/Navbar';
 import { Link } from '@inertiajs/react';
 
 export default function Authenticated({ auth, header, children }) {
@@ -8,59 +9,50 @@ export default function Authenticated({ auth, header, children }) {
 
     return (
         <div className="min-h-screen bg-gray-100">
-            <nav className="bg-white border-b border-gray-100">
+
+            {/* 🔥 Navbar dipanggil di sini */}
+            <Navbar auth={auth} />
+
+            <nav style={{ backgroundColor: '#223A5C' }} className="shadow-lg">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between h-16">
-                        <div className="flex">
-                            <div className="shrink-0 flex items-center">
-                                <Link href="/">
-                                    <ApplicationLogo className="block h-9 w-auto fill-current text-gray-800" />
-                                </Link>
-                            </div>
+                        {/* Logo */}
+                        <div className="flex items-center gap-3">
+                            <Link href="/" className="flex items-center gap-2">
+                                <div className="w-9 h-9 rounded-lg flex items-center justify-center">
+                                    <ApplicationLogo className="block h-6 w-auto fill-current text-white" />
+                                </div>
+                                <span className="text-white font-bold text-lg tracking-wide hidden sm:block">
+                                    Beranda
+                                </span>
+                            </Link>
                         </div>
 
-                        <div className="hidden sm:flex sm:items-center sm:ml-6">
-                            <div className="ml-3 relative">
-                                <Dropdown>
-                                    <Dropdown.Trigger>
-                                        <span className="inline-flex rounded-md">
-                                            <button
-                                                type="button"
-                                                className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150"
-                                            >
+                        <div className="hidden sm:flex sm:items-center gap-3">      
+                                    <button
+                                        type="button"
+                                        className="flex items-center gap-2.5 px-3 py-1.5"
+                                    >
+                                        <div className="text-left hidden md:block">
+                                            <p className="text-white text-sm font-semibold leading-none">
                                                 {auth.user.name}
-
-                                                <svg
-                                                    className="ml-2 -mr-0.5 h-4 w-4"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    viewBox="0 0 20 20"
-                                                    fill="currentColor"
-                                                >
-                                                    <path
-                                                        fillRule="evenodd"
-                                                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                                        clipRule="evenodd"
-                                                    />
-                                                </svg>
-                                            </button>
-                                        </span>
-                                    </Dropdown.Trigger>
-
-                                    <Dropdown.Content>
-                                        <Dropdown.Link href={route('logout')} method="post" as="button">
-                                            Log Out
-                                        </Dropdown.Link>
-                                    </Dropdown.Content>
-                                </Dropdown>
-                            </div>
+                                            </p>
+                                        </div>
+                                        <svg
+                                            className="w-4 h-4 text-white/70 ml-1"
+                                            fill="currentColor"
+                                            viewBox="0 0 20 20"
+                                        >
+                                        </svg>
+                                    </button>
                         </div>
 
-                        <div className="-mr-2 flex items-center sm:hidden">
+                        <div className="flex items-center sm:hidden">
                             <button
-                                onClick={() => setShowingNavigationDropdown((previousState) => !previousState)}
-                                className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out"
+                                onClick={() => setShowingNavigationDropdown((prev) => !prev)}
+                                className="w-9 h-9 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
                             >
-                                <svg className="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                                <svg className="h-5 w-5 text-white" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                                     <path
                                         className={!showingNavigationDropdown ? 'inline-flex' : 'hidden'}
                                         strokeLinecap="round"
@@ -81,26 +73,39 @@ export default function Authenticated({ auth, header, children }) {
                     </div>
                 </div>
 
-                <div className={(showingNavigationDropdown ? 'block' : 'hidden') + ' sm:hidden'}>
-                    <div className="pt-4 pb-1 border-t border-gray-200">
-                        <div className="px-4">
-                            <div className="font-medium text-base text-gray-800">
-                                {auth.user.name}
+                <div className={(showingNavigationDropdown ? 'block' : 'hidden') + ' sm:hidden border-t border-white/10'}>
+                    <div className="px-4 py-4">
+                        <div className="flex items-center gap-3 mb-4">
+                            <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-white font-bold">
+                                {auth.user.name?.charAt(0).toUpperCase()}
+                            </div>
+                            <div>
+                                <p className="text-white font-semibold text-sm">{auth.user.name}</p>
+                                <p className="text-blue-200 text-xs">{auth.user.email}</p>
                             </div>
                         </div>
 
-                        <div className="mt-3 space-y-1">
-                            <Dropdown.Link method="post" href={route('logout')} as="button">
-                                Log Out
-                            </Dropdown.Link>
+                        <div className="space-y-1">
+                            <Link
+                                href={route('profile.edit')}
+                                className="flex items-center gap-2 px-3 py-2 rounded-lg text-white/80 hover:bg-white/10 text-sm transition"
+                            >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                </svg>
+                                Profil Saya
+                            </Link>
                         </div>
                     </div>
                 </div>
             </nav>
 
             {header && (
-                <header className="bg-white shadow">
-                    <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">{header}</div>
+                <header className="bg-white shadow-sm border-b border-gray-200">
+                    <div className="max-w-7xl mx-auto py-5 px-4 sm:px-6 lg:px-8 flex items-center gap-3">
+                        <div className="w-1 h-6 rounded-full" style={{ backgroundColor: '#223A5C' }}></div>
+                        <div>{header}</div>
+                    </div>
                 </header>
             )}
 

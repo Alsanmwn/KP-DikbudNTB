@@ -9,6 +9,8 @@ use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\AdminProfileController;
 use App\Http\Controllers\KegiatanController;
 use App\Http\Controllers\PendaftaranKegiatanController;
+use App\Http\Controllers\PermohonanLayananController;
+use App\Http\Controllers\Admin\DashboardController;
 // use App\Http\Controllers\SekolahController;
 // use App\Http\Controllers\GuruController;
 // use App\Http\Controllers\SiswaController;
@@ -234,3 +236,41 @@ Route::get('storage/{filename}', function ($filename) {
 })->where('filename', '.*');
 
 require __DIR__.'/auth.php';
+
+// Admin Guru route
+Route::get('/admin/guru', function () {
+    return Inertia::render('Admin/Guru');
+})->name('admin.guru')->middleware(['auth:admin']);
+
+Route::middleware(['auth'])->post('/pendaftaran-kegiatan', [PendaftaranKegiatanController::class, 'store']);
+
+// // Pendaftaran kegiatan
+// Route::delete('/pendaftaran-kegiatan/{id}', [PendaftaranKegiatanController::class, 'destroy'])
+//     ->name('pendaftaran.destroy');
+
+// // Permohonan layanan
+// Route::delete('/permohonan-layanan/{id}', [PermohonanLayananController::class, 'destroy'])
+//     ->name('permohonan.destroy');
+
+// Route::middleware(['auth'])->group(function () {
+//     Route::delete('/pendaftaran/{id}', [PendaftaranKegiatanController::class, 'destroy'])
+//         ->name('pendaftaran.destroy');
+
+//     Route::delete('/permohonan/{id}', [PermohonanLayananController::class, 'destroy'])
+//         ->name('permohonan.destroy');
+// });
+Route::delete('/permohonan/{id}', [PermohonanLayananController::class, 'destroy'])
+    ->name('permohonan.destroy');
+
+Route::post('/permohonan-layanan', [PermohonanLayananController::class, 'store'])
+    ->middleware('auth');
+
+// routes/web.php
+Route::middleware('auth')->group(function () {
+    Route::get('/permohonan-layanan', fn() => Inertia::render('PermohonanLayanan'));
+});
+
+Route::delete('/pendaftaran/{id}', [PendaftaranController::class, 'destroy'])
+    ->name('pendaftaran.destroy');
+
+Route::get('/admin/dashboard', [DashboardController::class, 'index']); 

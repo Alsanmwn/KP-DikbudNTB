@@ -13,8 +13,6 @@ class SekolahController extends Controller
 {
     public function index()
     {
-        // $sekolah = Sekolah::all();
-        // return view('sekolah.index', compact('sekolah'));
         return response()->json(Sekolah::all());
     }
    
@@ -69,10 +67,6 @@ class SekolahController extends Controller
         return redirect()->route('sekolah.index')->with('success', 'Data sekolah berhasil dihapus');
     }
 
-
-    // Tambahkan metode-metode berikut di SekolahController atau buat ApiSekolahController baru
-
-
     public function getSekolahSummary()
     {
         // Mengambil data ringkasan sekolah per kabupaten
@@ -117,7 +111,6 @@ class SekolahController extends Controller
         return response()->json($data);
     }
 
-
     public function getSekolahDetail($kabupaten, $kecamatan)
     {
         // Mengambil daftar sekolah di kecamatan dan kabupaten tertentu
@@ -131,7 +124,6 @@ class SekolahController extends Controller
         return response()->json($data);
     }
 
-
     public function getSekolahFull($id)
 {
     // Mengambil detail lengkap sekolah berdasarkan ID
@@ -141,16 +133,16 @@ class SekolahController extends Controller
         'id' => $sekolah->id,
         'nama' => $sekolah->nama,
         'npsn' => $sekolah->npsn,
-        'bp' => $sekolah->bp, // Ganti menjadi bentuk_pendidikan
+        'bp' => $sekolah->bp, 
         'status' => $sekolah->status,
         'status_kepemilikan' => $sekolah->status_kepemilikan,
         'sk_pendirian' => $sekolah->sk_pendirian,
-        'tgl_sk_pendirian' => $sekolah->tgl_sk_pendirian, // Ganti menjadi tanggal_sk_pendirian
+        'tgl_sk_pendirian' => $sekolah->tgl_sk_pendirian, 
         'kepala_sekolah' => $sekolah->kepala_sekolah,
         'akreditasi' => $sekolah->akreditasi,
         'kurikulum' => $sekolah->kurikulum,
         'sk_izin_operasional' => $sekolah->sk_izin_operasional,
-        'tgl_sk_izin' => $sekolah->tgl_sk_izin_operasional, // Ganti menjadi tanggal_sk_izin
+        'tgl_sk_izin' => $sekolah->tgl_sk_izin_operasional, 
         'alamat' => $sekolah->alamat,
         'kecamatan' => $sekolah->kecamatan,
         'kabupaten' => $sekolah->kabupaten,
@@ -159,5 +151,3 @@ class SekolahController extends Controller
     ]);
 }
 }
-
-

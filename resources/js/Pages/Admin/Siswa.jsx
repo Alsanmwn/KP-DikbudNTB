@@ -1,85 +1,11 @@
-// import React from 'react';
-// import Sidebar from '@/Components/Sidebar';
-// import { usePage, router } from '@inertiajs/react';
-
-// const Siswa = () => {
-//     const { admin } = usePage().props;
-
-//     const handleLogout = () => {
-//         router.post('/admin/logout');
-//     };
-
-//     return (
-//         <div className="flex min-h-screen bg-gray-100">
-//             {/* Sidebar */}
-//             <Sidebar />
-
-//             {/* Konten Halaman */}
-//             <div className="flex-1">
-//                 <nav className="bg-white shadow-sm">
-//                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-//                         <div className="flex justify-between h-16">
-//                             <div className="flex items-center">
-//                                 <h1 className="text-xl font-semibold">Data Siswa</h1>
-//                             </div>
-//                             <div className="flex items-center">
-//                                 <span className="mr-4">Welcome, {admin.name}</span>
-//                             </div>
-//                         </div>
-//                     </div>
-//                 </nav>
-
-//                 <div className="py-12">
-//                     <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-//                         <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-//                             <div className="p-6">
-//                                 {/* Konten Agenda BTIDP */}
-//                                 <h2 className="text-lg font-semibold">Data siswa ntb</h2>
-//                                 <p>This is the data students page content.</p>
-
-//                                 {/* Anda bisa menambahkan lebih banyak konten agenda di sini */}
-//                                 <table className="min-w-full table-auto mt-6">
-//                                     <thead>
-//                                         <tr>
-//                                             <th className="px-4 py-2">No</th>
-//                                             <th className="px-4 py-2">name</th>
-//                                             <th className="px-4 py-2">Tanggal lahir</th>
-//                                         </tr>
-//                                     </thead>
-//                                     <tbody>
-//                                         {/* Contoh data agenda */}
-//                                         <tr>
-//                                             <td className="px-4 py-2">1</td>
-//                                             <td className="px-4 py-2">Alsa Nurmawan</td>
-//                                             <td className="px-4 py-2">01/02/2020</td>
-//                                         </tr>
-//                                         <tr>
-//                                             <td className="px-4 py-2">2</td>
-//                                             <td className="px-4 py-2">Ayu widya</td>
-//                                             <td className="px-4 py-2">03/03/2020</td>
-//                                         </tr>
-//                                     </tbody>
-//                                 </table>
-//                             </div>
-//                         </div>
-//                     </div>
-//                 </div>
-//             </div>
-//         </div>
-//     );
-// };
-
-// export default Siswa;
-
 import React, { useState, useEffect, useMemo } from 'react';
 import { MaterialReactTable } from 'material-react-table';
 import axios from 'axios';
 import Sidebar from '@/Components/Sidebar';
 import { usePage } from '@inertiajs/react';
-import { Edit, Trash, User as UserIcon, Plus, Loader2 } from 'lucide-react';
+import { User as UserIcon, Plus, Loader2 } from 'lucide-react';
 import { Link } from '@inertiajs/react';
 
-// Konfigurasi Axios
 axios.defaults.baseURL = window.location.origin;
 axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
@@ -100,7 +26,6 @@ const Siswa = () => {
     });
     const [successMessage, setSuccessMessage] = useState('');
 
-    // Fetch data saat komponen mount
     useEffect(() => {
         fetchSiswa();
         fetchSchools();
@@ -132,20 +57,6 @@ const Siswa = () => {
         }
     };
 
-    // Fungsi untuk menghapus siswa
-    const handleDelete = async (id) => {
-        if (!window.confirm('Apakah Anda yakin ingin menghapus data siswa ini?')) return;
-        try {
-            await axios.delete(`/api/siswa/${id}`);
-            setSiswa(siswa.filter(s => s.id !== id));
-            setSuccessMessage('Data siswa berhasil dihapus!');
-            setTimeout(() => setSuccessMessage(''), 3000);
-        } catch (error) {
-            console.error('Error deleting siswa:', error);
-            setError('Gagal menghapus data siswa.');
-        }
-    };
-
     // Fungsi untuk menambah siswa dalam jumlah banyak
     const handleAddStudents = async () => {
         if (!addData.sekolah_id) {
@@ -168,15 +79,12 @@ const Siswa = () => {
                 perempuan: addData.perempuan
             });
 
-            // Refresh data setelah penambahan
             await fetchSiswa();
             
-            // Tampilkan pesan sukses
             const totalAdded = addData.laki_laki + addData.perempuan;
             setSuccessMessage(`Berhasil menambahkan ${totalAdded} siswa!`);
             setTimeout(() => setSuccessMessage(''), 5000);
             
-            // Reset form dan tutup modal
             setAddData({
                 sekolah_id: '',
                 laki_laki: 0,
@@ -200,65 +108,6 @@ const Siswa = () => {
             setLoading(false);
         }
     };
-
-    // Kolom untuk tabel detail siswa
-    const columns = useMemo(() => [
-        { 
-            accessorKey: 'id', 
-            header: 'ID', 
-            size: 80,
-            enableColumnOrdering: false,
-            enableEditing: false,
-        },
-        { 
-            accessorKey: 'sekolah.nama', 
-            header: 'Sekolah',
-            size: 200,
-            Cell: ({ row }) => row.original.sekolah?.nama || '-',
-            enableColumnOrdering: false,
-        },
-        { 
-            accessorKey: 'sekolah.bp', 
-            header: 'Bentuk Pendidikan',
-            size: 150,
-            Cell: ({ row }) => row.original.sekolah?.bp || '-',
-            enableColumnOrdering: false,
-        },
-        { 
-            accessorKey: 'jenis_kelamin', 
-            header: 'Jenis Kelamin', 
-            size: 120,
-            enableColumnOrdering: false,
-        },
-        {
-            accessorKey: 'created_at',
-            header: 'Tanggal Dibuat',
-            Cell: ({ cell }) => {
-                const date = cell.getValue();
-                return date ? new Date(date).toLocaleDateString('id-ID') : '-';
-            },
-            size: 150,
-            enableColumnOrdering: false,
-        },
-        {
-            id: 'actions',
-            header: 'Aksi',
-            Cell: ({ row }) => (
-                <div className="flex gap-2">
-                    <button 
-                        onClick={() => handleDelete(row.original.id)}
-                        className="text-red-500 hover:text-red-700 transition-colors"
-                        title="Hapus"
-                        disabled={loading}
-                    >
-                        <Trash className="w-5 h-5" />
-                    </button>
-                </div>
-            ),
-            size: 100,
-            enableColumnOrdering: false,
-        },
-    ], [siswa, loading]);
 
     // Ringkasan data per sekolah
     const schoolSummary = useMemo(() => {
@@ -330,9 +179,8 @@ const Siswa = () => {
             <Sidebar />
             
             <div className="flex-1 flex flex-col">
-                {/* Navbar */}
-                <nav className="bg-white shadow-sm p-4 flex justify-between items-center">
-                    <div className="font-semibold text-lg">Data Siswa</div>
+                <nav className="bg-white shadow-lg p-4 flex justify-between items-center">
+                    <div className="font-semibold text-lg"></div>
                     <Link 
                         href={route('admin.profile')} 
                         className="flex items-center gap-2 text-gray-700 hover:text-blue-600 transition-colors"
@@ -344,9 +192,7 @@ const Siswa = () => {
                     </Link>
                 </nav>
                 
-                {/* Main Content */}
                 <div className="flex-1 p-6 overflow-auto">
-                    {/* Notifikasi */}
                     {error && (
                         <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4 rounded">
                             <div className="font-bold">Error!</div>
@@ -362,12 +208,12 @@ const Siswa = () => {
                     )}
                     
                     {/* Ringkasan Data */}
-                    <div className="bg-white rounded-lg shadow p-6 mb-8">
+                    <div className="bg-white rounded-lg shadow p-6">
                         <div className="mb-4 flex justify-between items-center">
                             <h2 className="text-xl font-semibold text-gray-800">Ringkasan Data Siswa per Sekolah</h2>
                             <button 
                                 onClick={() => setIsAddModalOpen(true)}
-                                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded flex items-center gap-2 transition-colors"
+                                className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded flex items-center gap-2 transition-colors"
                                 disabled={loading}
                             >
                                 <Plus className="w-4 h-4" />
@@ -378,30 +224,6 @@ const Siswa = () => {
                         <MaterialReactTable
                             columns={summaryColumns}
                             data={schoolSummary}
-                            state={{ isLoading: loading }}
-                            enableColumnActions={false}
-                            enableColumnFilters={false}
-                            enablePagination={true}
-                            enableSorting={true}
-                            enableBottomToolbar={true}
-                            enableTopToolbar={false}
-                            muiTablePaperProps={{
-                                elevation: 0,
-                                sx: {
-                                    boxShadow: 'none',
-                                    border: '1px solid #e5e7eb',
-                                },
-                            }}
-                        />
-                    </div>
-                    
-                    {/* Detail Data Siswa */}
-                    <div className="bg-white rounded-lg shadow p-6">
-                        <h2 className="text-xl font-semibold text-gray-800 mb-4">Detail Data Siswa</h2>
-                        
-                        <MaterialReactTable
-                            columns={columns}
-                            data={siswa}
                             state={{ isLoading: loading }}
                             enableColumnActions={false}
                             enableColumnFilters={true}
@@ -432,12 +254,10 @@ const Siswa = () => {
             {isAddModalOpen && (
                 <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50 p-4">
                     <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
-                        {/* Modal Header */}
                         <div className="border-b p-4">
                             <h2 className="text-lg font-semibold text-gray-800">Tambah Data Siswa</h2>
                         </div>
                         
-                        {/* Modal Body */}
                         <div className="p-6">
                             <div className="mb-4">
                                 <label className="block text-gray-700 text-sm font-medium mb-2">
@@ -498,7 +318,6 @@ const Siswa = () => {
                             </div>
                         </div>
                         
-                        {/* Modal Footer */}
                         <div className="border-t p-4 flex justify-end gap-2">
                             <button
                                 onClick={() => {

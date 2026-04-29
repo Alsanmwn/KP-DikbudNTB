@@ -4,13 +4,11 @@ import axios from 'axios';
 import { Edit, Trash, User as UserIcon } from 'lucide-react';
 import Sidebar from '@/Components/Sidebar';
 import { usePage } from '@inertiajs/react';
+import { AiOutlineExclamationCircle } from 'react-icons/ai';
 
-
-// Set up axios defaults
 axios.defaults.baseURL = window.location.origin;
 axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
-
 
 const StrukturOrganisasi = () => {
     const { admin } = usePage().props;
@@ -24,13 +22,16 @@ const StrukturOrganisasi = () => {
     const [selectedData, setSelectedData] = useState(null);
     const [activeTab, setActiveTab] = useState('pegawai');
    
-    // Search and filter state
     const [searchTerm, setSearchTerm] = useState('');
     const [filterYear, setFilterYear] = useState('');
     const [availableYears, setAvailableYears] = useState([]);
 
+    const [deleteConfirm, setDeleteConfirm] = useState({
+        show: false,
+        id: null,
+        tipe: null
+    });
 
-    // Form data state
     const [formData, setFormData] = useState({
         nama: '',
         nip: '',
@@ -41,13 +42,10 @@ const StrukturOrganisasi = () => {
         peran: ''
     });
 
-
     useEffect(() => {
         fetchData();
     }, []);
 
-
-    // Extract unique years from pegawai data for filtering
     useEffect(() => {
         if (pegawai.length > 0) {
             const years = [...new Set(pegawai.map(p => p.tahun_aktif))].sort((a, b) => b - a);
@@ -55,12 +53,10 @@ const StrukturOrganisasi = () => {
         }
     }, [pegawai]);
 
-
     const fetchData = async () => {
         try {
             setLoading(true);
            
-            // Fetch all data from API endpoints
             const [pegawaiRes, jabatanRes, strukturRes] = await Promise.all([
                 axios.get('/api/pegawai'),
                 axios.get('/api/jabatan'),
@@ -75,7 +71,6 @@ const StrukturOrganisasi = () => {
             console.error('Error fetching data:', error.response?.data || error.message);
             setError(`Error: ${error.response?.data?.error || error.message}`);
            
-            // Try to fetch each data individually to identify the source of the error
             try {
                 const pegawaiRes = await axios.get('/api/pegawai');
                 setPegawai(pegawaiRes.data);
@@ -101,11 +96,9 @@ const StrukturOrganisasi = () => {
         }
     };
 
-
     const handleAdd = () => {
         setModalMode('add');
         setSelectedData(null);
-        // Reset form data based on active tab
         if (activeTab === 'struktur') {
             setFormData({
                 pegawai_id: '',
@@ -126,13 +119,11 @@ const StrukturOrganisasi = () => {
         setIsModalOpen(true);
     };
 
-
     const handleEdit = (data) => {
         setModalMode('edit');
         setSelectedData(data);
        
         if (activeTab === 'struktur') {
-            // Make a copy of the struktur data
             const struktur = { ...data };
            
             setFormData({
@@ -147,34 +138,41 @@ const StrukturOrganisasi = () => {
         setIsModalOpen(true);
     };
 
+    const handleDelete = (id, tipe) => {
+        setDeleteConfirm({
+            show: true,
+            id,
+            tipe
+        });
+    };
 
-    const handleDelete = async (id, tipe) => {
-        if (!window.confirm('Apakah Anda yakin ingin menghapus data ini?')) return;
-       
+    const confirmDelete = async () => {
         try {
             let endpoint;
-            switch (tipe) {
+            switch (deleteConfirm.tipe) {
                 case 'pegawai':
-                    endpoint = `/api/pegawai/${id}`;
+                    endpoint = `/api/pegawai/${deleteConfirm.id}`;
                     break;
                 case 'jabatan':
-                    endpoint = `/api/jabatan/${id}`;
+                    endpoint = `/api/jabatan/${deleteConfirm.id}`;
                     break;
                 case 'struktur':
-                    endpoint = `/api/pegawai-jabatan/${id}`;
+                    endpoint = `/api/pegawai-jabatan/${deleteConfirm.id}`;
                     break;
                 default:
                     throw new Error('Tipe yang ditentukan tidak valid');
             }
-           
+
             await axios.delete(endpoint);
             fetchData();
+
         } catch (error) {
             console.error('Error menghapus data:', error);
             setError(`Gagal menghapus data: ${error.message}`);
+        } finally {
+            setDeleteConfirm({ show: false, id: null, tipe: null });
         }
     };
-
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -182,7 +180,6 @@ const StrukturOrganisasi = () => {
             let endpoint;
             let method;
             let data;
-
 
             switch (activeTab) {
                 case 'pegawai':
@@ -219,12 +216,10 @@ const StrukturOrganisasi = () => {
                     break;
             }
 
-
             await axios[method](endpoint, data);
             fetchData();
             setIsModalOpen(false);
            
-            // Show success message (you could add a toast notification here)
             console.log(`Data berhasil ${modalMode === 'add' ? 'ditambahkan' : 'diperbarui'}`);
            
         } catch (error) {
@@ -232,7 +227,6 @@ const StrukturOrganisasi = () => {
             setError('Gagal menyimpan data. ' + (error.response?.data?.message || error.message));
         }
     };
-
 
     // Filter and search functions
     const getFilteredData = () => {
@@ -300,7 +294,6 @@ const StrukturOrganisasi = () => {
         return filteredData;
     };
 
-
     const pegawaiColumns = useMemo(() => [
         { accessorKey: 'nama', header: 'Nama', size: 200 },
         { accessorKey: 'nip', header: 'NIP', size: 150 },
@@ -332,6 +325,8 @@ const StrukturOrganisasi = () => {
     const jabatanColumns = useMemo(() => [
         { accessorKey: 'nama_jabatan', header: 'Nama Jabatan', size: 200 },
         {
+            id: 'aksi',          
+            enablePinning: true, 
             header: 'Aksi',
             Cell: ({ row }) => (
                 <div className="flex gap-2">
@@ -382,6 +377,8 @@ const StrukturOrganisasi = () => {
         },
         { accessorKey: 'peran', header: 'Peran', size: 150 },
         {
+            id: 'aksi',          
+            enablePinning: true, 
             header: 'Aksi',
             Cell: ({ row }) => (
                 <div className="flex gap-2">
@@ -405,16 +402,15 @@ const StrukturOrganisasi = () => {
         },
     ], [pegawai, jabatan]);
 
-
     return (
         <div className="flex min-h-screen bg-gray-100">
             <Sidebar />
             <div className="flex-1">
-            <nav className="bg-white shadow-sm p-4 flex justify-between items-center">
+            <nav className="bg-white shadow-lg p-4 flex justify-between items-center">
                 <div className="font-semibold text-lg"></div>
                 <div className="flex items-center gap-2 text-gray-700">
                     <span className="text-base font-medium">{admin.name}</span>
-                    <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white">
+                    <div className="w-8 h-8 bg-gray-400 rounded-full flex items-center justify-center text-white">
                         <UserIcon className="w-5 h-5" />
                     </div>
                 </div>
@@ -467,7 +463,6 @@ const StrukturOrganisasi = () => {
                                 Tambah Data
                             </button>
                            
-                            {/* Search field */}
                             <div className="flex-1 max-w-md">
                                 <input
                                     type="text"
@@ -477,14 +472,15 @@ const StrukturOrganisasi = () => {
                                     className="p-2 border border-gray-300 rounded w-full"
                                 />
                             </div>
-                           
-                            {/* Year filter - only for pegawai and struktur */}
+
                             {(activeTab === 'pegawai' || activeTab === 'struktur') && availableYears.length > 0 && (
-                                <div>
+                                <div className="relative">
                                     <select
                                         value={filterYear}
                                         onChange={(e) => setFilterYear(e.target.value)}
-                                        className="p-2 border border-gray-300 rounded"
+                                        className="p-2 pr-10 border border-gray-300 rounded w-full 
+                                                appearance-none bg-white 
+                                                [&::-ms-expand]:hidden"
                                     >
                                         <option value="">Semua Tahun</option>
                                         {availableYears.map(year => (
@@ -493,9 +489,9 @@ const StrukturOrganisasi = () => {
                                     </select>
                                 </div>
                             )}
+
                         </div>
                     </div>
-
 
                     <MaterialReactTable
                         columns={
@@ -508,10 +504,14 @@ const StrukturOrganisasi = () => {
                         enableColumnFilters
                         enablePagination
                         enableSorting
+                        enableColumnPinning
                         initialState={{
                             pagination: {
                                 pageSize: 10,
                                 pageIndex: 0,
+                            },
+                        columnPinning: {
+                                right: ['aksi'], 
                             },
                         }}
                         muiTablePaginationProps={{
@@ -524,10 +524,9 @@ const StrukturOrganisasi = () => {
                 </div>
             </div>
 
-
             {isModalOpen && (
-                <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
-                    <div className="bg-white p-6 rounded shadow-lg max-w-lg w-full">
+                <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50">
+                    <div className="bg-white p-6 rounded-2xl shadow-lg max-w-lg w-full animate-fadeIn">
                         <h2 className="text-lg font-semibold mb-4">
                             {modalMode === 'add' ? 'Tambah' : 'Edit'} Data {
                                 activeTab === 'pegawai' ? 'Pegawai' :
@@ -591,7 +590,6 @@ const StrukturOrganisasi = () => {
                                 </div>
                             )}
 
-
                             {activeTab === 'struktur' && (
                                 <>
                                     <div className="mb-4">
@@ -637,12 +635,11 @@ const StrukturOrganisasi = () => {
                                 </>
                             )}
 
-
                             <div className="flex justify-end gap-2 mt-6">
                                 <button
                                     type="button"
                                     onClick={() => setIsModalOpen(false)}
-                                    className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+                                    className="px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-600"
                                     disabled={loading}
                                 >
                                     Batal
@@ -659,9 +656,41 @@ const StrukturOrganisasi = () => {
                     </div>
                 </div>
             )}
+
+            {deleteConfirm.show && (
+                <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50">
+                    <div className="bg-white p-6 rounded-2xl shadow-lg max-w-sm w-full text-center animate-fadeIn">
+                        
+                        <AiOutlineExclamationCircle className="text-red-500 text-5xl mx-auto mb-3" />
+
+                        <h2 className="text-lg font-semibold text-red-600 mb-3">
+                            Konfirmasi Hapus
+                        </h2>
+
+                        <p className="text-gray-600 mb-6">
+                            Apakah Anda yakin ingin menghapus data ini?
+                        </p>
+
+                        <div className="flex justify-center gap-3">
+                            <button
+                                onClick={() => setDeleteConfirm({ show: false, id: null, tipe: null })}
+                                className="px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500"
+                            >
+                                Batal
+                            </button>
+
+                            <button
+                                onClick={confirmDelete}
+                                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+                            >
+                                Hapus
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>    
     );
 };
-
 
 export default StrukturOrganisasi;

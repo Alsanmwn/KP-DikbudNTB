@@ -3,38 +3,79 @@ import Navbar from "@/Components/Navbar";
 import Footer from "@/Components/Footer";
 import axios from 'axios';
 
-const STYLES = {
-  title: "text-[25px] font-bold text-[#223A5C] mb-6",
-  sectionPadding: "px-4 py-16",
+const C = {
+  navy:    "#1A2E4A",
+  teal:    "#2A7F62",
+  tealLt:  "#3DAA83",
+  offWhite:"#F7F9FC",
+  lightBg: "#EEF2F8",
 };
 
-const SectionTitle = ({ children, className = "" }) => (
-  <h3
-    className={`${STYLES.title} ${className}`}
-    style={{ textShadow: "2px 2px 4px rgba(0, 0, 0, 0.2)" }}
-  >
-    {children}
-  </h3>
-);
-
-const HeroSection = () => (
-  <div className="relative flex justify-center items-center flex-1 mb-2">
-    <img
-      src="/assets/landingpage.png"
-      alt="Hero image"
-      className="w-full h-[390px] object-cover"
-    />
+const Divider = ({ className = "" }) => (
+  <div className={`flex items-center gap-3 ${className}`}>
+    <div className="h-px flex-1 bg-gradient-to-r from-transparent to-[#2A7F62]/40" />
+    <div className="h-px flex-1 bg-gradient-to-l from-transparent to-[#2A7F62]/40" />
   </div>
 );
+
+const SectionLabel = ({ children }) => (
+  <span
+    className="inline-block text-xs font-bold tracking-[0.25em] uppercase mb-3 px-3 py-1 rounded-full"
+    style={{ background: `${C.teal}18`, color: C.teal }}
+  >
+    {children}
+  </span>
+);
+
+const SectionHeading = ({ label, title, light = false }) => (
+  <div className="text-center mb-12">
+    <SectionLabel>{label}</SectionLabel>
+    <h2
+      className="text-3xl md:text-4xl font-bold"
+      style={{
+        fontFamily: "'Georgia', serif",
+        color: light ? "#fff" : C.navy,
+        letterSpacing: "-0.02em",
+      }}
+    >
+      {title}
+    </h2>
+    <Divider className="mt-4 max-w-xs mx-auto" />
+  </div>
+);
+
 
 const AboutSection = () => {
   const [isOpen, setIsOpen] = useState(false);
 
+  const historyCards = [
+    {
+      abbr: "BTKP",
+      title: "Balai Teknologi Komunikasi Pendidikan",
+      body: `Sebelum menjadi Balai Teknologi Komunikasi Pendidikan awalnya bernama Sanggar Teknologi Komunikasi Pendidikan di bawah naungan Pusat Teknologi Komunikasi (Pustekkom). Sekitar tahun 2001 dengan diberlakukannya Otonomi Daerah maka berubah nama menjadi Balai Teknologi Komunikasi Pendidikan (BTKP) sesuai SK Gubernur nomor 484 Tahun 2001.`,
+    },
+    {
+      abbr: "BTIKP",
+      title: "Balai Teknologi Informasi dan Komunikasi Pendidikan",
+      body: `Seiring perkembangan kelembagaan dan tuntutan Pembentukan Susunan Perangkat Daerah Provinsi NTB, dilakukan perombakan struktur organisasi. Lahirlah Balai Teknologi Informasi dan Komunikasi Pendidikan sesuai Peraturan Gubernur nomor 53 Tahun 2016.`,
+    },
+    {
+      abbr: "BPTP",
+      title: "Balai Pengembangan Teknologi Pembelajaran",
+      body: `Mengacu pada Permendagri No. 12 Tahun 2017, BTIKP dievaluasi dan berubah nama menjadi Balai Pengembangan Teknologi Pendidikan (BPTeknodik) NTB setelah hasil konsultasi dengan Biro Organisasi Sekretariat Daerah NTB.`,
+    },
+    {
+      abbr: "BTIDP",
+      title: "Balai Teknologi Informasi dan Data Pendidikan",
+      body: `Mengacu pada perubahan nomenklatur Pusat Teknologi Komunikasi (Pustekkom) menjadi Pusat Data dan Informasi, BPTeknodik berubah menjadi Balai Teknologi Informasi dan Data Pendidikan (BTIDP) tertuang dalam Peraturan Gubernur nomor 29 Tahun 2018.`,
+    },
+  ];
+
   return (
-    <section className="py-16 bg-white text-center">
-      <h2 className="text-2xl font-bold text-[#223A5C] mb-6">Tentang Kami</h2>
-      <div className="max-w-4xl mx-auto text-center">
-        <p className="text-[18px] text-[#223A5C] leading-relaxed mb-2">
+    <section className="py-20 bg-white">
+      <div className="max-w-3xl mx-auto px-6 text-center">
+        <SectionHeading label="Profil Lembaga" title="Tentang Kami" />
+        <p className="text-[#223A5C] text-base leading-relaxed mb-6">
           Balai Teknologi Informasi dan Data Pendidikan dipimpin oleh Kepala Balai
           yang dibantu oleh Kasubbag Tata Usaha, Kepala Seksi Pemanfaatan Teknologi
           Informasi dan Data Pendidikan serta Kepala Seksi Pengembangan Media
@@ -44,68 +85,68 @@ const AboutSection = () => {
         </p>
         <button
           onClick={() => setIsOpen(true)}
-          className="text-blue-700 font-semibold px-6 py-2 transition"
+          className="inline-flex items-center gap-2 text-sm font-semibold transition-all"
+          style={{ color: C.teal }}
         >
-          Selengkapnya {'>>>'}
+          Lihat Sejarah Kami
+          <span className="text-lg leading-none">→</span>
         </button>
-        <hr className="border-t-2 border-[#223A5C] mt-4 mx-auto w-1/5" />
       </div>
 
-      {/* Modal Popup */}
       {isOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white p-4 lg:p-6 rounded-lg shadow-lg max-w-4xl w-full max-h-[80vh] overflow-y-auto">
-            <h3 className="text-xl font-bold text-[#223A5C] mb-4">Sejarah BTIDP</h3>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 text-justify">
-              {/* Card 1 */}
-              <div className="border border-[#223A5C] p-4 rounded-lg shadow-md w-full">
-                <h4 className="text-lg font-semibold text-[#223A5C]">BTKP <br/> Balai Teknologi Komunikasi Pendidikan</h4>
-                <p className="text-sm text-gray-600 mt-2">
-                      Sebelum menjadi Balai Teknologi Komunikasi Pendidikan awalnya bernama Sanggar Teknologi
-                    Komunikasi Pendidikan di bawah naungan Pusat Teknologi Komunikasi (Pustekkom) yang secara tekni
-                    operasional bertanggung jawab kepada Kepala Kanto Wilayah Pendidikan dan Kebudayaan Provinsi Nusa
-                    Tenggara Barat. Sekitar tahun 2001 dengan diberlakukannya Otonomi Daerah maka sejak itulah berubah nama menjadi Bala
-                    Teknologi Komunikasi Pendidikan (BTKP) di bawah kendali Pemerintah Provinsi NTB sesuai SK Gubernur
-                    nomor 484 Tahun 2001, Tanggal 23 Desember 2001
-                    </p>
-              </div>
-              {/* Card 2 */}
-              <div className="border border-[#223A5C] p-4 rounded-lg shadow-md w-full">
-                <h4 className="text-lg font-semibold text-[#223A5C]">BTIKP <br/> Balai Teknologi Informasi dan Komunikasi Pendidikan (Dinas Dikbud)</h4>
-                <p className="text-sm text-gray-600 mt-2">
-                      Seiring dengan perkembangan kelembagaan dan tuntutan tentang Pembentukan dan
-                    Susunan Perangkat Daerah Provinsi Nusa Tenggara Barat maka dilakukan perombakan
-                    struktur organisasi beserta turunannya dan lahirlah Balai Teknologi Informasi dan Komunikasi 
-                    Pendidikan sesuai Peraturan Gubernur nomor 53 Tahun 2016 yang sebelumnya bernama BTKP.
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div
+            className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[85vh] overflow-hidden flex flex-col"
+            style={{ fontFamily: "sans-serif" }}
+          >
+            <div
+              className="flex items-center justify-between px-8 py-5"
+              style={{ background: C.navy }}
+            >
+              <div>
+                <p className="text-xs text-white/60 tracking-widest uppercase font-bold">
+                  Sejarah Lembaga
                 </p>
+                <h3 className="text-xl font-bold text-white" style={{ fontFamily: "'Georgia',serif" }}>
+                  Perjalanan BTIDP
+                </h3>
               </div>
-              {/* Card 3 */}
-              <div className="border border-[#223A5C] p-4 rounded-lg shadow-md w-full">
-                <h4 className="text-lg font-semibold text-[#223A5C]">BPTP <br/> Balai Pengembangan Teknologi Pembelajaran</h4>
-                <p className="text-sm text-gray-600 mt-2">
-                      Dengan mengacu pada amanat Permendagri No. 12 Tahun 2017 tentang Pedoman Pembentukan dan Klasifikasi
-                    Cabang Dinas dan Unit Pelaksana Teknis Daerah, BTIKP dievaluasi dan dikaji keberadaannya dan hasil rekomendasi
-                    Kementerian Dalam Negeri agar diubah tugas pokok dan fungsi serta hasil konsultasi dengan Biro Organisasi Sekretariat Daerah
-                    NTB maka Balai Teknologi Informasi dan Komunikasi Pendidikan berubah nama menjadi Balai Pengembangan Teknologi Pendidikan (BPTeknodik) NTB
-                </p>
-              </div>
-              {/* Card 4 */}
-              <div className="border border-[#223A5C] p-4 rounded-lg shadow-md w-full">
-                <h4 className="text-lg font-semibold text-[#223A5C]">BTIDP <br/> Balai Teknologi Informasi dan Data Pendidikan</h4>
-                <p className="text-sm text-gray-600 mt-2">
-                      Mengacu pada perubahan nomenklatur lembaga pembina Jabatan Fungsional yang ada di BPTeknodik dalam hal ini adalah
-                    Pusat Teknologi Komunikasi (Pustekkom) menjadi Pusat Data dan Informasi serta hasil konsultasi dengan Biro Organisasi Sekretaris
-                    Daerah NTB maka BPTeknodik berubah lagi dengan nama Balai Teknologi Informasi dan Data Pendidikan (BTIDP) yang tertuang
-                    dalam Peraturan Gubernur nomor 29 Tahun 2018 tanggal 14 September 2018
-                </p>
-              </div>
-            </div>
-
-            {/* Tombol Tutup */}
-            <div className="text-center mt-4">
               <button
                 onClick={() => setIsOpen(false)}
-                className="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
+                className="w-9 h-9 rounded-full flex items-center justify-center text-white/70 hover:text-white hover:bg-white/10 transition text-xl"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="overflow-y-auto p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+              {historyCards.map((c, i) => (
+                <div
+                  key={i}
+                  className="rounded-xl border p-5 flex flex-col gap-2 transition hover:shadow-md"
+                  style={{ borderColor: `${C.navyMid}25`, background: C.offWhite }}
+                >
+                  <div className="flex items-center gap-3 mb-1">
+                    <span
+                      className="text-xs font-black tracking-widest px-2 py-1 rounded"
+                      style={{ background: C.navy, color: "#fff" }}
+                    >
+                      {c.abbr}
+                    </span>
+                  </div>
+                  <h4 className="font-bold text-sm" style={{ color: C.navy }}>
+                    {c.title}
+                  </h4>
+                  <p className="text-xs text-gray-600 leading-relaxed">{c.body}</p>
+                </div>
+              ))}
+            </div>
+
+            <div className="px-6 pb-6 text-center">
+              <button
+                onClick={() => setIsOpen(false)}
+                className="px-8 py-2.5 rounded-full text-sm font-semibold text-white transition"
+                style={{ background: C.teal }}
               >
                 Tutup
               </button>
@@ -117,30 +158,44 @@ const AboutSection = () => {
   );
 };
 
-
 const WelcomeSection = () => (
-  <section className="relative mb-36">
-    <div className="flex justify-center items-center">
+  <section className="relative" style={{ background: C.lightBg }}>
+    <div className="relative h-[320px] overflow-hidden">
       <img
         src="/assets/sunset.png"
         alt="Sunset view"
-        className="w-full max-w-[1115px] h-[405px] object-cover"
+        className="w-full h-full object-cover"
+      />
+      <div
+        className="absolute inset-0"
+        style={{ background: "linear-gradient(to bottom, transparent 40%, #EEF2F8 100%)" }}
       />
     </div>
-    <div className="absolute top-72 left-1/2 transform -translate-x-1/2 w-[90%] max-w-[1000px] bg-white shadow-lg p-6 mt-16">
-      <h2 className="text-[#223A5C] text-xl font-semibold mb-1">
-        Selamat Datang di Website Kami
-      </h2>
-      <p className="text-gray-600 text-sm">
-        Website ini menyediakan layanan Pengajuan Surat, Data Pendidikan, dan Rumah Belajar untuk 
-        mendukung kebutuhan pendidikan. Anda juga dapat melihat agenda BTIDP selama setahun, termasuk 
-        pelatihan dan seminar. Kami berkomitmen menghadirkan inovasi teknologi demi kemajuan pendidikan.
-      </p>
+    <div className="max-w-3xl mx-auto px-6 -mt-16 relative z-10 pb-20">
+      <div
+        className="rounded-2xl shadow-xl p-8 md:p-10 border"
+        style={{ background: "#fff", borderColor: `${C.navy}12` }}
+      >
+        <div
+          className="w-10 h-1 rounded mb-4"
+          style={{ background: C.gold }}
+        />
+        <h2
+          className="text-2xl font-bold mb-3"
+          style={{ color: C.navy, fontFamily: "'Georgia',serif" }}
+        >
+          Selamat Datang di Website Kami
+        </h2>
+        <p className="text-gray-600 text-sm leading-relaxed">
+          Website ini menyediakan layanan Pengajuan Surat, Data Pendidikan, dan Rumah Belajar untuk
+          mendukung kebutuhan pendidikan. Anda juga dapat melihat agenda BTIDP selama setahun, termasuk
+          pelatihan dan seminar. Kami berkomitmen menghadirkan inovasi teknologi demi kemajuan pendidikan.
+        </p>
+      </div>
     </div>
   </section>
 );
 
-// Mission Popup Component
 const MissionPopup = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
@@ -149,28 +204,47 @@ const MissionPopup = ({ isOpen, onClose }) => {
     "Mewujudkan peningkatan kompetensi sumber daya manusia dan menciptakan pertumbuhan kapasitas manajemen, serta sarana dan prasarana teknologi Pendidikan bagi tenaga pendidik dan kependidikan di semua jalur, jenis dan jenjang pendidikan.",
     "Meningkatkan pelayanan dan pengelolaan pendidikan dengan mengembangkan sistem informasi dan jaringan pendidikan berbasis teknologi.",
     "Mengembangkan kultur lembaga berbasis kinerja dan kebersamaan.",
-    "Membangun jejaring kerja dan kemitraan di bidang teknologi Pendidikan."
+    "Membangun jejaring kerja dan kemitraan di bidang teknologi Pendidikan.",
   ];
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white rounded-lg p-6 w-[800px] max-h-[80vh] overflow-y-auto">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="text-xl font-bold text-[#223A5C]">Misi BTIDP</h3>
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-4">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[80vh] overflow-hidden flex flex-col">
+        <div className="flex items-center justify-between px-8 py-5" style={{ background: C.navy }}>
+          <div>
+            <p className="text-xs text-white/60 tracking-widest uppercase font-bold">Lembaga</p>
+            <h3 className="text-xl font-bold text-white" style={{ fontFamily: "'Georgia',serif" }}>
+              Misi BTIDP
+            </h3>
+          </div>
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700"
+            className="w-9 h-9 rounded-full flex items-center justify-center text-white/70 hover:text-white hover:bg-white/10 transition text-xl"
           >
             ✕
           </button>
         </div>
-        <div className="space-y-4">
-          {missions.map((mission, index) => (
-            <div key={index} className="flex gap-2">
-              <span className="text-[#223A5C] font-bold min-w-[16px]">•</span>
-              <p className="text-[#223A5C]">{mission}</p>
+        <div className="overflow-y-auto p-8 space-y-4">
+          {missions.map((mission, i) => (
+            <div key={i} className="flex gap-4 items-start">
+              <div
+                className="w-7 h-7 rounded-full flex-shrink-0 flex items-center justify-center text-xs font-bold text-white mt-0.5"
+                style={{ background: C.teal }}
+              >
+                {i + 1}
+              </div>
+              <p className="text-sm text-gray-700 leading-relaxed">{mission}</p>
             </div>
           ))}
+        </div>
+        <div className="px-8 pb-6 text-right border-t pt-4">
+          <button
+            onClick={onClose}
+            className="px-8 py-2.5 rounded-full text-sm font-semibold text-white transition"
+            style={{ background: C.teal }}
+          >
+            Tutup
+          </button>
         </div>
       </div>
     </div>
@@ -181,74 +255,91 @@ const VisionMissionSection = () => {
   const [isMissionPopupOpen, setIsMissionPopupOpen] = useState(false);
 
   const items = [
-    { 
-      title: "Visi", 
-      image: "/assets/Visi.jpg", 
-      description: "Menjadi suatu lembaga pengembangan, pemanfaatan dan pelayanan Teknologi Pendidikan yang kreatif, inovatif dan mencerdaskan." 
+    {
+      title: "Visi",
+      image: "/assets/Visi.jpg",
+      accent: C.teal,
+      description:
+        "Menjadi suatu lembaga pengembangan, pemanfaatan dan pelayanan Teknologi Pendidikan yang kreatif, inovatif dan mencerdaskan.",
+      extra: null,
     },
-    { 
-      title: "Misi", 
-      image: "/assets/Misi.jpg", 
-      description: (
-        <div>
-          <p className="mb-2">Meningkatkan akses dan mutu pendidikan dengan mengembangkan media, model dan sistem pembelajaran berbasis...</p>
-          <button 
-            onClick={() => setIsMissionPopupOpen(true)}
-            className="text-blue-600 hover:text-blue-800 text-sm font-semibold"
-          >
-            Selengkapnya
-          </button>
-        </div>
-      )
+    {
+      title: "Misi",
+      image: "/assets/Misi.jpg",
+      accent: C.gold,
+      description:
+        "Meningkatkan akses dan mutu pendidikan dengan mengembangkan media, model dan sistem pembelajaran berbasis...",
+      extra: (
+        <button
+          onClick={() => setIsMissionPopupOpen(true)}
+          className="mt-2 text-xs font-bold tracking-wide flex items-center gap-1 transition"
+          style={{ color: C.teal }}
+        >
+          Selengkapnya <span>→</span>
+        </button>
+      ),
     },
   ];
 
   return (
-    <section className="flex flex-wrap justify-center gap-9 mb-16 relative">
-      {items.map(({ title, image, description }) => (
-        <div key={title} className="w-auto relative">
-          <img
-            src={image}
-            alt={`${title} image`}
-            className="w-[540px] h-[340px] object-cover"
-          />
-          <div className="absolute top-64 left-16 w-[400px] h-[140px] bg-white shadow-lg p-4 flex flex-col justify-center items-start">
-            <h3 className="text-xl font-semibold text-[#223A5C] mb-2 text-left">
-              {title}
-            </h3>
-            <div className="text-sm text-gray-700 text-left">
-              {description}
+    <section className="py-20" style={{ background: C.offWhite }}>
+      <SectionHeading label="Identitas" title="Visi & Misi" />
+      <div className="flex flex-wrap justify-center gap-10 px-6">
+        {items.map(({ title, image, accent, description, extra }) => (
+          <div
+            key={title}
+            className="rounded-2xl overflow-hidden shadow-lg w-full max-w-sm flex flex-col"
+            style={{ background: "#fff" }}
+          >
+            <div className="relative h-52 overflow-hidden">
+              <img src={image} alt={title} className="w-full h-full object-cover" />
+              <div
+                className="absolute inset-0"
+                style={{
+                  background: `linear-gradient(to bottom, transparent 30%, rgba(26,46,74,0.75) 100%)`,
+                }}
+              />
+              <div className="absolute bottom-0 left-0 p-5">
+                <div
+                  className="w-8 h-1 rounded mb-2"
+                  style={{ background: accent }}
+                />
+                <h3 className="text-2xl font-bold text-white" style={{ fontFamily: "'Georgia',serif" }}>
+                  {title}
+                </h3>
+              </div>
+            </div>
+            <div className="p-6 flex-1 flex flex-col">
+              <p className="text-sm text-gray-600 leading-relaxed flex-1">{description}</p>
+              {extra}
             </div>
           </div>
-        </div>
-      ))}
-      <MissionPopup 
-        isOpen={isMissionPopupOpen} 
-        onClose={() => setIsMissionPopupOpen(false)} 
-      />
+        ))}
+      </div>
+      <MissionPopup isOpen={isMissionPopupOpen} onClose={() => setIsMissionPopupOpen(false)} />
     </section>
   );
 };
 
-
 const OrganizationSection = () => (
-  <section className={`${STYLES.sectionPadding} bg-white text-center`}>
-    <SectionTitle>Struktur Organisasi</SectionTitle>
-    <div className="max-w-4xl mx-auto text-center mb-2">
-      <p className="text-[18px] text-[#223A5C] leading-relaxed mb-2 font-bold">
-        Balai Teknologi Informasi dan Data Pendidikan
-      </p>
-      <p className="text-[18px] text-[#223A5C] leading-relaxed mb-2 font-semibold">
-        Dinas Pendidikan dan Kebudayaan
-      </p>
-      <p className="text-[18px] text-[#223A5C] leading-relaxed mb-2 font-semibold">
-        Provinsi Nusa Tenggara Barat
-      </p>
-      <img
-        src="/assets/StrukturOrganisasi.jpg"
-        alt="Struktur Organisasi"
-        className="w-full max-w-[1220px] h-auto mx-auto object-cover"
-      />
+  <section className="py-20 bg-white">
+    <div className="max-w-5xl mx-auto px-6">
+      <SectionHeading label="Kelembagaan" title="Struktur Organisasi" />
+      <div className="text-center mb-6">
+        <p className="font-bold text-base" style={{ color: C.navy }}>
+          Balai Teknologi Informasi dan Data Pendidikan
+        </p>
+        <p className="text-sm font-semibold" style={{ color: C.navyMid }}>
+          Dinas Pendidikan dan Kebudayaan · Provinsi Nusa Tenggara Barat
+        </p>
+      </div>
+      <div className="rounded-2xl overflow-hidden shadow-lg border" style={{ borderColor: `${C.navy}15` }}>
+        <img
+          src="/assets/StrukturOrganisasi.jpg"
+          alt="Struktur Organisasi"
+          className="w-full h-auto object-cover"
+        />
+      </div>
     </div>
   </section>
 );
@@ -257,44 +348,64 @@ const Popup = ({ isOpen, onClose, title, data }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white rounded-lg p-6 w-[800px] max-h-[80vh] overflow-y-auto">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="text-xl font-bold text-[#223A5C]">{title}</h3>
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-4">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[80vh] overflow-hidden flex flex-col">
+        <div className="flex items-center justify-between px-8 py-5" style={{ background: C.navy }}>
+          <div>
+            <p className="text-xs text-white/60 tracking-widest uppercase font-bold">Detail Personel</p>
+            <h3 className="text-xl font-bold text-white" style={{ fontFamily: "'Georgia',serif" }}>
+              {title}
+            </h3>
+          </div>
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700"
+            className="w-9 h-9 rounded-full flex items-center justify-center text-white/70 hover:text-white hover:bg-white/10 transition text-xl"
           >
             ✕
           </button>
         </div>
-        <table className="w-full border-collapse border border-[#223A5C]">
-          <thead className="bg-[#223A5C] text-white">
-            <tr>
-              <th className="px-4 py-2 border">Nama</th>
-              <th className="px-4 py-2 border">Sub Bagian</th>
-              <th className="px-4 py-2 border">NIP</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.map((item, index) => (
-              <tr 
-                key={index} 
-                className={`text-center ${index === 0 ? 'bg-[#63997F]' : index % 2 === 0 ? 'bg-white' : 'bg-gray-100'}`}
-              >
-                <td className={`px-4 py-2 border ${index === 0 ? 'text-white' : 'text-[#223A5C]'}`}>
-                  {item.name}
-                </td>
-                <td className={`px-4 py-2 border ${index === 0 ? 'text-white' : 'text-[#223A5C]'}`}>
-                  {item.subDepartment}
-                </td>
-                <td className={`px-4 py-2 border ${index === 0 ? 'text-white' : 'text-[#223A5C]'}`}>
-                  {item.nip}
-                </td>
+        <div className="overflow-y-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr style={{ background: C.teal }}>
+                <th className="px-5 py-3 text-white font-semibold text-left">Nama</th>
+                <th className="px-5 py-3 text-white font-semibold text-left">Sub Bagian</th>
+                <th className="px-5 py-3 text-white font-semibold text-left">NIP</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {data.map((item, index) => (
+                <tr
+                  key={index}
+                  className={index === 0 ? "" : ""}
+                  style={{
+                    background:
+                      index === 0
+                        ? `${C.teal}18`
+                        : index % 2 === 0
+                        ? "#fff"
+                        : C.offWhite,
+                  }}
+                >
+                  <td className="px-5 py-3 font-medium" style={{ color: index === 0 ? C.teal : C.navy }}>
+                    {item.name}
+                  </td>
+                  <td className="px-5 py-3 text-gray-600">{item.subDepartment}</td>
+                  <td className="px-5 py-3 text-gray-500 font-mono text-xs">{item.nip}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div className="px-8 py-4 border-t text-right">
+          <button
+            onClick={onClose}
+            className="px-8 py-2.5 rounded-full text-sm font-semibold text-white transition"
+            style={{ background: C.teal }}
+          >
+            Tutup
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -313,7 +424,7 @@ const OrganizationTable = () => {
     "Fungsional Prakom",
     "Kasubbag Tata Usaha",
     "Kasi Pemanfaatan TI dan Pengelolaan DP",
-    "Kasi Pengembangan Media Belajar"
+    "Kasi Pengembangan Media Belajar",
   ];
 
   const formatActiveYear = (year) => {
@@ -322,56 +433,46 @@ const OrganizationTable = () => {
   };
 
   useEffect(() => {
-    // Fetch main table data
     const fetchMembers = async () => {
       try {
-        const response = await axios.get('/api/organization-members');
-        // Get only one member per position (the first one)
+        const response = await axios.get("/api/organization-members");
         const uniqueMembers = Object.values(
           response.data.reduce((acc, member) => {
-            if (!acc[member.position]) {
-              acc[member.position] = member;
-            }
+            if (!acc[member.position]) acc[member.position] = member;
             return acc;
           }, {})
         );
-
-        // Sort members according to positionOrder
         const sortedMembers = uniqueMembers.sort((a, b) => {
-          const indexA = positionOrder.indexOf(a.position);
-          const indexB = positionOrder.indexOf(b.position);
-          // If position is not in the order array, put it at the end
-          if (indexA === -1) return 1;
-          if (indexB === -1) return -1;
-          return indexA - indexB;
+          const ia = positionOrder.indexOf(a.position);
+          const ib = positionOrder.indexOf(b.position);
+          if (ia === -1) return 1;
+          if (ib === -1) return -1;
+          return ia - ib;
         });
-
         setUniquePositionMembers(sortedMembers);
       } catch (error) {
-        console.error('Error fetching members:', error);
+        console.error("Error fetching members:", error);
       }
     };
 
-    // Fetch department staff data
     const fetchDepartmentStaff = async () => {
       try {
-        const response = await axios.get('/api/department-staff');
-        // Sort staff in each department according to positionOrder if needed
+        const response = await axios.get("/api/department-staff");
         const sortedStaff = Object.fromEntries(
           Object.entries(response.data).map(([key, staff]) => [
             key,
             staff.sort((a, b) => {
-              const indexA = positionOrder.indexOf(a.subDepartment);
-              const indexB = positionOrder.indexOf(b.subDepartment);
-              if (indexA === -1) return 1;
-              if (indexB === -1) return -1;
-              return indexA - indexB;
-            })
+              const ia = positionOrder.indexOf(a.subDepartment);
+              const ib = positionOrder.indexOf(b.subDepartment);
+              if (ia === -1) return 1;
+              if (ib === -1) return -1;
+              return ia - ib;
+            }),
           ])
         );
         setDepartmentStaff(sortedStaff);
       } catch (error) {
-        console.error('Error fetching department staff:', error);
+        console.error("Error fetching department staff:", error);
       }
     };
 
@@ -386,41 +487,58 @@ const OrganizationTable = () => {
   };
 
   return (
-    <section className="px-14 py-2 mb-16 bg-white">
-      <div className="overflow-x-auto mx-auto" style={{ maxWidth: "calc(100% - 40px)" }}>
-        <table className="table-auto w-full border border-[#223A5C]">
-          <thead className="bg-[#223A5C] text-white">
-            <tr>
-              <th className="px-4 py-2 border">Nama</th>
-              <th className="px-4 py-2 border">Jabatan</th>
-              <th className="px-4 py-2 border">NIP</th>
-              <th className="px-4 py-2 border">Tahun Aktif</th>
-            </tr>
-          </thead>
-          <tbody>
-            {uniquePositionMembers.map((member, index) => (
-              <tr key={index} className="text-center odd:bg-white even:bg-gray-100">
-                <td 
-                  className="px-4 py-2 border text-[#223A5C] cursor-pointer hover:text-blue-600"
-                  onClick={() => handleClick(member.position)}
-                >
-                  {member.name}
-                </td>
-                <td 
-                  className="px-4 py-2 border text-[#223A5C] cursor-pointer hover:text-blue-600"
-                  onClick={() => handleClick(member.position)}
-                >
-                  {member.position}
-                </td>
-                <td className="px-4 py-2 border text-[#223A5C]">{member.nip}</td>
-                <td className="px-4 py-2 border text-[#223A5C]">
-                  {formatActiveYear(member.activeYear)}
-                </td>
+    <section className="py-20" style={{ background: C.lightBg }}>
+      <div className="max-w-5xl mx-auto px-6 mb-20">
+        <SectionHeading label="Personel" title="Daftar Pegawai" />
+
+        <div className="rounded-2xl overflow-hidden shadow-lg border" style={{ borderColor: `${C.navy}15` }}>
+          <table className="w-full text-sm">
+            <thead>
+              <tr style={{ background: C.navy }}>
+                <th className="px-5 py-4 text-white font-semibold text-left">Nama</th>
+                <th className="px-5 py-4 text-white font-semibold text-left">Jabatan</th>
+                <th className="px-5 py-4 text-white font-semibold text-left">NIP</th>
+                <th className="px-5 py-4 text-white font-semibold text-left">Tahun Aktif</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {uniquePositionMembers.map((member, index) => (
+                <tr
+                  key={index}
+                  className="group transition"
+                  style={{ background: index % 2 === 0 ? "#fff" : C.offWhite }}
+                >
+                  <td
+                    className="px-5 py-3.5 font-medium cursor-pointer transition"
+                    style={{ color: C.navy }}
+                    onClick={() => handleClick(member.position)}
+                  >
+                    <span className="group-hover:underline" style={{ color: C.teal }}>
+                      {member.name}
+                    </span>
+                  </td>
+                  <td
+                    className="px-5 py-3.5 cursor-pointer text-gray-600"
+                    onClick={() => handleClick(member.position)}
+                  >
+                    {member.position}
+                  </td>
+                  <td className="px-5 py-3.5 font-mono text-xs text-gray-500">{member.nip}</td>
+                  <td className="px-5 py-3.5">
+                    <span
+                      className="inline-block px-3 py-1 rounded-full text-xs font-semibold"
+                      style={{ background: `${C.teal}15`, color: C.teal }}
+                    >
+                      {formatActiveYear(member.activeYear)}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
+
       <Popup
         isOpen={isPopupOpen}
         onClose={() => setIsPopupOpen(false)}
@@ -433,15 +551,14 @@ const OrganizationTable = () => {
 
 const TentangKami = ({ auth }) => {
   return (
-    <div className="bg-gray-50 text-black/50 dark:bg-black dark:text-white/50 min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col" style={{ background: C.offWhite }}>
       <header className="w-full">
         <Navbar auth={auth} />
       </header>
 
-      <main>
-        <HeroSection />
+      <main className="flex-1">
         <AboutSection />
-        <WelcomeSection/>
+        <WelcomeSection />
         <VisionMissionSection />
         <OrganizationSection />
         <OrganizationTable />

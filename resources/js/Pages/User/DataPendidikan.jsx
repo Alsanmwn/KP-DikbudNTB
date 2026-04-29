@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from '@inertiajs/react';
+import Navbar from '@/Components/Navbar';
+import Footer from '@/Components/Footer';
 import { ArrowLeft, ChevronRight, ChevronLeft } from 'lucide-react';
 import { utils, writeFile } from 'xlsx';
 import axios from 'axios';
@@ -757,18 +759,9 @@ const DataPendidikan = () => {
 
     return (
         <div className="min-h-screen flex flex-col">
-            <div className="flex-grow container mx-auto px-4 py-6">
+            <Navbar />
+            <div className="flex-grow container mx-auto px-4 py-6 mt-20 mb-20">
                 <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-                    <div className="bg-[#4A6A99] p-4 flex items-center gap-2">
-                        <Link
-                            href={route('beranda')}
-                            className="p-1 hover:bg-gray-700 rounded-full transition-colors"
-                        >
-                            <ArrowLeft className="w-5 h-5 text-white" />
-                        </Link>
-                        <h1 className="text-2xl font-bold text-white">Informasi Pendidikan</h1>
-                    </div>
-
                     <div className="flex border-b">
                         {[
                             { id: 'sekolah', label: 'Data Sekolah' },
@@ -838,6 +831,7 @@ const DataPendidikan = () => {
                     </div>
                 </div>
             </div>
+            <Footer />
         </div>
     );
 };

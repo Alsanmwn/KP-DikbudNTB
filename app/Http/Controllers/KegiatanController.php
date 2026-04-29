@@ -24,11 +24,7 @@ class KegiatanController extends Controller
     public function showDetail($id)
     {
         $kegiatan = Kegiatan::findOrFail($id);
-       
-        if ($kegiatan->gambar) {
-            $kegiatan->gambar = $kegiatan->gambar; 
-        }
-       
+
         return Inertia::render('User/DetailKegiatan', [
             'kegiatan' => $kegiatan
         ]);
@@ -37,23 +33,22 @@ class KegiatanController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'nama' => 'required|string',
-            'deskripsi' => 'required|string',
-            'tanggal' => 'required|date',
-            'waktu' => 'required|string',
-            'lokasi' => 'required|string',
-            'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg',
-            'status' => 'required|string',
-            'link_pendaftaran' => 'nullable|url',
-            'link_kegiatan' => 'nullable|url',
+            'nama'             => 'required|string',
+            'deskripsi'        => 'required|string',
+            'tanggal'          => 'required|date',
+            'waktu'            => 'required|string',
+            'lokasi'           => 'required|string',
+            'gambar'           => 'nullable|image|mimes:jpeg,png,jpg,gif,svg',
+            'status'           => 'required|string',
+            'tipe'             => 'required|in:public,anggota', // tambah ini
+            'link_kegiatan'    => 'nullable|url',
         ]);
 
         if ($request->hasFile('gambar')) {
             $data['gambar'] = $request->file('gambar')->store('kegiatan', 'public');
         }
 
-        $kegiatan = Kegiatan::create($data);
-        return response()->json($kegiatan, 201);
+        return response()->json(Kegiatan::create($data), 201);
     }
 
     public function update(Request $request, $id)
@@ -68,6 +63,7 @@ class KegiatanController extends Controller
             'lokasi' => 'required|string',
             'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg',
             'status' => 'required|string',
+            'tipe' => 'required|in:public,anggota',
             'link_pendaftaran' => 'nullable|string',
             'link_kegiatan' => 'nullable|string',
         ]);
@@ -119,13 +115,17 @@ class KegiatanController extends Controller
 
     public function daftarKegiatan(Request $request)
     {
-        $kegiatan_data = Kegiatan::findOrFail($request->kegiatan_id);
-        
-        return Inertia::render('User/PendaftaranKegiatan', [ 
-            'auth' => [
-                'user' => Auth::user()
-            ],
-            'kegiatan_data' => $kegiatan_data
+        $kegiatan = Kegiatan::findOrFail($request->kegiatan_id);
+        $user = Auth::user();
+
+        // Validasi akses: umum hanya boleh daftar kegiatan public
+        if ($kegiatan->tipe === 'anggota' && $user->role !== 'anggota') {
+            abort(403, 'Kegiatan ini hanya tersedia untuk anggota.');
+        }
+
+        return Inertia::render('User/PendaftaranKegiatan', [
+            'auth' => ['user' => $user],
+            'kegiatan_data' => $kegiatan
         ]);
     }
 

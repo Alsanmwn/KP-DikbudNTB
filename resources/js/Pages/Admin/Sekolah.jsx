@@ -6,11 +6,9 @@ import { usePage } from '@inertiajs/react';
 import { Edit, Trash, User as UserIcon, Plus, School } from 'lucide-react';
 import { Link } from '@inertiajs/react';
 
-
 axios.defaults.baseURL = window.location.origin;
 axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
-
 
 const Sekolah = () => {
     const { admin } = usePage().props;
@@ -37,11 +35,9 @@ const Sekolah = () => {
         ruang_perpus: 0
     });
 
-
     useEffect(() => {
         fetchSekolahData();
     }, []);
-
 
     const fetchSekolahData = async () => {
         try {
@@ -57,7 +53,6 @@ const Sekolah = () => {
         }
     };
 
-
     const handleDelete = async (id) => {
         if (!window.confirm('Apakah Anda yakin ingin menghapus sekolah ini?')) return;
         try {
@@ -69,17 +64,14 @@ const Sekolah = () => {
         }
     };
 
-
     const handleEdit = (sekolah) => {
         setEditSekolah(sekolah);
         setIsEditModalOpen(true);
     };
 
-
     const handleSaveEdit = async () => {
         try {
             const response = await axios.put(`/api/sekolah/${editSekolah.id}`, editSekolah);
-   
             const updatedSekolahData = sekolahData.map(sekolah =>
                 sekolah.id === editSekolah.id ? response.data : sekolah
             );
@@ -91,7 +83,6 @@ const Sekolah = () => {
             setError('Gagal memperbarui data sekolah.');
         }
     };
-
 
     const handleAddSekolah = async () => {
         try {
@@ -119,7 +110,6 @@ const Sekolah = () => {
             setError('Gagal menambahkan sekolah baru.');
         }
     };
-
 
     const columns = useMemo(() => [
         { accessorKey: 'nama', header: 'Nama Sekolah', size: 280 },
@@ -161,13 +151,12 @@ const Sekolah = () => {
         },
     ], []);
 
-
     return (
         <div className="flex min-h-screen bg-gray-100">
             <Sidebar />
             <div className="flex-1 flex flex-col overflow-hidden">
-                <nav className="bg-white shadow-sm p-4 flex justify-between items-center">
-                    <div className="font-semibold text-lg">Data Sekolah NTB</div>
+                <nav className="bg-white shadow-lg p-4 flex justify-between items-center">
+                    <div className="font-semibold text-lg"></div>
                     <Link href={route('admin.profile')} className="flex items-center gap-2 text-gray-700 hover:text-blue-600 transition-colors">
                         <span className="text-base font-medium">{admin.name}</span>
                         <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white">
@@ -182,23 +171,24 @@ const Sekolah = () => {
                         </div>
                     )}
                    
-                    <div className="mb-4 flex justify-between items-center">
-                        <h1 className="text-2xl font-bold flex items-center">
-                            <School className="w-6 h-6 mr-2" />
-                            Data Sekolah
-                        </h1>
-                        <button
-                            onClick={() => setIsAddModalOpen(true)}
-                            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded flex items-center gap-2"
-                        >
-                            <Plus className="w-5 h-5" />
-                            Tambah Sekolah
-                        </button>
-                    </div>
-                   
-                    {/* Table container with fixed height and horizontal scroll */}
-                    <div className="flex-1 overflow-hidden">
-                        <div className="h-full overflow-x-auto overflow-y-auto">
+                    {/* Card container with header and table inside */}
+                    <div className="flex-1 overflow-hidden bg-white rounded-lg shadow">
+                        {/* Header inside the white card */}
+                        <div className="p-6 border-b flex justify-between items-center">
+                            <h1 className="text-xl font-bold flex items-center">
+                                Data Sekolah
+                            </h1>
+                            <button
+                                onClick={() => setIsAddModalOpen(true)}
+                                className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded flex items-center gap-2"
+                            >
+                                <Plus className="w-5 h-5" />
+                                Tambah Sekolah
+                            </button>
+                        </div>
+                        
+                        {/* Table section */}
+                        <div className="overflow-auto" style={{ height: 'calc(100vh - 250px)' }}>
                             <MaterialReactTable
                                 columns={columns}
                                 data={sekolahData}
@@ -206,7 +196,7 @@ const Sekolah = () => {
                                 enableStickyHeader
                                 muiTableContainerProps={{
                                     sx: {
-                                        maxHeight: 'calc(100vh - 220px)',
+                                        maxHeight: '100%',
                                     },
                                 }}
                                 muiTablePaperProps={{
@@ -214,16 +204,9 @@ const Sekolah = () => {
                                         boxShadow: 'none',
                                     },
                                 }}
-                                // Adjusted for slightly larger column display
                                 initialState={{
                                     density: 'comfortable',
-                                    columnVisibility: {
-                                        // Optionally hide some columns by default if needed
-                                        // 'sk_pendirian': false,
-                                        // 'tgl_sk_pendirian': false,
-                                    },
                                 }}
-                                // Ensure better padding in cells
                                 muiTableBodyCellProps={{
                                     sx: {
                                         padding: '12px 16px',
@@ -241,8 +224,6 @@ const Sekolah = () => {
                 </div>
             </div>
 
-
-            {/* Modal Edit Sekolah */}
             {isEditModalOpen && editSekolah && (
                 <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
                     <div className="bg-white p-6 rounded shadow-lg max-w-3xl w-full max-h-screen overflow-y-auto">
@@ -297,7 +278,6 @@ const Sekolah = () => {
                                 </select>
                             </div>
 
-
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Kabupaten</label>
                                 <input
@@ -319,7 +299,6 @@ const Sekolah = () => {
                                     disabled={loading}
                                 />
                             </div>
-
 
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Provinsi</label>
@@ -354,7 +333,6 @@ const Sekolah = () => {
                                 ></textarea>
                             </div>
                            
-                            {/* Fasilitas Sekolah */}
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Jumlah Guru</label>
                                 <input
@@ -431,8 +409,6 @@ const Sekolah = () => {
                 </div>
             )}
 
-
-            {/* Modal Tambah Sekolah */}
             {isAddModalOpen && (
                 <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
                     <div className="bg-white p-6 rounded shadow-lg max-w-3xl w-full max-h-screen overflow-y-auto">
@@ -489,7 +465,6 @@ const Sekolah = () => {
                                 </select>
                             </div>
 
-
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Kabupaten</label>
                                 <input
@@ -513,7 +488,6 @@ const Sekolah = () => {
                                     required
                                 />
                             </div>
-
 
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Provinsi</label>
@@ -551,7 +525,6 @@ const Sekolah = () => {
                                 ></textarea>
                             </div>
                            
-                            {/* Fasilitas Sekolah */}
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Jumlah Guru</label>
                                 <input
@@ -630,6 +603,5 @@ const Sekolah = () => {
         </div>
     );
 };
-
 
 export default Sekolah;

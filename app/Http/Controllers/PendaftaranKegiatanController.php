@@ -5,12 +5,33 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\PendaftaranKegiatan;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 class PendaftaranKegiatanController extends Controller
 {
     public function store(Request $request)
     {
-        Log::info('Menerima request pendaftaran:', $request->all());
+        // Ambil user login
+        $user = Auth::user();
+
+        // Jika belum login
+        if (!$user) {
+            return response()->json([
+                'message' => 'Unauthorized'
+            ], 401);
+        }
+
+        // Ambil kegiatan
+        $kegiatan = \App\Models\Kegiatan::findOrFail($request->kegiatan_id);
+
+        // Validasi akses role
+        if ($kegiatan->tipe === 'anggota' && $user->role !== 'anggota') {
+            return response()->json([
+                'message' => 'Akses ditolak'
+            ], 403);
+        }
+
+        Log::info('Request masuk:', $request->all());
 
         try {
             $validated = $request->validate([
@@ -20,12 +41,10 @@ class PendaftaranKegiatanController extends Controller
                 'alamat' => 'required|string',
                 'nomorHP' => 'required|string',
                 'email' => 'required|email',
-                'user_id' => 'required',
                 'kegiatan_id' => 'required'
             ]);
 
-            Log::info('Data tervalidasi:', $validated);
-
+            // Simpan ke DB
             $pendaftaran = PendaftaranKegiatan::create([
                 'namaLengkap' => $validated['namaLengkap'],
                 'jenisKelamin' => $validated['jenisKelamin'],
@@ -33,11 +52,9 @@ class PendaftaranKegiatanController extends Controller
                 'alamat' => $validated['alamat'],
                 'nomorHP' => $validated['nomorHP'],
                 'email' => $validated['email'],
-                'user_id' => $validated['user_id'],
+                'user_id' => $user->id, // 🔥 dari backend
                 'kegiatan_id' => $validated['kegiatan_id'],
             ]);
-
-            Log::info('Pendaftaran berhasil dibuat:', $pendaftaran->toArray());
 
             return response()->json([
                 'message' => 'Pendaftaran berhasil',
@@ -45,21 +62,38 @@ class PendaftaranKegiatanController extends Controller
             ], 201);
 
         } catch (\Illuminate\Validation\ValidationException $e) {
-            Log::error('Validation error:', $e->errors());
+
             return response()->json([
                 'message' => 'Validasi gagal',
                 'errors' => $e->errors()
             ], 422);
-            
+
         } catch (\Exception $e) {
-            Log::error('Error saat menyimpan pendaftaran:', [
-                'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
+
+            Log::error('ERROR:', [
+                'message' => $e->getMessage()
             ]);
-            
+
             return response()->json([
-                'message' => 'Terjadi kesalahan internal: ' . $e->getMessage()
+                'message' => 'Terjadi kesalahan internal'
             ], 500);
         }
     }
+
+    public function destroy($id)
+    {
+        $data = PendaftaranKegiatan::findOrFail($id);
+
+        // keamanan: pastikan milik user
+        if ($data->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $data->delete();
+
+        // return back()->with('success', 'Pendaftaran dibatalkan');
+        return redirect()->back()->with('success', 'Pendaftaran dibatalkan');
+
+    }
+
 }

@@ -6,10 +6,17 @@ use App\Models\Guru;
 use App\Models\Sekolah;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class GuruController extends Controller
 {
     // Add these methods to your GuruController:
+
+    public function index()
+    {
+        $guru = Guru::with('sekolah')->get();
+        return response()->json($guru);
+    }
 
     public function guruSummary()
     {
@@ -99,4 +106,82 @@ class GuruController extends Controller
 
         return response()->json($guru);
     }
+
+    /**
+     * Add multiple guru records in a batch.
+     */
+    public function batchAdd(Request $request)
+    {
+        // Validate the request
+        $validator = Validator::make($request->all(), [
+            'sekolah_id' => 'required|exists:sekolahs,id',
+            'laki_laki' => 'required|integer|min:0',
+            'perempuan' => 'required|integer|min:0',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        // Start transaction
+        DB::beginTransaction();
+        try {
+            // Create guru records for laki-laki
+            for ($i = 0; $i < $request->laki_laki; $i++) {
+                Guru::create([
+                    'sekolah_id' => $request->sekolah_id,
+                    'jenis_kelamin' => 'Laki-laki',
+                ]);
+            }
+
+            // Create guru records for perempuan
+            for ($i = 0; $i < $request->perempuan; $i++) {
+                Guru::create([
+                    'sekolah_id' => $request->sekolah_id,
+                    'jenis_kelamin' => 'Perempuan',
+                ]);
+            }
+
+            DB::commit();
+            return response()->json(['message' => 'Data guru berhasil ditambahkan'], 201);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['message' => 'Gagal menambahkan data guru: ' . $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Retrieve guru summary reports by kabupaten
+     */
+    public function summary()
+    {
+        $data = DB::table('gurus')
+            ->join('sekolahs', 'gurus.sekolah_id', '=', 'sekolahs.id')
+            ->select(
+                'sekolahs.kabupaten as wilayah',
+                DB::raw('SUM(CASE WHEN sekolahs.bp = "SMA" AND gurus.jenis_kelamin = "Laki-laki" THEN 1 ELSE 0 END) as sma_l'),
+                DB::raw('SUM(CASE WHEN sekolahs.bp = "SMA" AND gurus.jenis_kelamin = "Perempuan" THEN 1 ELSE 0 END) as sma_p'),
+                DB::raw('SUM(CASE WHEN sekolahs.bp = "SMK" AND gurus.jenis_kelamin = "Laki-laki" THEN 1 ELSE 0 END) as smk_l'),
+                DB::raw('SUM(CASE WHEN sekolahs.bp = "SMK" AND gurus.jenis_kelamin = "Perempuan" THEN 1 ELSE 0 END) as smk_p'),
+                DB::raw('SUM(CASE WHEN sekolahs.bp = "SLB" AND gurus.jenis_kelamin = "Laki-laki" THEN 1 ELSE 0 END) as slb_l'),
+                DB::raw('SUM(CASE WHEN sekolahs.bp = "SLB" AND gurus.jenis_kelamin = "Perempuan" THEN 1 ELSE 0 END) as slb_p')
+            )
+            ->groupBy('sekolahs.kabupaten')
+            ->get();
+
+        return response()->json($data);
+    }
+
+    /**
+     * Retrieve guru data for a specific school
+     */
+    public function bySchool($schoolId)
+    {
+        $guru = Guru::where('sekolah_id', $schoolId)
+            ->select('id', 'jenis_kelamin')
+            ->get();
+
+        return response()->json($guru);
+    }
 }
+
